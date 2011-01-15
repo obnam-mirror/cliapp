@@ -14,21 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import optparse
-import sys
+import cliapp
 
 
-class Application(object):
+class ExampleApp(cliapp.Application):
 
-    def __init__(self):
-        self.version = '0.0.0'
-        self._init_parser()
-        
-    def _init_parser(self):
-        '''Initialize the option parser with default options and values.'''
-        self.parser = optparse.OptionParser(version=self.version)
-                               
-    def run(self): # pragma: no cover
-        opts, args = self.parser.parse_args()
-        
+    pass
     
+    
+ExampleApp().run()
+
