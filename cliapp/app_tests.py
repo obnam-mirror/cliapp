@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import optparse
 import unittest
 
 import cliapp
@@ -25,4 +26,4 @@ class ApplicationTests(unittest.TestCase):
         self.app = cliapp.Application()
 
     def test_creates_option_parser(self):
-        self.assert_(hasattr(self.app, 'parser'))
+        self.assert_(isinstance(self.app.parser, optparse.OptionParser))
