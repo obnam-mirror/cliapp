@@ -21,3 +21,9 @@ class Application(object):
 
     def __init__(self):
         self.parser = optparse.OptionParser()
+        self._init_parser()
+        
+    def _init_parser(self):
+        '''Initialize the option parser with default options and values.'''
+        self.parser.add_option('--version', action='store_true',
+                               help='show version of program')
