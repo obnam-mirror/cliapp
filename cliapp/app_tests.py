@@ -27,3 +27,6 @@ class ApplicationTests(unittest.TestCase):
 
     def test_creates_option_parser(self):
         self.assert_(isinstance(self.app.parser, optparse.OptionParser))
+        
+    def test_adds_default_options(self):
+        self.assert_(self.app.parser.has_option('--version'))
