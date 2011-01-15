@@ -20,6 +20,16 @@ import sys
 
 class Application(object):
 
+    '''A framework for Unix-like command line programs.
+    
+    The user should subclass this class, then create an instance of the
+    subclass, and call the run method.
+    
+    The subclass should define the version attribute to contain the
+    version number of the program.
+    
+    '''
+
     def __init__(self):
         self.version = '0.0.0'
         self._init_parser()
