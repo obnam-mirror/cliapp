@@ -156,10 +156,10 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(option.help, 'foo help')
 
     def test_parses_integer_option(self):
-        self.app.add_bytesize_setting(['foo'], 'foo help')
+        self.app.add_integer_setting(['foo'], 'foo help', default=123)
 
-        self.app.run(args=['--foo=xyzzy'])
-        self.assertEqual(self.app['foo'], 0)
+        self.app.run(args=[])
+        self.assertEqual(self.app['foo'], 123)
 
         self.app.run(args=['--foo=123'])
         self.assertEqual(self.app['foo'], 123)

@@ -109,12 +109,13 @@ class Application(object):
                                nargs=1,
                                help=help)
 
-    def add_integer_setting(self, names, help):
+    def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
 
         self.parser.add_option(*self._option_names(names), 
                                action='store',
                                type='long',
+                               default=default,
                                help=help)
 
     def get_setting(self, name):
