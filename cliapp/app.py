@@ -41,7 +41,7 @@ class Application(object):
     def _init_parser(self):
         '''Initialize the option parser with default options and values.'''
         self.parser = optparse.OptionParser(version=self.version)
-        self.add_options()
+        self.add_settings()
 
     def _option_names(self, names):
         '''Turn setting names into option names.
@@ -81,8 +81,8 @@ class Application(object):
     def __getitem__(self, setting_name):
         return self.get_setting(setting_name)
         
-    def add_options(self):
-        '''Add application specific options.'''
+    def add_settings(self):
+        '''Add application specific settings.'''
 
     def run(self, args=None):
         args = sys.argv[1:] if args is None else args

@@ -33,11 +33,11 @@ class ApplicationTests(unittest.TestCase):
         self.assert_(self.app.parser.has_option('--version'))
         self.assert_(self.app.parser.has_option('--help'))
         
-    def test_calls_add_options(self):
+    def test_calls_add_settings(self):
     
         class Foo(cliapp.Application):
-            def add_options(self):
-                self.parser.add_option('--foo')
+            def add_settings(self):
+                self.add_string_setting(['foo'], '')
         foo = Foo()
         self.assert_(foo.parser.has_option('--foo'))
     
