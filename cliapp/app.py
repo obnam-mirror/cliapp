@@ -42,6 +42,10 @@ class Application(object):
         '''Initialize the option parser with default options and values.'''
         self.parser = optparse.OptionParser(version=self.version)
         self.add_options()
+
+    def add_string_setting(self, primary_name, *args, **kwargs):
+        '''Add a setting with a string value.'''
+        self.parser.add_option('--' + primary_name, *args, **kwargs)
         
     def add_options(self):
         '''Add application specific options.'''

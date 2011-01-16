@@ -83,3 +83,7 @@ class ApplicationTests(unittest.TestCase):
         foo.run(args=['foo', 'bar'])
         self.assertEqual(lines, ['foo0\n', 'foo1\n', 'bar0\n', 'bar1\n'])
 
+    def test_adds_string_setting(self):
+        self.app.add_string_setting('foo')
+        self.assert_(self.app.parser.has_option('--foo'))
+
