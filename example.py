@@ -22,11 +22,10 @@ class ExampleApp(cliapp.Application):
     '''A little fgrep-like tool.'''
     
     def add_options(self):
-        self.add_string_setting('pattern', '-e', action='store',
-                               help='the pattern to search for')
+        self.add_string_setting(['pattern', 'e'], 'the pattern to search for')
 
     def process_input_line(self, name, line):
-        if self.options.pattern in line:
+        if self['pattern'] in line:
             print line,
     
     
