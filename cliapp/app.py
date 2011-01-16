@@ -15,6 +15,7 @@
 
 
 import optparse
+import re
 import sys
 
 
@@ -65,6 +66,48 @@ class Application(object):
         '''Add a setting with a boolean value (defaults to false).'''
         self.parser.add_option(*self._option_names(names), 
                                action='store_true', 
+                               help=help)
+
+
+    def _parse_human_size(self, size):
+        '''Parse a size using suffix into plain bytes.'''
+        
+        m = re.match(r'''(?P<number>\d+(\.\d+)?) \s* 
+                         (?P<unit>k|ki|m|mi|g|gi|t|ti)? b? \s*$''',
+                     size.lower(), flags=re.X)
+        if not m:
+            return 0
+        else:
+            number = float(m.group('number'))
+            unit = m.group('unit')
+            units = {
+                'k': 10**3,
+                'm': 10**6,
+                'g': 10**9,
+                't': 10**12,
+                'ki': 2**10,
+                'mi': 2**20,
+                'gi': 2**30,
+                'ti': 2**40,
+            }
+            return int(number * units.get(unit, 1))
+
+    def _store_bytesize_option(self, option, opt_str, value, parser):
+        '''Parse value of bytesize option and store it in the parser value.'''
+        setattr(parser.values, option.dest, self._parse_human_size(value))
+
+    def add_bytesize_setting(self, names, help):
+        '''Add a setting with a size in bytes.
+        
+        The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
+        
+        '''
+
+        self.parser.add_option(*self._option_names(names), 
+                               action='callback',
+                               type='string',
+                               callback=self._store_bytesize_option,
+                               nargs=1,
                                help=help)
 
     def get_setting(self, name):
