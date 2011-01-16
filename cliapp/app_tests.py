@@ -33,12 +33,14 @@ class ApplicationTests(unittest.TestCase):
         self.assert_(self.app.parser.has_option('--version'))
         self.assert_(self.app.parser.has_option('--help'))
         
-    def test_calls_add_settings(self):
+    def test_calls_add_settings_only_in_run(self):
     
         class Foo(cliapp.Application):
             def add_settings(self):
                 self.add_string_setting(['foo'], '')
         foo = Foo()
+        self.assertFalse(foo.parser.has_option('--foo'))
+        foo.run(args=[])
         self.assert_(foo.parser.has_option('--foo'))
     
     def test_run_calls_process_args(self):
