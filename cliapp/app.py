@@ -46,7 +46,7 @@ class Application(object):
     def add_options(self):
         '''Add application specific options.'''
 
-    def run(self, args=None): # pragma: no cover
+    def run(self, args=None):
         args = sys.argv[1:] if args is None else args
         self.options, args = self.parser.parse_args(args)
         
