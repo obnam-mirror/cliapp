@@ -53,6 +53,21 @@ class Application(object):
         for arg in args:
             self.process_input(arg)
 
+    def open_input(self, name, mode='r'):
+        '''Open an input file for reading.
+        
+        The default behaviour is to open a file named on the local
+        filesystem. A subclass might override this behavior for URLs,
+        for example.
+        
+        The optional mode argument speficies the mode in which the file
+        gets opened. It should allow reading. Some files should perhaps
+        be opened in binary mode ('rb') instead of the default text mode.
+        
+        '''
+        
+        return open(name, mode)
+
     def process_input(self, name):
         '''Process a particular input file.'''
 

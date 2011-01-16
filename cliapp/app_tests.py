@@ -50,6 +50,15 @@ class ApplicationTests(unittest.TestCase):
         self.app.run(args=[])
         self.assert_(hasattr(self.app, 'options'))
 
+    def test_open_input_opens_file(self):
+        f = self.app.open_input('/dev/null')
+        self.assert_(isinstance(f, file))
+        self.assertEqual(f.mode, 'r')
+        
+    def test_open_input_opens_file_in_binary_mode_when_requested(self):
+        f = self.app.open_input('/dev/null', mode='rb')
+        self.assertEqual(f.mode, 'rb')
+
     def test_process_input_calls_open_input(self):
         self.called = None
         def open_input(name):
