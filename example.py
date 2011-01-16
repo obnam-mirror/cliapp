@@ -25,12 +25,9 @@ class ExampleApp(cliapp.Application):
         self.parser.add_option('--pattern', '-e', action='store',
                                help='the pattern to search for')
 
-    def process_input(self, name):
-        f = open(name, 'r')
-        for line in f:
-            if self.options.pattern in line:
-                print line,
-        f.close()
+    def process_input_line(self, name, line):
+        if self.options.pattern in line:
+            print line,
     
     
 ExampleApp().run()
