@@ -50,6 +50,15 @@ class ApplicationTests(unittest.TestCase):
         self.app.run(args=[])
         self.assert_(hasattr(self.app, 'options'))
 
+    def test_process_input_calls_open_input(self):
+        self.called = None
+        def open_input(name):
+            self.called = name
+            return StringIO.StringIO('')
+        self.app.open_input = open_input
+        self.app.process_input('foo')
+        self.assertEqual(self.called, 'foo')
+
     def test_processes_input_lines(self):
 
         lines = []
