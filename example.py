@@ -22,7 +22,7 @@ class ExampleApp(cliapp.Application):
     '''A little fgrep-like tool.'''
     
     def add_options(self):
-        self.parser.add_option('--pattern', '-e', action='store',
+        self.add_string_setting('pattern', '-e', action='store',
                                help='the pattern to search for')
 
     def process_input_line(self, name, line):
