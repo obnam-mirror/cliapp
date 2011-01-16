@@ -31,6 +31,7 @@ class ApplicationTests(unittest.TestCase):
         
     def test_adds_default_options(self):
         self.assert_(self.app.parser.has_option('--version'))
+        self.assert_(self.app.parser.has_option('--help'))
         
     def test_calls_add_options(self):
     
