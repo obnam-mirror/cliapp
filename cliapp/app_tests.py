@@ -56,6 +56,7 @@ class ApplicationTests(unittest.TestCase):
         self.app.add_boolean_setting(['bar'], 'bar help')
         self.app.run(args=['--foo=foovalue', '--bar'])
         self.assertEqual(self.app['foo'], 'foovalue')
+        self.assertEqual(self.app['bar'], True)
 
     def test_open_input_opens_file(self):
         f = self.app.open_input('/dev/null')
