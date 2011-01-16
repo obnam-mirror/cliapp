@@ -47,7 +47,7 @@ class Application(object):
 
     def run(self, args=None): # pragma: no cover
         args = sys.argv[1:] if args is None else args
-        opts, args = self.parser.parse_args(args)
+        self.options, args = self.parser.parse_args(args)
         
         for arg in args:
             self.process_input(arg)

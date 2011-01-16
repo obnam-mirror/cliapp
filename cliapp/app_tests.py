@@ -44,3 +44,8 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_input = lambda name: self.inputs.append(name)
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.inputs, ['foo', 'bar'])
+        
+    def test_sets_options_attribute(self):
+        self.app.run(args=[])
+        self.assert_(hasattr(self.app, 'options'))
+
