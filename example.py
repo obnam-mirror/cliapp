@@ -19,7 +19,18 @@ import cliapp
 
 class ExampleApp(cliapp.Application):
 
-    pass
+    '''A little fgrep-like tool.'''
+    
+    def add_options(self):
+        self.parser.add_option('--pattern', '-e', action='store',
+                               help='the pattern to search for')
+
+    def process_input(self, name):
+        f = open(name, 'r')
+        for line in f:
+            if self.options.pattern in line:
+                print line,
+        f.close()
     
     
 ExampleApp().run()
