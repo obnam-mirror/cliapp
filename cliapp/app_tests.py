@@ -30,3 +30,17 @@ class ApplicationTests(unittest.TestCase):
         
     def test_adds_default_options(self):
         self.assert_(self.app.parser.has_option('--version'))
+        
+    def test_calls_add_options(self):
+    
+        class Foo(cliapp.Application):
+            def add_options(self):
+                self.parser.add_option('--foo')
+        foo = Foo()
+        self.assert_(foo.parser.has_option('--foo'))
+    
+    def test_processes_input_files(self):
+        self.inputs = []
+        self.app.process_input = lambda name: self.inputs.append(name)
+        self.app.run(args=['foo', 'bar'])
+        self.assertEqual(self.inputs, ['foo', 'bar'])

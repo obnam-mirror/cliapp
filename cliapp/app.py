@@ -28,6 +28,9 @@ class Application(object):
     The subclass should define the version attribute to contain the
     version number of the program.
     
+    Some methods are meant to be redefined by subclasses, so as to
+    provide real functionality.
+    
     '''
 
     def __init__(self):
@@ -37,8 +40,18 @@ class Application(object):
     def _init_parser(self):
         '''Initialize the option parser with default options and values.'''
         self.parser = optparse.OptionParser(version=self.version)
-                               
-    def run(self): # pragma: no cover
-        opts, args = self.parser.parse_args()
+        self.add_options()
         
-    
+    def add_options(self):
+        '''Add application specific options.'''
+
+    def run(self, args=None): # pragma: no cover
+        args = sys.argv[1:] if args is None else args
+        opts, args = self.parser.parse_args(args)
+        
+        for arg in args:
+            self.process_input(arg)
+
+    def process_input(self, name):
+        '''Process a particular input file.'''
+
