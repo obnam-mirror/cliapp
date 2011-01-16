@@ -148,4 +148,19 @@ class ApplicationTests(unittest.TestCase):
 
         self.app.run(args=['--foo=123tib'])
         self.assertEqual(self.app['foo'], 123 * 1024**4)
+        
+    def test_adds_integer_setting(self):
+        self.app.add_integer_setting(['foo'], 'foo help')
+        self.assert_(self.app.parser.has_option('--foo'))
+        option = self.app.parser.get_option('--foo')
+        self.assertEqual(option.help, 'foo help')
+
+    def test_parses_integer_option(self):
+        self.app.add_bytesize_setting(['foo'], 'foo help')
+
+        self.app.run(args=['--foo=xyzzy'])
+        self.assertEqual(self.app['foo'], 0)
+
+        self.app.run(args=['--foo=123'])
+        self.assertEqual(self.app['foo'], 123)
 

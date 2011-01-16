@@ -109,6 +109,14 @@ class Application(object):
                                nargs=1,
                                help=help)
 
+    def add_integer_setting(self, names, help):
+        '''Add an integer setting.'''
+
+        self.parser.add_option(*self._option_names(names), 
+                               action='store',
+                               type='long',
+                               help=help)
+
     def get_setting(self, name):
         '''Return value of setting with a given name.
         
