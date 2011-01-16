@@ -77,6 +77,11 @@ class Application(object):
         f.close()
 
     def process_input_line(self, name, f):
-        '''Process one line of the input file.'''
+        '''Process one line of the input file.
+        
+        Applications that are line-oriented can redefine only this method in
+        a subclass, and should not need to care about the other methods.
+        
+        '''
         
 
