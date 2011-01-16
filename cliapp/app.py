@@ -66,6 +66,20 @@ class Application(object):
         self.parser.add_option(*self._option_names(names), 
                                action='store_true', 
                                help=help)
+
+    def get_setting(self, name):
+        '''Return value of setting with a given name.
+        
+        Note that you may only call this method after the command line
+        has been parsed.
+        
+        '''
+
+        option = self.parser.get_option(self._option_names([name])[0])
+        return getattr(self.options, option.dest)
+
+    def __getitem__(self, setting_name):
+        return self.get_setting(setting_name)
         
     def add_options(self):
         '''Add application specific options.'''

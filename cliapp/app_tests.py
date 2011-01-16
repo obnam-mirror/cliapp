@@ -51,6 +51,12 @@ class ApplicationTests(unittest.TestCase):
         self.app.run(args=[])
         self.assert_(hasattr(self.app, 'options'))
 
+    def test_parses_options(self):
+        self.app.add_string_setting(['foo'], 'foo help')
+        self.app.add_boolean_setting(['bar'], 'bar help')
+        self.app.run(args=['--foo=foovalue', '--bar'])
+        self.assertEqual(self.app['foo'], 'foovalue')
+
     def test_open_input_opens_file(self):
         f = self.app.open_input('/dev/null')
         self.assert_(isinstance(f, file))
