@@ -43,9 +43,11 @@ class Application(object):
         self.parser = optparse.OptionParser(version=self.version)
         self.add_options()
 
-    def add_string_setting(self, primary_name, *args, **kwargs):
+    def add_string_setting(self, names, help):
         '''Add a setting with a string value.'''
-        self.parser.add_option('--' + primary_name, *args, **kwargs)
+        option_names = ['--%s' % name if len(name) > 1 else '-%s' % name
+                        for name in names]
+        self.parser.add_option(*option_names, action='store', help=help)
         
     def add_options(self):
         '''Add application specific options.'''
