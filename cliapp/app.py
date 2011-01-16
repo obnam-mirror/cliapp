@@ -130,7 +130,16 @@ class Application(object):
     def run(self, args=None):
         args = sys.argv[1:] if args is None else args
         self.options, args = self.parser.parse_args(args)
+        self.process_args(args)
         
+    def process_args(self, args):
+        '''Process command line non-option arguments.
+        
+        The default is to treat each argument as the name of an input,
+        and call process_input on it.
+        
+        '''
+                
         for arg in args:
             self.process_input(arg)
 

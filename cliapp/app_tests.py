@@ -41,6 +41,12 @@ class ApplicationTests(unittest.TestCase):
         foo = Foo()
         self.assert_(foo.parser.has_option('--foo'))
     
+    def test_run_calls_process_args(self):
+        self.called = None
+        self.app.process_args = lambda args: setattr(self, 'called', args)
+        self.app.run(args=['foo', 'bar'])
+        self.assertEqual(self.called, ['foo', 'bar'])
+    
     def test_processes_input_files(self):
         self.inputs = []
         self.app.process_input = lambda name: self.inputs.append(name)
