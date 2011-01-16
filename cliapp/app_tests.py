@@ -15,6 +15,7 @@
 
 
 import optparse
+import StringIO
 import unittest
 
 import cliapp
@@ -48,4 +49,18 @@ class ApplicationTests(unittest.TestCase):
     def test_sets_options_attribute(self):
         self.app.run(args=[])
         self.assert_(hasattr(self.app, 'options'))
+
+    def test_processes_input_lines(self):
+
+        lines = []
+        class Foo(cliapp.Application):
+            def open_input(self, name):
+                return StringIO.StringIO(''.join('%s%d\n' % (name, i)
+                                                 for i in range(2)))
+            def process_input_line(self, name, line):
+                lines.append(line)
+
+        foo = Foo()
+        foo.run(args=['foo', 'bar'])
+        self.assertEqual(lines, ['foo0\n', 'foo1\n', 'bar0\n', 'bar1\n'])
 

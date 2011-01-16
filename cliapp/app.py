@@ -29,7 +29,8 @@ class Application(object):
     version number of the program.
     
     Some methods are meant to be redefined by subclasses, so as to
-    provide real functionality.
+    provide real functionality. These methods have names that do not
+    start with an underscore.
     
     '''
 
@@ -54,4 +55,13 @@ class Application(object):
 
     def process_input(self, name):
         '''Process a particular input file.'''
+
+        f = self.open_input(name)
+        for line in f:
+            self.process_input_line(name, line)
+        f.close()
+
+    def process_input_line(self, name, f):
+        '''Process one line of the input file.'''
+        
 
