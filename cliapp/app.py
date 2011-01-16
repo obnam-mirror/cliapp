@@ -43,11 +43,29 @@ class Application(object):
         self.parser = optparse.OptionParser(version=self.version)
         self.add_options()
 
+    def _option_names(self, names):
+        '''Turn setting names into option names.
+        
+        Names with a single letter are short options, and get prefixed
+        with one dash. The rest get prefixed with two dashes.
+        
+        '''
+
+        return ['--%s' % name if len(name) > 1 else '-%s' % name
+                for name in names]
+
     def add_string_setting(self, names, help):
         '''Add a setting with a string value.'''
-        option_names = ['--%s' % name if len(name) > 1 else '-%s' % name
-                        for name in names]
-        self.parser.add_option(*option_names, action='store', help=help)
+        self.parser.add_option(*self._option_names(names), 
+                               action='store', 
+                               help=help)
+        self.parser.set_default(names[0], '')
+
+    def add_boolean_setting(self, names, help):
+        '''Add a setting with a boolean value (defaults to false).'''
+        self.parser.add_option(*self._option_names(names), 
+                               action='store_true', 
+                               help=help)
         
     def add_options(self):
         '''Add application specific options.'''

@@ -86,5 +86,11 @@ class ApplicationTests(unittest.TestCase):
     def test_adds_string_setting(self):
         self.app.add_string_setting(['foo'], 'foo help')
         self.assert_(self.app.parser.has_option('--foo'))
-        self.assertEqual(self.app.parser.get_option('--foo').help, 'foo help')
+        option = self.app.parser.get_option('--foo')
+        self.assertEqual(option.help, 'foo help')
 
+    def test_adds_boolean_setting(self):
+        self.app.add_boolean_setting(['foo'], 'foo help')
+        self.assert_(self.app.parser.has_option('--foo'))
+        option = self.app.parser.get_option('--foo')
+        self.assertEqual(option.help, 'foo help')
