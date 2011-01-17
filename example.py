@@ -14,6 +14,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+'''Example for cliapp framework.'''
+
+
 import cliapp
 
 
@@ -21,7 +24,7 @@ class ExampleApp(cliapp.Application):
 
     '''A little fgrep-like tool.'''
     
-    def add_options(self):
+    def add_settings(self):
         self.add_string_setting(['pattern', 'e'], 'the pattern to search for')
 
     def process_input_line(self, name, line):
