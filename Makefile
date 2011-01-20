@@ -17,7 +17,7 @@
 all:
 
 clean:
-	rm -f cliapp/*.py[co] .coverage
+	rm -rf cliapp/*.py[co] .coverage build
 
 check:
 	python -m CoverageTestRunner --ignore-missing-from=without-tests
