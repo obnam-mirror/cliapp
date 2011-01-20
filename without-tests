@@ -1,2 +1,3 @@
 ./cliapp/__init__.py
 ./example.py
+./setup.py
