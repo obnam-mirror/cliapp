@@ -1,0 +1,6 @@
+python-cliapp (0.1) squeeze; urgency=low
+
+  * Initial packaging. This is not intended to be uploaded to Debian, so
+    no closing of an ITP bug.
+
+ -- Lars Wirzenius <liw@liw.fi>  Thu, 20 Jan 2011 22:13:38 +0200
