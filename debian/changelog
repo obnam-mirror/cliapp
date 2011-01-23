@@ -1,3 +1,10 @@
+python-cliapp (0.3) squeeze; urgency=low
+
+  * New release.
+    - set defaults correctly for settings with dashes in names
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 23 Jan 2011 16:51:40 +0000
+
 python-cliapp (0.2) squeeze; urgency=low
 
   * New release.
