@@ -19,7 +19,7 @@ from distutils.core import setup, Extension
 import glob
 
 setup(name='cliapp',
-      version='0.2',
+      version='0.3',
       description='Framework for Unix command line applications',
       author='Lars Wirzenius',
       author_email='liw@liw.fi',
