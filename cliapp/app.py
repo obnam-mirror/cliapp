@@ -54,19 +54,19 @@ class Application(object):
         return ['--%s' % name if len(name) > 1 else '-%s' % name
                 for name in names]
 
-    def add_string_setting(self, names, help):
+    def add_string_setting(self, names, help, default=''):
         '''Add a setting with a string value.'''
         self.parser.add_option(*self._option_names(names), 
                                action='store', 
                                help=help)
-        self.parser.set_default(names[0], '')
+        self.parser.set_default(names[0], default)
 
-    def add_boolean_setting(self, names, help):
+    def add_boolean_setting(self, names, help, default=False):
         '''Add a setting with a boolean value (defaults to false).'''
         self.parser.add_option(*self._option_names(names), 
                                action='store_true', 
                                help=help)
-
+        self.parser.set_default(names[0], default)
 
     def _parse_human_size(self, size):
         '''Parse a size using suffix into plain bytes.'''
@@ -95,7 +95,7 @@ class Application(object):
         '''Parse value of bytesize option and store it in the parser value.'''
         setattr(parser.values, option.dest, self._parse_human_size(value))
 
-    def add_bytesize_setting(self, names, help):
+    def add_bytesize_setting(self, names, help, default=0):
         '''Add a setting with a size in bytes.
         
         The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
@@ -108,6 +108,7 @@ class Application(object):
                                callback=self._store_bytesize_option,
                                nargs=1,
                                help=help)
+        self.parser.set_default(names[0], default)
 
     def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
@@ -115,8 +116,8 @@ class Application(object):
         self.parser.add_option(*self._option_names(names), 
                                action='store',
                                type='long',
-                               default=default,
                                help=help)
+        self.parser.set_default(names[0], default)
 
     def get_setting(self, name):
         '''Return value of setting with a given name.
