@@ -54,19 +54,32 @@ class Application(object):
         return ['--%s' % name if len(name) > 1 else '-%s' % name
                 for name in names]
 
+    def _attr_name(self, name):
+        '''Turn setting name into attribute name.
+        
+        Dashes get turned into underscores.
+        
+        '''
+
+        return '_'.join(name.split('-'))
+
+    def _set_default_value(self, names, value):
+        '''Set default value for a setting with names in names.'''
+        self.parser.set_default(self._attr_name(names[0]), value)
+
     def add_string_setting(self, names, help, default=''):
         '''Add a setting with a string value.'''
         self.parser.add_option(*self._option_names(names), 
                                action='store', 
                                help=help)
-        self.parser.set_default(names[0], default)
+        self._set_default_value(names, default)
 
     def add_boolean_setting(self, names, help, default=False):
         '''Add a setting with a boolean value (defaults to false).'''
         self.parser.add_option(*self._option_names(names), 
                                action='store_true', 
                                help=help)
-        self.parser.set_default(names[0], default)
+        self._set_default_value(names, default)
 
     def _parse_human_size(self, size):
         '''Parse a size using suffix into plain bytes.'''
@@ -108,7 +121,7 @@ class Application(object):
                                callback=self._store_bytesize_option,
                                nargs=1,
                                help=help)
-        self.parser.set_default(names[0], default)
+        self._set_default_value(names, default)
 
     def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
@@ -117,7 +130,7 @@ class Application(object):
                                action='store',
                                type='long',
                                help=help)
-        self.parser.set_default(names[0], default)
+        self._set_default_value(names, default)
 
     def get_setting(self, name):
         '''Return value of setting with a given name.
