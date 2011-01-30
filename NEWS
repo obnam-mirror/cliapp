@@ -1,0 +1,9 @@
+NEWS for cliapp
+===============
+
+
+Version 0.4, released 2011-01-30
+--------------------------------
+
+* Bugfix: Subclasses can now actually set the application version, so
+  that --version works.

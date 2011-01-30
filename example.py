@@ -32,5 +32,5 @@ class ExampleApp(cliapp.Application):
             print line,
     
     
-ExampleApp().run()
+ExampleApp(version='0.1.2').run()
 
