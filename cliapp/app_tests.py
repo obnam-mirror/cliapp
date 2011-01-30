@@ -33,6 +33,10 @@ class ApplicationTests(unittest.TestCase):
         self.assert_(self.app.parser.has_option('--version'))
         self.assert_(self.app.parser.has_option('--help'))
         
+    def test_gets_version(self):
+        app = cliapp.Application(version='1.2.3')
+        self.assertEqual(app.parser.get_version(), '1.2.3')
+        
     def test_calls_add_settings_only_in_run(self):
     
         class Foo(cliapp.Application):

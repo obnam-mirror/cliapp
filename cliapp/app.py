@@ -35,8 +35,8 @@ class Application(object):
     
     '''
 
-    def __init__(self):
-        self.version = '0.0.0'
+    def __init__(self, version='0.0.0'):
+        self.version = version
         self._init_parser()
         
     def _init_parser(self):
