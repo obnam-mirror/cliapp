@@ -16,10 +16,11 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from distutils.core import setup, Extension
-import glob
+
+import cliapp
 
 setup(name='cliapp',
-      version='0.3',
+      version=cliapp.version,
       description='Framework for Unix command line applications',
       author='Lars Wirzenius',
       author_email='liw@liw.fi',
