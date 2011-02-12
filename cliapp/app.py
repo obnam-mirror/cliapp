@@ -155,6 +155,8 @@ class Application(object):
             args = sys.argv[1:] if args is None else args
             self.options, args = self.parser.parse_args(args)
             self.process_args(args)
+        except SystemExit, e:
+            sys.exit(e.code)
         except Exception, e:
             stderr.write('%s\n' % str(e))
             sys.exit(1)

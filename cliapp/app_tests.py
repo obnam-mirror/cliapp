@@ -176,3 +176,10 @@ class ApplicationTests(unittest.TestCase):
         self.assertRaises(SystemExit, self.app.run, [], stderr=f)
         self.assert_('xxx' in f.getvalue())
 
+    def test_run_raises_systemexit_for_systemexit(self):
+        def raise_error(args):
+            raise SystemExit(123)
+        self.app.process_args = raise_error
+        f = StringIO.StringIO()
+        self.assertRaises(SystemExit, self.app.run, [], stderr=f)
+
