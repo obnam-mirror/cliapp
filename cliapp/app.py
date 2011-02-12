@@ -149,11 +149,15 @@ class Application(object):
     def add_settings(self):
         '''Add application specific settings.'''
 
-    def run(self, args=None):
-        self.add_settings()
-        args = sys.argv[1:] if args is None else args
-        self.options, args = self.parser.parse_args(args)
-        self.process_args(args)
+    def run(self, args=None, stderr=sys.stderr):
+        try:
+            self.add_settings()
+            args = sys.argv[1:] if args is None else args
+            self.options, args = self.parser.parse_args(args)
+            self.process_args(args)
+        except Exception, e:
+            stderr.write('%s\n' % str(e))
+            sys.exit(1)
         
     def process_args(self, args):
         '''Process command line non-option arguments.

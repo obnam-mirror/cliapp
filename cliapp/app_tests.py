@@ -168,3 +168,11 @@ class ApplicationTests(unittest.TestCase):
         self.app.run(args=['--foo=123'])
         self.assertEqual(self.app['foo'], 123)
 
+    def test_run_prints_out_error_for_exception(self):
+        def raise_error(args):
+            raise Exception('xxx')
+        self.app.process_args = raise_error
+        f = StringIO.StringIO()
+        self.assertRaises(SystemExit, self.app.run, [], stderr=f)
+        self.assert_('xxx' in f.getvalue())
+
