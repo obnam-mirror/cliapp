@@ -45,6 +45,10 @@ class Application(object):
     def _init_parser(self):
         '''Initialize the option parser with default options and values.'''
         self.parser = optparse.OptionParser(version=self.version)
+        
+        self.add_string_setting(['output'], 
+                                'write output to named file, '
+                                    'instead of standard output')
 
     def _option_names(self, names):
         '''Turn setting names into option names.
@@ -157,6 +161,12 @@ class Application(object):
             self.add_settings()
             args = sys.argv[1:] if args is None else args
             self.options, args = self.parser.parse_args(args)
+            
+            if self.options.output:
+                self.output = open(self.options.output, 'w')
+            else:
+                self.output = sys.stdout
+            
             self.process_args(args)
         except SystemExit, e:
             sys.exit(e.code)

@@ -29,7 +29,7 @@ class ExampleApp(cliapp.Application):
 
     def process_input_line(self, name, line):
         if self['pattern'] in line:
-            print line,
+            self.output.write(line)
     
     
 ExampleApp(version='0.1.2').run()

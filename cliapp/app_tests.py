@@ -33,6 +33,7 @@ class ApplicationTests(unittest.TestCase):
     def test_adds_default_options(self):
         self.assert_(self.app.parser.has_option('--version'))
         self.assert_(self.app.parser.has_option('--help'))
+        self.assert_(self.app.parser.has_option('--output'))
         
     def test_gets_version(self):
         app = cliapp.Application(version='1.2.3')
@@ -66,6 +67,16 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = lambda args: None
         self.app.run(args=[])
         self.assert_(hasattr(self.app, 'options'))
+        
+    def test_run_sets_output_attribute(self):
+        self.app.process_args = lambda args: None
+        self.app.run(args=[])
+        self.assertEqual(self.app.output, sys.stdout)
+        
+    def test_run_sets_output_to_file_if_output_option_is_set(self):
+        self.app.process_args = lambda args: None
+        self.app.run(args=['--output=/dev/null'])
+        self.assertEqual(self.app.output.name, '/dev/null')
 
     def test_parses_options(self):
         self.app.process_args = lambda args: None
