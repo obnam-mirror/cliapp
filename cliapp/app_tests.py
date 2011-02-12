@@ -183,3 +183,9 @@ class ApplicationTests(unittest.TestCase):
         f = StringIO.StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f)
 
+    def test_run_raises_systemexit_for_keyboardint(self):
+        def raise_error(args):
+            raise KeyboardInterrupt()
+        self.app.process_args = raise_error
+        f = StringIO.StringIO()
+        self.assertRaises(SystemExit, self.app.run, [], stderr=f)

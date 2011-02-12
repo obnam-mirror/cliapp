@@ -157,6 +157,8 @@ class Application(object):
             self.process_args(args)
         except SystemExit, e:
             sys.exit(e.code)
+        except KeyboardInterrupt, e:
+            sys.exit(255)
         except Exception, e:
             stderr.write('%s\n' % str(e))
             sys.exit(1)
