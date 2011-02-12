@@ -187,15 +187,19 @@ class Application(object):
         
         '''
         
-        return open(name, mode)
+        if name == '-':
+            return sys.stdin
+        else:
+            return open(name, mode)
 
-    def process_input(self, name):
+    def process_input(self, name, stdin=sys.stdin):
         '''Process a particular input file.'''
 
         f = self.open_input(name)
         for line in f:
             self.process_input_line(name, line)
-        f.close()
+        if f != stdin:
+            f.close()
 
     def process_input_line(self, name, f):
         '''Process one line of the input file.

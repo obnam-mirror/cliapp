@@ -16,6 +16,7 @@
 
 import optparse
 import StringIO
+import sys
 import unittest
 
 import cliapp
@@ -79,6 +80,9 @@ class ApplicationTests(unittest.TestCase):
         f = self.app.open_input('/dev/null', mode='rb')
         self.assertEqual(f.mode, 'rb')
 
+    def test_open_input_opens_stdin_if_dash_given(self):
+        self.assertEqual(self.app.open_input('-'), sys.stdin)
+
     def test_process_input_calls_open_input(self):
         self.called = None
         def open_input(name):
@@ -87,6 +91,19 @@ class ApplicationTests(unittest.TestCase):
         self.app.open_input = open_input
         self.app.process_input('foo')
         self.assertEqual(self.called, 'foo')
+        
+    def test_process_input_does_not_close_stdin(self):
+        self.closed = False
+        def close():
+            self.closed = True
+        f = StringIO.StringIO('')
+        f.close = close
+        def open_input(name):
+            if name == '-':
+                return f
+        self.app.open_input = open_input
+        self.app.process_input('-', stdin=f)
+        self.assertEqual(self.closed, False)
 
     def test_processes_input_lines(self):
 
