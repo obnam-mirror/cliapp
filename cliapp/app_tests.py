@@ -34,6 +34,8 @@ class ApplicationTests(unittest.TestCase):
         self.assert_(self.app.parser.has_option('--version'))
         self.assert_(self.app.parser.has_option('--help'))
         self.assert_(self.app.parser.has_option('--output'))
+        self.assert_(self.app.parser.has_option('--log'))
+        self.assert_(self.app.parser.has_option('--log-level'))
         
     def test_gets_version(self):
         app = cliapp.Application(version='1.2.3')
@@ -50,6 +52,15 @@ class ApplicationTests(unittest.TestCase):
         self.assertFalse(foo.parser.has_option('--foo'))
         foo.run(args=[])
         self.assert_(foo.parser.has_option('--foo'))
+
+    def test_run_sets_up_logging(self):
+        self.called = False
+        def setup():
+            self.called = True
+        self.app.setup_logging = setup
+        self.app.process_args = lambda args: None
+        self.app.run([])
+        self.assert_(self.called)
     
     def test_run_calls_process_args(self):
         self.called = None

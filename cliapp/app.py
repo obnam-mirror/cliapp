@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
 import optparse
 import re
 import sys
@@ -49,6 +50,13 @@ class Application(object):
         self.add_string_setting(['output'], 
                                 'write output to named file, '
                                     'instead of standard output')
+
+        self.add_string_setting(['log'], 'write log entries to file')
+        self.add_string_setting(['log-level'], 
+                                'log at given level, one of '
+                                    'debug, info, warning, error, critical, '
+                                    'fatal (default: %default)',
+                                default='info')
 
     def _option_names(self, names):
         '''Turn setting names into option names.
@@ -162,6 +170,8 @@ class Application(object):
             args = sys.argv[1:] if args is None else args
             self.options, args = self.parser.parse_args(args)
             
+            self.setup_logging()
+            
             if self.options.output:
                 self.output = open(self.options.output, 'w')
             else:
@@ -176,6 +186,24 @@ class Application(object):
             stderr.write('%s\n' % str(e))
             sys.exit(1)
         
+    def setup_logging(self): # pragma: no cover
+        '''Set up logging.'''
+        
+        if self.options.log:
+            level_name = self.options.log_level
+            levels = {
+                'debug': logging.DEBUG,
+                'info': logging.INFO,
+                'warning': logging.WARNING,
+                'error': logging.ERROR,
+                'critical': logging.CRITICAL,
+                'fatal': logging.FATAL,
+            }
+            level = levels.get(level_name, logging.INFO)
+            
+            logging.basicConfig(filename=self.options.log,
+                                level=level)
+
     def process_args(self, args):
         '''Process command line non-option arguments.
         
