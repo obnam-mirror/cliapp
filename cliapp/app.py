@@ -166,12 +166,24 @@ class Application(object):
     def process_args(self, args):
         '''Process command line non-option arguments.
         
-        The default is to treat each argument as the name of an input,
-        and call process_input on it.
+        The default is to call process_inputs with the argument list.
+        
+        '''
+        
+        self.process_inputs(args)
+
+    def process_inputs(self, args):
+        '''Process all arguments as input filenames.
+        
+        The default implementation calls process_input for each
+        input filename. If no filenames were given, then 
+        process_input is called with '-' as the argument name.
+        This implements the usual Unix command line practice of
+        reading from stdin if no inputs are named.
         
         '''
                 
-        for arg in args:
+        for arg in args or ['-']:
             self.process_input(arg)
 
     def open_input(self, name, mode='r'):

@@ -41,6 +41,8 @@ class ApplicationTests(unittest.TestCase):
     def test_calls_add_settings_only_in_run(self):
     
         class Foo(cliapp.Application):
+            def process_args(self, args):
+                pass
             def add_settings(self):
                 self.add_string_setting(['foo'], '')
         foo = Foo()
@@ -54,22 +56,48 @@ class ApplicationTests(unittest.TestCase):
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.called, ['foo', 'bar'])
     
-    def test_processes_input_files(self):
+    def test_run_processes_input_files(self):
         self.inputs = []
         self.app.process_input = lambda name: self.inputs.append(name)
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.inputs, ['foo', 'bar'])
         
-    def test_sets_options_attribute(self):
+    def test_run_sets_options_attribute(self):
+        self.app.process_args = lambda args: None
         self.app.run(args=[])
         self.assert_(hasattr(self.app, 'options'))
 
     def test_parses_options(self):
+        self.app.process_args = lambda args: None
         self.app.add_string_setting(['foo'], 'foo help')
         self.app.add_boolean_setting(['bar'], 'bar help')
         self.app.run(args=['--foo=foovalue', '--bar'])
         self.assertEqual(self.app['foo'], 'foovalue')
         self.assertEqual(self.app['bar'], True)
+
+    def test_process_args_calls_process_inputs(self):
+        self.called = False
+        def process_inputs(args):
+            self.called = True
+        self.app.process_inputs = process_inputs
+        self.app.process_args([])
+        self.assert_(self.called)
+
+    def test_process_inputs_calls_process_input_for_each_arg(self):
+        self.args = []
+        def process_input(arg):
+            self.args.append(arg)
+        self.app.process_input = process_input
+        self.app.process_inputs(['foo', 'bar'])
+        self.assertEqual(self.args, ['foo', 'bar'])
+
+    def test_process_inputs_calls_process_input_with_dash_if_no_inputs(self):
+        self.args = []
+        def process_input(arg):
+            self.args.append(arg)
+        self.app.process_input = process_input
+        self.app.process_inputs([])
+        self.assertEqual(self.args, ['-'])
 
     def test_open_input_opens_file(self):
         f = self.app.open_input('/dev/null')
@@ -138,6 +166,8 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(option.help, 'foo help')
 
     def test_parses_bytesize_option(self):
+        self.app.process_args = lambda args: None
+
         self.app.add_bytesize_setting(['foo'], 'foo help')
 
         self.app.run(args=['--foo=xyzzy'])
@@ -177,6 +207,8 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(option.help, 'foo help')
 
     def test_parses_integer_option(self):
+        self.app.process_args = lambda args: None
+
         self.app.add_integer_setting(['foo'], 'foo help', default=123)
 
         self.app.run(args=[])
