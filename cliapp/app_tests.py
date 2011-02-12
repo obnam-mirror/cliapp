@@ -147,6 +147,23 @@ class ApplicationTests(unittest.TestCase):
         foo.run(args=['foo', 'bar'])
         self.assertEqual(lines, ['foo0\n', 'foo1\n', 'bar0\n', 'bar1\n'])
 
+    def test_process_input_line_can_access_counters(self):
+        counters = []
+        class Foo(cliapp.Application):
+            def open_input(self, name):
+                return StringIO.StringIO(''.join('%s%d\n' % (name, i)
+                                                 for i in range(2)))
+            def process_input_line(self, name, line):
+                counters.append((self.fileno, self.global_lineno, self.lineno))
+
+        foo = Foo()
+        foo.run(args=['foo', 'bar'])
+        self.assertEqual(counters, 
+                         [(1, 1, 1), 
+                          (1, 2, 2), 
+                          (2, 3, 1), 
+                          (2, 4, 2)])
+
     def test_adds_string_setting(self):
         self.app.add_string_setting(['foo'], 'foo help')
         self.assert_(self.app.parser.has_option('--foo'))

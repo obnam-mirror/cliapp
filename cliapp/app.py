@@ -37,6 +37,9 @@ class Application(object):
 
     def __init__(self, version='0.0.0'):
         self.version = version
+        self.fileno = 0
+        self.global_lineno = 0
+        self.lineno = 0
         self._init_parser()
         
     def _init_parser(self):
@@ -181,8 +184,12 @@ class Application(object):
         This implements the usual Unix command line practice of
         reading from stdin if no inputs are named.
         
+        The attributes fileno, global_lineno, and lineno are set,
+        and count files and lines. The global line number is the
+        line number as if all input files were one.
+        
         '''
-                
+
         for arg in args or ['-']:
             self.process_input(arg)
 
@@ -207,8 +214,12 @@ class Application(object):
     def process_input(self, name, stdin=sys.stdin):
         '''Process a particular input file.'''
 
+        self.fileno += 1
+        self.lineno = 0
         f = self.open_input(name)
         for line in f:
+            self.global_lineno += 1
+            self.lineno += 1
             self.process_input_line(name, line)
         if f != stdin:
             f.close()
