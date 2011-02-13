@@ -2,6 +2,17 @@ NEWS for cliapp
 ===============
 
 
+Version 0.5, released 2011-02-13
+--------------------------------
+
+* Catches exceptions and prints error message, instead of having the Python
+  interpreter do a stack trace.
+* Support more traditional Unix command line filter behavior: read from
+  stdin if no arguments are given, or a dash ('-') is given as the filename.
+* Count files and lines in files.
+* New options: --output, --log, --log-level.
+
+
 Version 0.4, released 2011-01-30
 --------------------------------
 
