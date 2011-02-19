@@ -49,6 +49,25 @@ class Application(object):
     
     To start the application, call the `run` method.
     
+    The framework defines some options: --help, --output, --log,
+    --log-level, perhaps others if this docstring has not been
+    updated properly. Run application with --help to see the list of
+    options.
+    
+    The application can define more options, which are called settings,
+    in preparation for configuration file support. See the
+    add_string_setting, add_string_list_setting, add_choice_setting,
+    add_integer_setting, and add_boolean_setting methods. Each setting
+    has a name and a mandatory help text, and can have a default value.
+    
+    Logging support: by default, no log file is written, it must be
+    requested explicitly by the user. The default log level is info.
+    
+    Profiling support: if sys.argv[0] is 'foo', and the environment
+    variable 'FOO_PROFILE' is set, then the execution of the 
+    application (the 'run' method) is profiled, using cProfile, and
+    the profile written to the file named in the environment variable.
+    
     '''
 
     def __init__(self, version='0.0.0'):
