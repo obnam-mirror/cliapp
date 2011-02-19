@@ -88,12 +88,23 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = lambda args: None
         self.app.run(args=['--output=/dev/null'])
         self.assertEqual(self.app.output.name, '/dev/null')
+    
+    def test_run_calls_parse_args(self):
+        class DummyOptions(object):
+            def __init__(self):
+                self.output = None
+                self.log = None
+        self.called = None
+        self.app.parse_args = lambda args: setattr(self, 'called', args)
+        self.app.process_args = lambda args: None
+        self.app.options = DummyOptions()
+        self.app.run(args=['foo', 'bar'])
+        self.assertEqual(self.called, ['foo', 'bar'])
 
     def test_parses_options(self):
-        self.app.process_args = lambda args: None
         self.app.add_string_setting(['foo'], 'foo help')
         self.app.add_boolean_setting(['bar'], 'bar help')
-        self.app.run(args=['--foo=foovalue', '--bar'])
+        self.app.parse_args(['--foo=foovalue', '--bar'])
         self.assertEqual(self.app['foo'], 'foovalue')
         self.assertEqual(self.app['bar'], True)
 
@@ -204,13 +215,11 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app['foo'], [])
 
     def test_string_list_parses_one_item(self):
-        self.app.process_args = lambda args: None
         self.app.add_string_list_setting(['foo'], '')
         self.app.parse_args(['--foo=foo'])
         self.assertEqual(self.app['foo'], ['foo'])
 
     def test_string_list_parses_two_items(self):
-        self.app.process_args = lambda args: None
         self.app.add_string_list_setting(['foo'], '')
         self.app.parse_args(['--foo=foo', '--foo', 'bar'])
         self.assertEqual(self.app['foo'], ['foo', 'bar'])
@@ -246,38 +255,36 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(option.help, 'foo help')
 
     def test_parses_bytesize_option(self):
-        self.app.process_args = lambda args: None
-
         self.app.add_bytesize_setting(['foo'], 'foo help')
 
-        self.app.run(args=['--foo=xyzzy'])
+        self.app.parse_args(args=['--foo=xyzzy'])
         self.assertEqual(self.app['foo'], 0)
 
-        self.app.run(args=['--foo=123'])
+        self.app.parse_args(args=['--foo=123'])
         self.assertEqual(self.app['foo'], 123)
 
-        self.app.run(args=['--foo=123k'])
+        self.app.parse_args(args=['--foo=123k'])
         self.assertEqual(self.app['foo'], 123 * 1000)
 
-        self.app.run(args=['--foo=123m'])
+        self.app.parse_args(args=['--foo=123m'])
         self.assertEqual(self.app['foo'], 123 * 1000**2)
 
-        self.app.run(args=['--foo=123g'])
+        self.app.parse_args(args=['--foo=123g'])
         self.assertEqual(self.app['foo'], 123 * 1000**3)
 
-        self.app.run(args=['--foo=123t'])
+        self.app.parse_args(args=['--foo=123t'])
         self.assertEqual(self.app['foo'], 123 * 1000**4)
 
-        self.app.run(args=['--foo=123kib'])
+        self.app.parse_args(args=['--foo=123kib'])
         self.assertEqual(self.app['foo'], 123 * 1024)
 
-        self.app.run(args=['--foo=123mib'])
+        self.app.parse_args(args=['--foo=123mib'])
         self.assertEqual(self.app['foo'], 123 * 1024**2)
 
-        self.app.run(args=['--foo=123gib'])
+        self.app.parse_args(args=['--foo=123gib'])
         self.assertEqual(self.app['foo'], 123 * 1024**3)
 
-        self.app.run(args=['--foo=123tib'])
+        self.app.parse_args(args=['--foo=123tib'])
         self.assertEqual(self.app['foo'], 123 * 1024**4)
         
     def test_adds_integer_setting(self):
@@ -287,14 +294,12 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(option.help, 'foo help')
 
     def test_parses_integer_option(self):
-        self.app.process_args = lambda args: None
-
         self.app.add_integer_setting(['foo'], 'foo help', default=123)
 
-        self.app.run(args=[])
+        self.app.parse_args(args=[])
         self.assertEqual(self.app['foo'], 123)
 
-        self.app.run(args=['--foo=123'])
+        self.app.parse_args(args=['--foo=123'])
         self.assertEqual(self.app['foo'], 123)
 
     def test_run_prints_out_error_for_exception(self):
