@@ -25,11 +25,12 @@ class ExampleApp(cliapp.Application):
     '''A little fgrep-like tool.'''
     
     def add_settings(self):
-        self.add_string_setting(['pattern', 'e'], 'the pattern to search for')
+        self.add_string_list_setting(['pattern', 'e'], 'pattern to search for')
 
     def process_input_line(self, name, line):
-        if self['pattern'] in line:
-            self.output.write(line)
+        for pattern in self['pattern']:
+            if pattern in line:
+                self.output.write(line)
     
     
 ExampleApp(version='0.1.2').run()
