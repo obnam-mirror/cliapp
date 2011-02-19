@@ -197,8 +197,17 @@ class Application(object):
 
     def run(self, args=None, stderr=sys.stderr):
         '''Run the application.'''
+        
+        def run_it():
+            self._run(args=args, stderr=stderr)
 
-        self._run(args=args, stderr=stderr)
+        envname = '%s_PROFILE' % self._envname(sys.argv[0])
+        profname = os.environ.get(envname, '')
+        if profname: # pragma: no cover
+            import cProfile
+            cProfile.runctx('run_it()', globals(), locals(), profname)
+        else:
+            run_it()
 
     def _envname(self, progname):
         '''Create an environment variable name of the name of a program.'''
