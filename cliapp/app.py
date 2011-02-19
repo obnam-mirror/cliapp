@@ -16,6 +16,7 @@
 
 import logging
 import optparse
+import os
 import re
 import sys
 
@@ -195,6 +196,23 @@ class Application(object):
         '''Add application specific settings.'''
 
     def run(self, args=None, stderr=sys.stderr):
+        '''Run the application.'''
+
+        self._run(args=args, stderr=stderr)
+
+    def _envname(self, progname):
+        '''Create an environment variable name of the name of a program.'''
+        
+        basename = os.path.basename(progname)
+        if '.' in basename:
+            basename = basename.split('.')[0]
+        
+        ok = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        ok += ok.upper()
+        
+        return ''.join(x.upper() if x in ok else '_' for x in basename)
+
+    def _run(self, args=None, stderr=sys.stderr):
         try:
             self.add_settings()
             args = sys.argv[1:] if args is None else args

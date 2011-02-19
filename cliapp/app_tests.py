@@ -101,6 +101,14 @@ class ApplicationTests(unittest.TestCase):
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.called, ['foo', 'bar'])
 
+    def test_makes_envname_correctly(self):
+        self.assertEqual(self.app._envname('foo'), 'FOO')
+        self.assertEqual(self.app._envname('foo.py'), 'FOO')
+        self.assertEqual(self.app._envname('foo bar'), 'FOO_BAR')
+        self.assertEqual(self.app._envname('foo-bar'), 'FOO_BAR')
+        self.assertEqual(self.app._envname('foo/bar'), 'BAR')
+        self.assertEqual(self.app._envname('foo_bar'), 'FOO_BAR')
+
     def test_parses_options(self):
         self.app.add_string_setting(['foo'], 'foo help')
         self.app.add_boolean_setting(['bar'], 'bar help')
