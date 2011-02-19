@@ -185,13 +185,15 @@ class Application(object):
         '''
         
         def callback_wrapper(option, opt_str, value, parser):
+            if type(value) == str:
+                value = (value,)
             setattr(parser.values, option.dest, callback(*value))
 
         self.parser.add_option(*self._option_names(names), 
                                action='callback',
-                               type='string',
                                callback=callback_wrapper,
                                nargs=nargs,
+                               type='string',
                                help=help)
         self._set_default_value(names, default)
 
@@ -218,10 +220,6 @@ class Application(object):
             }
             return int(number * units.get(unit, 1))
 
-    def _store_bytesize_option(self, option, opt_str, value, parser):
-        '''Parse value of bytesize option and store it in the parser value.'''
-        setattr(parser.values, option.dest, self._parse_human_size(value))
-
     def add_bytesize_setting(self, names, help, default=0):
         '''Add a setting with a size in bytes.
         
@@ -229,13 +227,8 @@ class Application(object):
         
         '''
 
-        self.parser.add_option(*self._option_names(names), 
-                               action='callback',
-                               type='string',
-                               callback=self._store_bytesize_option,
-                               nargs=1,
-                               help=help)
-        self._set_default_value(names, default)
+        self.add_callback_setting(names, help, self._parse_human_size,
+                                  default=default, nargs=1)
 
     def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
