@@ -90,7 +90,7 @@ class Application(object):
         self._set_default_value(names, default)
 
     def add_string_list_setting(self, names, help, default=None):
-        '''Add a setting which have multipel string values.
+        '''Add a setting which have multiple string values.
         
         An example would be an option that can be given multiple times
         on the command line, e.g., "--exclude=foo --exclude=bar".
@@ -101,6 +101,23 @@ class Application(object):
                                action='append', 
                                help=help)
         self._set_default_value(names, default or [])
+
+    def add_choice_setting(self, names, possibilities, help, default=None):
+        '''Add a setting which chooses from list of acceptable values.
+        
+        An example would be an option to set debugging level to be
+        one of a set of accepted names: debug, info, warning, etc.
+        
+        The default value is the first possibility.
+        
+        '''
+
+        self.parser.add_option(*self._option_names(names), 
+                               action='store', 
+                               type='choice',
+                               choices=possibilities,
+                               help=help)
+        self._set_default_value(names, possibilities[0])
 
     def add_boolean_setting(self, names, help, default=False):
         '''Add a setting with a boolean value (defaults to false).'''

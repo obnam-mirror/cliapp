@@ -215,6 +215,24 @@ class ApplicationTests(unittest.TestCase):
         self.app.parse_args(['--foo=foo', '--foo', 'bar'])
         self.assertEqual(self.app['foo'], ['foo', 'bar'])
 
+    def test_adds_choice_setting(self):
+        self.app.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.assert_(self.app.parser.has_option('--foo'))
+        option = self.app.parser.get_option('--foo')
+        self.assertEqual(option.help, 'foo help')
+
+    def test_choice_defaults_to_first_one(self):
+        self.app.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.app.parse_args([])
+        self.assertEqual(self.app['foo'], 'foo')
+
+    def test_choice_accepts_any_valid_value(self):
+        self.app.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.app.parse_args(['--foo=foo'])
+        self.assertEqual(self.app['foo'], 'foo')
+        self.app.parse_args(['--foo=bar'])
+        self.assertEqual(self.app['foo'], 'bar')
+
     def test_adds_boolean_setting(self):
         self.app.add_boolean_setting(['foo'], 'foo help')
         self.assert_(self.app.parser.has_option('--foo'))
