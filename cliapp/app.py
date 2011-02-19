@@ -92,6 +92,21 @@ class Application(object):
                                     'fatal (default: %default)',
                                 default='info')
 
+        self.add_callback_setting(['dump-setting-names'],
+                                  'write out all names of settings and quit',
+                                  self._dump_setting_names, nargs=0)
+
+    def _dump_setting_names(self): # pragma: no cover
+        for option in self.parser.option_list:
+            if option.dest:
+                print option.dest
+            else:
+                x = option._long_opts[0]
+                if x.startswith('--'):
+                    x = x[2:]
+                print x
+        sys.exit(0)
+
     def _option_names(self, names):
         '''Turn setting names into option names.
         
@@ -157,6 +172,26 @@ class Application(object):
         '''Add a setting with a boolean value (defaults to false).'''
         self.parser.add_option(*self._option_names(names), 
                                action='store_true', 
+                               help=help)
+        self._set_default_value(names, default)
+
+    def add_callback_setting(self, names, help, callback, nargs=1, 
+                             default=None):
+        '''Add a setting processed by a callback. 
+        
+        The callback will receive nargs argument strings, and will return
+        the actual value of the setting.
+        
+        '''
+        
+        def callback_wrapper(option, opt_str, value, parser):
+            setattr(parser.values, option.dest, callback(*value))
+
+        self.parser.add_option(*self._option_names(names), 
+                               action='callback',
+                               type='string',
+                               callback=callback_wrapper,
+                               nargs=nargs,
                                help=help)
         self._set_default_value(names, default)
 
