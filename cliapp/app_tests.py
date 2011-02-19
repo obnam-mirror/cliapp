@@ -192,6 +192,29 @@ class ApplicationTests(unittest.TestCase):
         option = self.app.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
+    def test_adds_string_list_setting(self):
+        self.app.add_string_list_setting(['foo'], 'foo help')
+        self.assert_(self.app.parser.has_option('--foo'))
+        option = self.app.parser.get_option('--foo')
+        self.assertEqual(option.help, 'foo help')
+
+    def test_string_list_is_empty_list_by_default(self):
+        self.app.add_string_list_setting(['foo'], '')
+        self.app.parse_args([])
+        self.assertEqual(self.app['foo'], [])
+
+    def test_string_list_parses_one_item(self):
+        self.app.process_args = lambda args: None
+        self.app.add_string_list_setting(['foo'], '')
+        self.app.parse_args(['--foo=foo'])
+        self.assertEqual(self.app['foo'], ['foo'])
+
+    def test_string_list_parses_two_items(self):
+        self.app.process_args = lambda args: None
+        self.app.add_string_list_setting(['foo'], '')
+        self.app.parse_args(['--foo=foo', '--foo', 'bar'])
+        self.assertEqual(self.app['foo'], ['foo', 'bar'])
+
     def test_adds_boolean_setting(self):
         self.app.add_boolean_setting(['foo'], 'foo help')
         self.assert_(self.app.parser.has_option('--foo'))

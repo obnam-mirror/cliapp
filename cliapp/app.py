@@ -89,6 +89,19 @@ class Application(object):
                                help=help)
         self._set_default_value(names, default)
 
+    def add_string_list_setting(self, names, help, default=None):
+        '''Add a setting which have multipel string values.
+        
+        An example would be an option that can be given multiple times
+        on the command line, e.g., "--exclude=foo --exclude=bar".
+        
+        '''
+
+        self.parser.add_option(*self._option_names(names), 
+                               action='append', 
+                               help=help)
+        self._set_default_value(names, default or [])
+
     def add_boolean_setting(self, names, help, default=False):
         '''Add a setting with a boolean value (defaults to false).'''
         self.parser.add_option(*self._option_names(names), 
@@ -168,7 +181,7 @@ class Application(object):
         try:
             self.add_settings()
             args = sys.argv[1:] if args is None else args
-            self.options, args = self.parser.parse_args(args)
+            args = self.parse_args(args)
             
             self.setup_logging()
             
@@ -203,6 +216,17 @@ class Application(object):
             
             logging.basicConfig(filename=self.options.log,
                                 level=level)
+
+    def parse_args(self, args):
+        '''Parse the command line.
+        
+        Set self.options to a value like the options returned by
+        OptionParser. Return list of non-option arguments.
+        
+        '''
+
+        self.options, args = self.parser.parse_args(args)
+        return args
 
     def process_args(self, args):
         '''Process command line non-option arguments.
