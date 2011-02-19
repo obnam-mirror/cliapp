@@ -25,15 +25,29 @@ class Application(object):
 
     '''A framework for Unix-like command line programs.
     
-    The user should subclass this class, then create an instance of the
-    subclass, and call the run method.
+    This is a Python framework for writing Unix command line utilities.
+    This base class contains logic to do the typical things
+    a command line program should do:
+
+    * parse command line options
+    * iterate over input files
+      - read from stdin if there are no named files
+      - also recognize '-' as a name for stdin
+    * write output to stdout
+      - or a file named with --output option
+
+    The user should subclass the base class for each application.
+    The subclass does not need code for the mundane, boilerplate
+    parts that are the same in every utility, and can concentrate on the 
+    interesting part that is unique to it.
+
+    Many programs need to adjust some parts of this typical scenario.
+    For example, the non-option command line arguments might not be
+    filenames, but URLs. The framework allows the user to override
+    the necessary parts for this, but re-use all parts that do not need
+    to be changed.
     
-    The subclass should define the version attribute to contain the
-    version number of the program.
-    
-    Some methods are meant to be redefined by subclasses, so as to
-    provide real functionality. These methods have names that do not
-    start with an underscore.
+    To start the application, call the `run` method.
     
     '''
 
