@@ -2,6 +2,16 @@ NEWS for cliapp
 ===============
 
 
+Version 0.6, released 2011-02-19
+--------------------------------
+
+* New option types: list of strings, choice of strings, callback.
+* New standard option: --dump-setting-names.
+* Python profiling support: automatically if the right environment variable
+  is set. If the process's argv[0] is 'foo', and 'FOO_PROFILE' is set, then
+  profiling happens.
+* Documentation improvments.
+
 Version 0.5, released 2011-02-13
 --------------------------------
 
