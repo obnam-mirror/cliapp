@@ -43,6 +43,7 @@ class ApplicationTests(unittest.TestCase):
     def test_sets_progname(self):
         app = cliapp.Application(progname='foo')
         self.assertEqual(app.progname, 'foo')
+        self.assertEqual(app.parser.get_prog_name(), 'foo')
         
     def test_sets_version(self):
         app = cliapp.Application(version='1.2.3')

@@ -80,7 +80,8 @@ class Application(object):
         
     def _init_parser(self):
         '''Initialize the option parser with default options and values.'''
-        self.parser = optparse.OptionParser(version=self.version)
+        self.parser = optparse.OptionParser(version=self.version,
+                                            prog=self.progname)
         
         self.add_string_setting(['output'], 
                                 'write output to named file, '
