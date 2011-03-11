@@ -52,6 +52,12 @@ class SettingsTests(unittest.TestCase):
     def test_does_not_have_foo_setting_by_default(self):
         self.assertFalse('foo' in self.settings)
 
+    def test_raises_keyerror_for_getting_unknown_setting(self):
+        self.assertRaises(KeyError, self.settings.__getitem__, 'foo')
+
+    def test_raises_keyerror_for_setting_unknown_setting(self):
+        self.assertRaises(KeyError, self.settings.__setitem__, 'foo', 'bar')
+
     def test_adds_string_setting(self):
         self.settings.add_string_setting(['foo'], 'foo help')
         self.assert_('foo' in self.settings)

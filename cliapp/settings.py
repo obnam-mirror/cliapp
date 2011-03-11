@@ -174,7 +174,7 @@ class Settings(object):
             value = self._cp.get('config', name)
             return self._getters[name](value)
         else:
-            return KeyError(name)
+            raise KeyError(name)
 
     def __setitem__(self, name, value):
         if name in self._aliases:
