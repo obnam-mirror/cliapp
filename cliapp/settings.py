@@ -31,6 +31,7 @@ class Settings(object):
     '''
 
     def __init__(self, progname, version):
+        self._names = list()
         self._init_parser(progname, version)
         
     def _init_parser(self, progname, version):
@@ -89,6 +90,7 @@ class Settings(object):
 
     def add_string_setting(self, names, help, default=''):
         '''Add a setting with a string value.'''
+        self._names += names
         self.parser.add_option(*self._option_names(names), 
                                action='store', 
                                help=help)
@@ -102,6 +104,7 @@ class Settings(object):
         
         '''
 
+        self._names += names
         self.parser.add_option(*self._option_names(names), 
                                action='append', 
                                help=help)
@@ -117,6 +120,7 @@ class Settings(object):
         
         '''
 
+        self._names += names
         self.parser.add_option(*self._option_names(names), 
                                action='store', 
                                type='choice',
@@ -126,6 +130,7 @@ class Settings(object):
 
     def add_boolean_setting(self, names, help, default=False):
         '''Add a setting with a boolean value (defaults to false).'''
+        self._names += names
         self.parser.add_option(*self._option_names(names), 
                                action='store_true', 
                                help=help)
@@ -145,6 +150,7 @@ class Settings(object):
                 value = (value,)
             setattr(parser.values, option.dest, callback(*value))
 
+        self._names += names
         self.parser.add_option(*self._option_names(names), 
                                action='callback',
                                callback=callback_wrapper,
@@ -189,6 +195,7 @@ class Settings(object):
     def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
 
+        self._names += names
         self.parser.add_option(*self._option_names(names), 
                                action='store',
                                type='long',
@@ -208,6 +215,9 @@ class Settings(object):
 
     def __getitem__(self, setting_name):
         return self.get_setting(setting_name)
+        
+    def __contains__(self, setting_name):
+        return setting_name in self._names
 
     def parse_args(self, args):
         '''Parse the command line.

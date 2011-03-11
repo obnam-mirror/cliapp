@@ -44,15 +44,20 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings['foo'], 'foovalue')
         self.assertEqual(self.settings['bar'], True)
 
+    def test_does_not_have_foo_setting_by_default(self):
+        self.assertFalse('foo' in self.settings)
+
     def test_adds_string_setting(self):
         self.settings.add_string_setting(['foo'], 'foo help')
         self.assert_(self.settings.parser.has_option('--foo'))
+        self.assert_('foo' in self.settings)
         option = self.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
     def test_adds_string_list_setting(self):
         self.settings.add_string_list_setting(['foo'], 'foo help')
         self.assert_(self.settings.parser.has_option('--foo'))
+        self.assert_('foo' in self.settings)
         option = self.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
@@ -74,6 +79,7 @@ class SettingsTests(unittest.TestCase):
     def test_adds_choice_setting(self):
         self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
         self.assert_(self.settings.parser.has_option('--foo'))
+        self.assert_('foo' in self.settings)
         option = self.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
@@ -92,12 +98,14 @@ class SettingsTests(unittest.TestCase):
     def test_adds_boolean_setting(self):
         self.settings.add_boolean_setting(['foo'], 'foo help')
         self.assert_(self.settings.parser.has_option('--foo'))
+        self.assert_('foo' in self.settings)
         option = self.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
         
     def test_adds_bytesize_setting(self):
         self.settings.add_bytesize_setting(['foo'], 'foo help')
         self.assert_(self.settings.parser.has_option('--foo'))
+        self.assert_('foo' in self.settings)
         option = self.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
@@ -137,6 +145,7 @@ class SettingsTests(unittest.TestCase):
     def test_adds_integer_setting(self):
         self.settings.add_integer_setting(['foo'], 'foo help')
         self.assert_(self.settings.parser.has_option('--foo'))
+        self.assert_('foo' in self.settings)
         option = self.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
