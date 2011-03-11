@@ -33,18 +33,11 @@ class SettingsTests(unittest.TestCase):
     def test_sets_progname(self):
         self.settings.progname = 'foo'
         self.assertEqual(self.settings.progname, 'foo')
-        self.assertEqual(self.settings.parser.get_prog_name(), 'foo')
         
     def test_has_version(self):
         self.assertEqual(self.settings.version, '1.0')
-        self.assertEqual(self.settings.parser.get_version(), '1.0')
 
-    def test_creates_option_parser(self):
-        self.assert_(isinstance(self.settings.parser, optparse.OptionParser))
-        
     def test_adds_default_options_and_settings(self):
-        self.assert_(self.settings.parser.has_option('--version'))
-        self.assert_(self.settings.parser.has_option('--help'))
         self.assert_('output' in self.settings)
         self.assert_('log' in self.settings)
         self.assert_('log-level' in self.settings)
@@ -61,17 +54,11 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_string_setting(self):
         self.settings.add_string_setting(['foo'], 'foo help')
-        self.assert_(self.settings.parser.has_option('--foo'))
         self.assert_('foo' in self.settings)
-        option = self.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
 
     def test_adds_string_list_setting(self):
         self.settings.add_string_list_setting(['foo'], 'foo help')
-        self.assert_(self.settings.parser.has_option('--foo'))
         self.assert_('foo' in self.settings)
-        option = self.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
 
     def test_string_list_is_empty_list_by_default(self):
         self.settings.add_string_list_setting(['foo'], '')
@@ -90,10 +77,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_choice_setting(self):
         self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
-        self.assert_(self.settings.parser.has_option('--foo'))
         self.assert_('foo' in self.settings)
-        option = self.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
 
     def test_choice_defaults_to_first_one(self):
         self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
@@ -109,17 +93,11 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_boolean_setting(self):
         self.settings.add_boolean_setting(['foo'], 'foo help')
-        self.assert_(self.settings.parser.has_option('--foo'))
         self.assert_('foo' in self.settings)
-        option = self.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
         
     def test_adds_bytesize_setting(self):
         self.settings.add_bytesize_setting(['foo'], 'foo help')
-        self.assert_(self.settings.parser.has_option('--foo'))
         self.assert_('foo' in self.settings)
-        option = self.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
 
     def test_parses_bytesize_option(self):
         self.settings.add_bytesize_setting(['foo'], 'foo help')
@@ -156,10 +134,7 @@ class SettingsTests(unittest.TestCase):
         
     def test_adds_integer_setting(self):
         self.settings.add_integer_setting(['foo'], 'foo help')
-        self.assert_(self.settings.parser.has_option('--foo'))
         self.assert_('foo' in self.settings)
-        option = self.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
 
     def test_parses_integer_option(self):
         self.settings.add_integer_setting(['foo'], 'foo help', default=123)

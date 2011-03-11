@@ -38,9 +38,9 @@ class ApplicationTests(unittest.TestCase):
             def add_settings(self):
                 self.settings.add_string_setting(['foo'], '')
         foo = Foo()
-        self.assertFalse(foo.settings.parser.has_option('--foo'))
+        self.assertFalse('foo' in foo.settings)
         foo.run(args=[])
-        self.assert_(foo.settings.parser.has_option('--foo'))
+        self.assert_('foo' in foo.settings)
 
     def test_run_sets_up_logging(self):
         self.called = False
@@ -55,7 +55,6 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = lambda args: None
         self.app.run(args=[], sysargv=['foo'])
         self.assertEqual(self.app.settings.progname, 'foo')
-        self.assertEqual(self.app.settings.parser.get_prog_name(), 'foo')
     
     def test_run_calls_process_args(self):
         self.called = None

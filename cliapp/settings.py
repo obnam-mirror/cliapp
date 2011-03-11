@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import ConfigParser
 import optparse
 import re
 import sys
@@ -29,15 +30,27 @@ class Settings(object):
     '''
 
     def __init__(self, progname, version):
-        self._names = list()
-        self._progname = progname
-        self._version = version
-        self._init_parser(progname, version)
+        # We store settings in a ConfigParser. Command line options will
+        # be put into the ConfigParser. Settings can have aliases,
+        # we store those in self._aliases, indexed by the canonical name.
+        # Further, converters for value types are stored in self._getters
+        # and self._setters, indexed by canonical name.
+        self._cp = ConfigParser.ConfigParser()
+        self._cp.add_section('config')
+        self._aliases = dict()
+        self._getters = dict()
+        self._setters = dict()
+        self._accumulators = set()
+        self._helps = dict()
+        self._nargs = dict()
+        self._choices = dict()
+
+        self.version = version
+        self.progname = progname
         
-    def _init_parser(self, progname, version):
-        '''Initialize the option parser with default options and values.'''
-        self.parser = optparse.OptionParser(prog=progname, version=version)
-        
+        self._add_default_settings()
+
+    def _add_default_settings(self):
         self.add_string_setting(['output'], 
                                 'write output to named file, '
                                     'instead of standard output')
@@ -49,63 +62,44 @@ class Settings(object):
                                     'fatal (default: %default)',
                                 default='info')
 
-        self.add_callback_setting(['dump-setting-names'],
-                                  'write out all names of settings and quit',
-                                  self._dump_setting_names, nargs=0)
-
-    @property
-    def version(self):
-        return self._version
-
-    def get_progname(self):
-        return self._progname
-    def set_progname(self, progname):
-        self._progname = progname
-        self.parser.prog = progname
-    progname = property(get_progname, set_progname)
-
-    def _dump_setting_names(self): # pragma: no cover
-        for option in self.parser.option_list:
-            if option.dest:
-                print option.dest
-            else:
-                x = option._long_opts[0]
-                if x.startswith('--'):
-                    x = x[2:]
-                print x
-        sys.exit(0)
-
-    def _option_names(self, names):
-        '''Turn setting names into option names.
+    def _add_setting(self, names, help, default, getter, setter, nargs=1,
+                     is_accumulator=False):
+        '''Add a setting to self._cp.
         
-        Names with a single letter are short options, and get prefixed
-        with one dash. The rest get prefixed with two dashes.
+        getter and setter convert the value when read from or written to
+        self._cp.
         
         '''
 
-        return ['--%s' % name if len(name) > 1 else '-%s' % name
-                for name in names]
+        self._cp.set('config', names[0], setter(default))
+        self._helps[names[0]] = help
+        self._getters[names[0]] = getter
+        self._setters[names[0]] = setter
+        if is_accumulator:
+            self._accumulators.add(names[0])
+        for alias in names[1:]:
+            self._aliases[name] = names[0]
+        self._nargs[names[0]] = nargs
 
-    def _attr_name(self, name):
-        '''Turn setting name into attribute name.
-        
-        Dashes get turned into underscores.
-        
-        '''
+    def _get_setting(self, name):
+        name = self._aliases.get(name, name)
+        if self._cp.has_option('config', name):
+            value = self._cp.get('config', name)
+            return self._getters[name](value)
+        else:
+            return KeyError(name)
 
-        return '_'.join(name.split('-'))
-
-    def _set_default_value(self, names, value):
-        '''Set default value for a setting with names in names.'''
-        self.parser.set_default(self._attr_name(names[0]), value)
+    def _set_setting(self, name, value):
+        name = self._aliases.get(name, name)
+        if self._cp.has_option('config', name):
+            value = self._setters[name](value)
+            self._cp.set('config', name, value)
+        else:
+            raise KeyError(name)
 
     def add_string_setting(self, names, help, default=''):
         '''Add a setting with a string value.'''
-        self._names += names
-        self.parser.add_option(*self._option_names(names), 
-                               action='store', 
-                               help=help)
-        self._set_default_value(names, default)
+        self._add_setting(names, help, default, str, str)
 
     def add_string_list_setting(self, names, help, default=None):
         '''Add a setting which have multiple string values.
@@ -115,13 +109,19 @@ class Settings(object):
         
         '''
 
-        self._names += names
-        self.parser.add_option(*self._option_names(names), 
-                               action='append', 
-                               help=help)
-        self._set_default_value(names, default or [])
+        def get_stringlist(encoded):
+            if encoded:
+                return encoded.split(',')
+            else:
+                return []
+            
+        def set_stringlist(strings):
+            return ','.join(strings)
 
-    def add_choice_setting(self, names, possibilities, help, default=None):
+        self._add_setting(names, help, default or [], 
+                          get_stringlist, set_stringlist, is_accumulator=True)
+
+    def add_choice_setting(self, names, possibilities, help):
         '''Add a setting which chooses from list of acceptable values.
         
         An example would be an option to set debugging level to be
@@ -131,44 +131,22 @@ class Settings(object):
         
         '''
 
-        self._names += names
-        self.parser.add_option(*self._option_names(names), 
-                               action='store', 
-                               type='choice',
-                               choices=possibilities,
-                               help=help)
-        self._set_default_value(names, possibilities[0])
+        self._add_setting(names, help, possibilities[0], str, str)
+        self._choices[names[0]] = possibilities
 
     def add_boolean_setting(self, names, help, default=False):
         '''Add a setting with a boolean value (defaults to false).'''
-        self._names += names
-        self.parser.add_option(*self._option_names(names), 
-                               action='store_true', 
-                               help=help)
-        self._set_default_value(names, default)
+        
+        def get_boolean(encoded):
+            return encoded.lower() in ['0', 'false', 'no', 'off']
+        def set_boolean(boolean):
+            if boolean:
+                return 'yes'
+            else:
+                return 'no'
 
-    def add_callback_setting(self, names, help, callback, nargs=1, 
-                             default=None):
-        '''Add a setting processed by a callback. 
-        
-        The callback will receive nargs argument strings, and will return
-        the actual value of the setting.
-        
-        '''
-        
-        def callback_wrapper(option, opt_str, value, parser):
-            if type(value) == str:
-                value = (value,)
-            setattr(parser.values, option.dest, callback(*value))
-
-        self._names += names
-        self.parser.add_option(*self._option_names(names), 
-                               action='callback',
-                               callback=callback_wrapper,
-                               nargs=nargs,
-                               type='string',
-                               help=help)
-        self._set_default_value(names, default)
+        self._add_setting(names, help, default, get_boolean, set_boolean, 
+                          nargs=0)
 
     def _parse_human_size(self, size):
         '''Parse a size using suffix into plain bytes.'''
@@ -200,44 +178,82 @@ class Settings(object):
         
         '''
 
-        self.add_callback_setting(names, help, self._parse_human_size,
-                                  default=default, nargs=1)
+        self._add_setting(names, help, default, self._parse_human_size, str)
 
     def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
+        self._add_setting(names, help, default, long, str)
 
-        self._names += names
-        self.parser.add_option(*self._option_names(names), 
-                               action='store',
-                               type='long',
-                               help=help)
-        self._set_default_value(names, default)
+    def __getitem__(self, setting_name):
+        return self._get_setting(setting_name)
 
-    def get_setting(self, name):
-        '''Return value of setting with a given name.
+    def __setitem__(self, setting_name, value):
+        return self._set_setting(setting_name, value)
         
-        Note that you may only call this method after the command line
-        has been parsed.
+    def __contains__(self, name):
+        return self._cp.has_option('config', self._aliases.get(name, name))
+        
+    def _option_names(self, names):
+        '''Turn setting names into option names.
+        
+        Names with a single letter are short options, and get prefixed
+        with one dash. The rest get prefixed with two dashes.
         
         '''
 
-        option = self.parser.get_option(self._option_names([name])[0])
-        return getattr(self.options, option.dest)
+        return ['--%s' % name if len(name) > 1 else '-%s' % name
+                for name in names]
 
-    def __getitem__(self, setting_name):
-        return self.get_setting(setting_name)
-        
-    def __contains__(self, setting_name):
-        return setting_name in self._names
+    def _find_names(self, name):
+        return [name] + [x for x in self._aliases if self._aliases[x] == name]
 
     def parse_args(self, args):
         '''Parse the command line.
         
-        Set self.options to a value like the options returned by
-        OptionParser. Return list of non-option arguments.
+        Return list of non-option arguments.
         
         '''
 
-        self.options, args = self.parser.parse_args(args)
+        p = optparse.OptionParser(prog=self.progname, version=self.version)
+        
+        def dump(*args): # pragma: no cover
+            for name in self._cp.options('config'):
+                print self._cp.get('config', name)
+            sys.exit(0)
+        p.add_option('--dump-setting-names',
+                     action='callback',
+                     nargs=0,
+                     callback=dump,
+                     help='write out all names of settings and quit')
+        
+        for name in self._cp.options('config'):
+            names = self._find_names(name)
+            option_names = self._option_names(names)
+
+            # Create a new function for callback handling.
+            # We create a new function for each option. We need nested
+            # functions to handle the 'name' variable correctly.
+            def callback(name):
+                def cb(option, opt_str, value, parser):
+                    if name in self._choices:
+                        choices = [x.lower() for x in self._choices[name]]
+                        if value.lower() not in choices:
+                            msg = 'Bad value %s for setting %s' % (value, opt_str)
+                            raise optparse.OptionValueError(msg)
+                    if name in self._accumulators:
+                        old = self[name]
+                        value = old + [value]
+                    self[name] = value
+                return cb
+
+            p.add_option(*option_names,
+                         action='callback',
+                         callback=callback(name),
+                         nargs=self._nargs[name],
+                         type='string',
+                         help=self._helps[name])
+            p.set_default(option_names[0], self[names[0]])
+
+        options, args = p.parse_args(args)
         return args
 
