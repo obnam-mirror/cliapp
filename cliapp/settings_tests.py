@@ -42,12 +42,12 @@ class SettingsTests(unittest.TestCase):
     def test_creates_option_parser(self):
         self.assert_(isinstance(self.settings.parser, optparse.OptionParser))
         
-    def test_adds_default_options(self):
+    def test_adds_default_options_and_settings(self):
         self.assert_(self.settings.parser.has_option('--version'))
         self.assert_(self.settings.parser.has_option('--help'))
-        self.assert_(self.settings.parser.has_option('--output'))
-        self.assert_(self.settings.parser.has_option('--log'))
-        self.assert_(self.settings.parser.has_option('--log-level'))
+        self.assert_('output' in self.settings)
+        self.assert_('log' in self.settings)
+        self.assert_('log-level' in self.settings)
 
     def test_parses_options(self):
         self.settings.add_string_setting(['foo'], 'foo help')
