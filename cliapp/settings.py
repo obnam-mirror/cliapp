@@ -122,7 +122,7 @@ class Settings(object):
         '''Add a setting with a boolean value (defaults to false).'''
         
         def get_boolean(encoded):
-            return encoded.lower() in ['0', 'false', 'no', 'off']
+            return encoded.lower() not in ['0', 'false', 'no', 'off']
         def set_boolean(boolean):
             if boolean:
                 return 'yes'
@@ -238,6 +238,8 @@ class Settings(object):
                     if name in self._accumulators:
                         old = self[name]
                         value = old + [value]
+                    elif self._nargs[name] == 0:
+                        value = True
                     self[name] = value
                 return cb
 

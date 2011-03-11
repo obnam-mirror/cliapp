@@ -107,6 +107,26 @@ class SettingsTests(unittest.TestCase):
         self.settings.add_boolean_setting(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
         
+    def test_sets_boolean_setting_to_true_for_many_true_values(self):
+        self.settings.add_boolean_setting(['foo'], 'foo help')
+        self.settings['foo'] = True
+        self.assert_(self.settings['foo'])
+        self.settings['foo'] = 1
+        self.assert_(self.settings['foo'])
+        
+    def test_sets_boolean_setting_to_false_for_many_false_values(self):
+        self.settings.add_boolean_setting(['foo'], 'foo help')
+        self.settings['foo'] = False
+        self.assertFalse(self.settings['foo'])
+        self.settings['foo'] = 0
+        self.assertFalse(self.settings['foo'])
+        self.settings['foo'] = ()
+        self.assertFalse(self.settings['foo'])
+        self.settings['foo'] = []
+        self.assertFalse(self.settings['foo'])
+        self.settings['foo'] = ''
+        self.assertFalse(self.settings['foo'])
+        
     def test_adds_bytesize_setting(self):
         self.settings.add_bytesize_setting(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
