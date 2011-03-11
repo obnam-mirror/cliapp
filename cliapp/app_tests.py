@@ -37,6 +37,9 @@ class ApplicationTests(unittest.TestCase):
         self.assert_(self.app.parser.has_option('--log'))
         self.assert_(self.app.parser.has_option('--log-level'))
 
+    def test_sets_progname_to_None_by_default(self):
+        self.assertEqual(self.app.progname, None)
+
     def test_sets_progname(self):
         app = cliapp.Application(progname='foo')
         self.assertEqual(app.progname, 'foo')
@@ -66,6 +69,11 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = lambda args: None
         self.app.run([])
         self.assert_(self.called)
+    
+    def test_run_sets_progname_from_sysargv0(self):
+        self.app.process_args = lambda args: None
+        self.app.run(args=[], sysargv=['foo'])
+        self.assertEqual(self.app.progname, 'foo')
     
     def test_run_calls_process_args(self):
         self.called = None

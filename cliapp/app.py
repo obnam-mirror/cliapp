@@ -257,13 +257,15 @@ class Application(object):
     def add_settings(self):
         '''Add application specific settings.'''
 
-    def run(self, args=None, stderr=sys.stderr):
+    def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv):
         '''Run the application.'''
         
         def run_it():
             self._run(args=args, stderr=stderr)
 
-        envname = '%s_PROFILE' % self._envname(sys.argv[0])
+        if self.progname is None and sysargv:
+            self.progname = sysargv[0]
+        envname = '%s_PROFILE' % self._envname(sysargv[0])
         profname = os.environ.get(envname, '')
         if profname: # pragma: no cover
             import cProfile
