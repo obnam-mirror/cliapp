@@ -97,6 +97,12 @@ class SettingsTests(unittest.TestCase):
         self.settings.parse_args(['--foo=bar'])
         self.assertEqual(self.settings['foo'], 'bar')
 
+    def test_choice_raises_error_for_unacceptable_value(self):
+        self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.assertRaises(SystemExit,
+                          self.settings.parse_args, ['--foo=xyzzy'],
+                          suppress_errors=True)
+
     def test_adds_boolean_setting(self):
         self.settings.add_boolean_setting(['foo'], 'foo help')
         self.assert_('foo' in self.settings)

@@ -201,7 +201,7 @@ class Settings(object):
     def _find_names(self, name):
         return [name] + [x for x in self._aliases if self._aliases[x] == name]
 
-    def parse_args(self, args):
+    def parse_args(self, args, suppress_errors=False):
         '''Parse the command line.
         
         Return list of non-option arguments.
@@ -232,7 +232,8 @@ class Settings(object):
                     if name in self._choices:
                         choices = [x.lower() for x in self._choices[name]]
                         if value.lower() not in choices:
-                            msg = 'Bad value %s for setting %s' % (value, opt_str)
+                            msg = ('Bad value %s for setting %s' % 
+                                   (value, opt_str))
                             raise optparse.OptionValueError(msg)
                     if name in self._accumulators:
                         old = self[name]
@@ -247,6 +248,9 @@ class Settings(object):
                          type='string',
                          help=self._helps[name])
             p.set_default(option_names[0], self[names[0]])
+
+        if suppress_errors:
+            p.error = lambda msg: sys.exit(1)
 
         options, args = p.parse_args(args)
         return args
