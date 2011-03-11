@@ -49,7 +49,7 @@ class ApplicationTests(unittest.TestCase):
             def process_args(self, args):
                 pass
             def add_settings(self):
-                self.add_string_setting(['foo'], '')
+                self.settings.add_string_setting(['foo'], '')
         foo = Foo()
         self.assertFalse(foo.settings.parser.has_option('--foo'))
         foo.run(args=[])
@@ -82,11 +82,6 @@ class ApplicationTests(unittest.TestCase):
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.inputs, ['foo', 'bar'])
         
-    def test_run_sets_options_attribute(self):
-        self.app.process_args = lambda args: None
-        self.app.run(args=[])
-        self.assert_(hasattr(self.app, 'options'))
-        
     def test_run_sets_output_attribute(self):
         self.app.process_args = lambda args: None
         self.app.run(args=[])
@@ -105,7 +100,7 @@ class ApplicationTests(unittest.TestCase):
         self.called = None
         self.app.parse_args = lambda args: setattr(self, 'called', args)
         self.app.process_args = lambda args: None
-        self.app.options = DummyOptions()
+        self.app.settings.options = DummyOptions()
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.called, ['foo', 'bar'])
 
@@ -118,11 +113,11 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app._envname('foo_bar'), 'FOO_BAR')
 
     def test_parses_options(self):
-        self.app.add_string_setting(['foo'], 'foo help')
-        self.app.add_boolean_setting(['bar'], 'bar help')
+        self.app.settings.add_string_setting(['foo'], 'foo help')
+        self.app.settings.add_boolean_setting(['bar'], 'bar help')
         self.app.parse_args(['--foo=foovalue', '--bar'])
-        self.assertEqual(self.app['foo'], 'foovalue')
-        self.assertEqual(self.app['bar'], True)
+        self.assertEqual(self.app.settings['foo'], 'foovalue')
+        self.assertEqual(self.app.settings['bar'], True)
 
     def test_process_args_calls_process_inputs(self):
         self.called = False
@@ -212,111 +207,6 @@ class ApplicationTests(unittest.TestCase):
                           (1, 2, 2), 
                           (2, 3, 1), 
                           (2, 4, 2)])
-
-    def test_adds_string_setting(self):
-        self.app.add_string_setting(['foo'], 'foo help')
-        self.assert_(self.app.settings.parser.has_option('--foo'))
-        option = self.app.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
-
-    def test_adds_string_list_setting(self):
-        self.app.add_string_list_setting(['foo'], 'foo help')
-        self.assert_(self.app.settings.parser.has_option('--foo'))
-        option = self.app.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
-
-    def test_string_list_is_empty_list_by_default(self):
-        self.app.add_string_list_setting(['foo'], '')
-        self.app.parse_args([])
-        self.assertEqual(self.app['foo'], [])
-
-    def test_string_list_parses_one_item(self):
-        self.app.add_string_list_setting(['foo'], '')
-        self.app.parse_args(['--foo=foo'])
-        self.assertEqual(self.app['foo'], ['foo'])
-
-    def test_string_list_parses_two_items(self):
-        self.app.add_string_list_setting(['foo'], '')
-        self.app.parse_args(['--foo=foo', '--foo', 'bar'])
-        self.assertEqual(self.app['foo'], ['foo', 'bar'])
-
-    def test_adds_choice_setting(self):
-        self.app.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
-        self.assert_(self.app.settings.parser.has_option('--foo'))
-        option = self.app.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
-
-    def test_choice_defaults_to_first_one(self):
-        self.app.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
-        self.app.parse_args([])
-        self.assertEqual(self.app['foo'], 'foo')
-
-    def test_choice_accepts_any_valid_value(self):
-        self.app.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
-        self.app.parse_args(['--foo=foo'])
-        self.assertEqual(self.app['foo'], 'foo')
-        self.app.parse_args(['--foo=bar'])
-        self.assertEqual(self.app['foo'], 'bar')
-
-    def test_adds_boolean_setting(self):
-        self.app.add_boolean_setting(['foo'], 'foo help')
-        self.assert_(self.app.settings.parser.has_option('--foo'))
-        option = self.app.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
-        
-    def test_adds_bytesize_setting(self):
-        self.app.add_bytesize_setting(['foo'], 'foo help')
-        self.assert_(self.app.settings.parser.has_option('--foo'))
-        option = self.app.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
-
-    def test_parses_bytesize_option(self):
-        self.app.add_bytesize_setting(['foo'], 'foo help')
-
-        self.app.parse_args(args=['--foo=xyzzy'])
-        self.assertEqual(self.app['foo'], 0)
-
-        self.app.parse_args(args=['--foo=123'])
-        self.assertEqual(self.app['foo'], 123)
-
-        self.app.parse_args(args=['--foo=123k'])
-        self.assertEqual(self.app['foo'], 123 * 1000)
-
-        self.app.parse_args(args=['--foo=123m'])
-        self.assertEqual(self.app['foo'], 123 * 1000**2)
-
-        self.app.parse_args(args=['--foo=123g'])
-        self.assertEqual(self.app['foo'], 123 * 1000**3)
-
-        self.app.parse_args(args=['--foo=123t'])
-        self.assertEqual(self.app['foo'], 123 * 1000**4)
-
-        self.app.parse_args(args=['--foo=123kib'])
-        self.assertEqual(self.app['foo'], 123 * 1024)
-
-        self.app.parse_args(args=['--foo=123mib'])
-        self.assertEqual(self.app['foo'], 123 * 1024**2)
-
-        self.app.parse_args(args=['--foo=123gib'])
-        self.assertEqual(self.app['foo'], 123 * 1024**3)
-
-        self.app.parse_args(args=['--foo=123tib'])
-        self.assertEqual(self.app['foo'], 123 * 1024**4)
-        
-    def test_adds_integer_setting(self):
-        self.app.add_integer_setting(['foo'], 'foo help')
-        self.assert_(self.app.settings.parser.has_option('--foo'))
-        option = self.app.settings.parser.get_option('--foo')
-        self.assertEqual(option.help, 'foo help')
-
-    def test_parses_integer_option(self):
-        self.app.add_integer_setting(['foo'], 'foo help', default=123)
-
-        self.app.parse_args(args=[])
-        self.assertEqual(self.app['foo'], 123)
-
-        self.app.parse_args(args=['--foo=123'])
-        self.assertEqual(self.app['foo'], 123)
 
     def test_run_prints_out_error_for_exception(self):
         def raise_error(args):

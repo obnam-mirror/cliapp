@@ -81,50 +81,6 @@ class Application(object):
         self.lineno = 0
         self.settings = cliapp.Settings(progname, version)
         
-    def add_string_setting(self, names, help, default=''):
-        '''Add a setting with a string value.'''
-        self.settings.add_string_setting(names, help, default=default)
-
-    def add_string_list_setting(self, names, help, default=None):
-        '''Add a setting which have multiple string values.
-        
-        An example would be an option that can be given multiple times
-        on the command line, e.g., "--exclude=foo --exclude=bar".
-        
-        '''
-        self.settings.add_string_list_setting(names, help, default=default)
-
-    def add_choice_setting(self, names, possibilities, help, default=None):
-        '''Add a setting which chooses from list of acceptable values.
-        
-        An example would be an option to set debugging level to be
-        one of a set of accepted names: debug, info, warning, etc.
-        
-        The default value is the first possibility.
-        
-        '''
-        self.settings.add_choice_setting(names, possibilities, help, 
-                                         default=default)
-
-    def add_boolean_setting(self, names, help, default=False):
-        '''Add a setting with a boolean value (defaults to false).'''
-        self.settings.add_boolean_setting(names, help, default=default)
-
-    def add_bytesize_setting(self, names, help, default=0):
-        '''Add a setting with a size in bytes.
-        
-        The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
-        
-        '''
-        self.settings.add_bytesize_setting(names, help, default=default)
-
-    def add_integer_setting(self, names, help, default=None):
-        '''Add an integer setting.'''
-        self.settings.add_integer_setting(names, help, default=default)
-
-    def __getitem__(self, setting_name):
-        return self.settings[setting_name]
-        
     def add_settings(self):
         '''Add application specific settings.'''
 
@@ -165,8 +121,8 @@ class Application(object):
             
             self.setup_logging()
             
-            if self.options.output:
-                self.output = open(self.options.output, 'w')
+            if self.settings['output']:
+                self.output = open(self.settings['output'], 'w')
             else:
                 self.output = sys.stdout
             
@@ -182,8 +138,8 @@ class Application(object):
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
         
-        if self.options.log:
-            level_name = self.options.log_level
+        if self.settings['log']:
+            level_name = self.settings['log_level']
             levels = {
                 'debug': logging.DEBUG,
                 'info': logging.INFO,
@@ -194,20 +150,16 @@ class Application(object):
             }
             level = levels.get(level_name, logging.INFO)
             
-            logging.basicConfig(filename=self.options.log,
-                                level=level)
+            logging.basicConfig(filename=self.settings['log'], level=level)
 
     def parse_args(self, args):
         '''Parse the command line.
         
-        Set self.options to a value like the options returned by
-        OptionParser. Return list of non-option arguments.
+        Return list of non-option arguments.
         
         '''
 
-        args = self.settings.parse_args(args)
-        self.options = self.settings.options
-        return args
+        return self.settings.parse_args(args)
 
     def process_args(self, args):
         '''Process command line non-option arguments.
