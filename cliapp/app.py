@@ -74,8 +74,6 @@ class Application(object):
     '''
 
     def __init__(self, progname=None, version='0.0.0'):
-        self.progname = progname
-        self.version = version
         self.fileno = 0
         self.global_lineno = 0
         self.lineno = 0
@@ -90,10 +88,9 @@ class Application(object):
         def run_it():
             self._run(args=args, stderr=stderr)
 
-        if self.progname is None and sysargv:
-            self.progname = sysargv[0]
-            self.settings.parser.prog = self.progname
-        envname = '%s_PROFILE' % self._envname(self.progname)
+        if self.settings.progname is None and sysargv:
+            self.settings.progname = sysargv[0]
+        envname = '%s_PROFILE' % self._envname(self.settings.progname)
         profname = os.environ.get(envname, '')
         if profname: # pragma: no cover
             import cProfile

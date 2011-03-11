@@ -30,19 +30,6 @@ class ApplicationTests(unittest.TestCase):
     def test_creates_settings(self):
         self.assert_(isinstance(self.app.settings, cliapp.Settings))
         
-    def test_sets_progname_to_None_by_default(self):
-        self.assertEqual(self.app.progname, None)
-
-    def test_sets_progname(self):
-        app = cliapp.Application(progname='foo')
-        self.assertEqual(app.progname, 'foo')
-        self.assertEqual(app.settings.parser.get_prog_name(), 'foo')
-        
-    def test_sets_version(self):
-        app = cliapp.Application(version='1.2.3')
-        self.assertEqual(app.version, '1.2.3')
-        self.assertEqual(app.settings.parser.get_version(), '1.2.3')
-        
     def test_calls_add_settings_only_in_run(self):
     
         class Foo(cliapp.Application):
@@ -67,7 +54,7 @@ class ApplicationTests(unittest.TestCase):
     def test_run_sets_progname_from_sysargv0(self):
         self.app.process_args = lambda args: None
         self.app.run(args=[], sysargv=['foo'])
-        self.assertEqual(self.app.progname, 'foo')
+        self.assertEqual(self.app.settings.progname, 'foo')
         self.assertEqual(self.app.settings.parser.get_prog_name(), 'foo')
     
     def test_run_calls_process_args(self):
