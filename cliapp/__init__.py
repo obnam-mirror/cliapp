@@ -17,4 +17,6 @@
 version = '0.6'
 
 
+from settings import Settings
 from app import Application
+
