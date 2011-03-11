@@ -14,9 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import logging
 import optparse
-import os
 import re
 import sys
 
