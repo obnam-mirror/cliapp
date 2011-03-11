@@ -267,7 +267,7 @@ class Application(object):
         if self.progname is None and sysargv:
             self.progname = sysargv[0]
             self.parser.prog = self.progname
-        envname = '%s_PROFILE' % self._envname(sysargv[0])
+        envname = '%s_PROFILE' % self._envname(self.progname)
         profname = os.environ.get(envname, '')
         if profname: # pragma: no cover
             import cProfile
