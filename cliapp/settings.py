@@ -77,12 +77,12 @@ class Settings(object):
         self._setters[names[0]] = setter
         if is_accumulator:
             self._accumulators.add(names[0])
-        for alias in names[1:]:
-            self._aliases[name] = names[0]
+        for alias in names:
+            self._aliases[alias] = names[0]
         self._nargs[names[0]] = nargs
 
     def _get_setting(self, name):
-        name = self._aliases.get(name, name)
+        name = self._aliases[name]
         if self._cp.has_option('config', name):
             value = self._cp.get('config', name)
             return self._getters[name](value)
@@ -90,7 +90,7 @@ class Settings(object):
             return KeyError(name)
 
     def _set_setting(self, name, value):
-        name = self._aliases.get(name, name)
+        name = self._aliases[name]
         if self._cp.has_option('config', name):
             value = self._setters[name](value)
             self._cp.set('config', name, value)
@@ -191,7 +191,7 @@ class Settings(object):
         return self._set_setting(setting_name, value)
         
     def __contains__(self, name):
-        return self._cp.has_option('config', self._aliases.get(name, name))
+        return name in self._aliases
         
     def _option_names(self, names):
         '''Turn setting names into option names.
