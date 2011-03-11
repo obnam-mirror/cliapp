@@ -27,28 +27,21 @@ class ApplicationTests(unittest.TestCase):
     def setUp(self):
         self.app = cliapp.Application()
 
-    def test_creates_option_parser(self):
-        self.assert_(isinstance(self.app.parser, optparse.OptionParser))
+    def test_creates_settings(self):
+        self.assert_(isinstance(self.app.settings, cliapp.Settings))
         
-    def test_adds_default_options(self):
-        self.assert_(self.app.parser.has_option('--version'))
-        self.assert_(self.app.parser.has_option('--help'))
-        self.assert_(self.app.parser.has_option('--output'))
-        self.assert_(self.app.parser.has_option('--log'))
-        self.assert_(self.app.parser.has_option('--log-level'))
-
     def test_sets_progname_to_None_by_default(self):
         self.assertEqual(self.app.progname, None)
 
     def test_sets_progname(self):
         app = cliapp.Application(progname='foo')
         self.assertEqual(app.progname, 'foo')
-        self.assertEqual(app.parser.get_prog_name(), 'foo')
+        self.assertEqual(app.settings.parser.get_prog_name(), 'foo')
         
     def test_sets_version(self):
         app = cliapp.Application(version='1.2.3')
         self.assertEqual(app.version, '1.2.3')
-        self.assertEqual(app.parser.get_version(), '1.2.3')
+        self.assertEqual(app.settings.parser.get_version(), '1.2.3')
         
     def test_calls_add_settings_only_in_run(self):
     
@@ -58,9 +51,9 @@ class ApplicationTests(unittest.TestCase):
             def add_settings(self):
                 self.add_string_setting(['foo'], '')
         foo = Foo()
-        self.assertFalse(foo.parser.has_option('--foo'))
+        self.assertFalse(foo.settings.parser.has_option('--foo'))
         foo.run(args=[])
-        self.assert_(foo.parser.has_option('--foo'))
+        self.assert_(foo.settings.parser.has_option('--foo'))
 
     def test_run_sets_up_logging(self):
         self.called = False
@@ -75,7 +68,7 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = lambda args: None
         self.app.run(args=[], sysargv=['foo'])
         self.assertEqual(self.app.progname, 'foo')
-        self.assertEqual(self.app.parser.get_prog_name(), 'foo')
+        self.assertEqual(self.app.settings.parser.get_prog_name(), 'foo')
     
     def test_run_calls_process_args(self):
         self.called = None
@@ -222,14 +215,14 @@ class ApplicationTests(unittest.TestCase):
 
     def test_adds_string_setting(self):
         self.app.add_string_setting(['foo'], 'foo help')
-        self.assert_(self.app.parser.has_option('--foo'))
-        option = self.app.parser.get_option('--foo')
+        self.assert_(self.app.settings.parser.has_option('--foo'))
+        option = self.app.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
     def test_adds_string_list_setting(self):
         self.app.add_string_list_setting(['foo'], 'foo help')
-        self.assert_(self.app.parser.has_option('--foo'))
-        option = self.app.parser.get_option('--foo')
+        self.assert_(self.app.settings.parser.has_option('--foo'))
+        option = self.app.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
     def test_string_list_is_empty_list_by_default(self):
@@ -249,8 +242,8 @@ class ApplicationTests(unittest.TestCase):
 
     def test_adds_choice_setting(self):
         self.app.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
-        self.assert_(self.app.parser.has_option('--foo'))
-        option = self.app.parser.get_option('--foo')
+        self.assert_(self.app.settings.parser.has_option('--foo'))
+        option = self.app.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
     def test_choice_defaults_to_first_one(self):
@@ -267,14 +260,14 @@ class ApplicationTests(unittest.TestCase):
 
     def test_adds_boolean_setting(self):
         self.app.add_boolean_setting(['foo'], 'foo help')
-        self.assert_(self.app.parser.has_option('--foo'))
-        option = self.app.parser.get_option('--foo')
+        self.assert_(self.app.settings.parser.has_option('--foo'))
+        option = self.app.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
         
     def test_adds_bytesize_setting(self):
         self.app.add_bytesize_setting(['foo'], 'foo help')
-        self.assert_(self.app.parser.has_option('--foo'))
-        option = self.app.parser.get_option('--foo')
+        self.assert_(self.app.settings.parser.has_option('--foo'))
+        option = self.app.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
     def test_parses_bytesize_option(self):
@@ -312,8 +305,8 @@ class ApplicationTests(unittest.TestCase):
         
     def test_adds_integer_setting(self):
         self.app.add_integer_setting(['foo'], 'foo help')
-        self.assert_(self.app.parser.has_option('--foo'))
-        option = self.app.parser.get_option('--foo')
+        self.assert_(self.app.settings.parser.has_option('--foo'))
+        option = self.app.settings.parser.get_option('--foo')
         self.assertEqual(option.help, 'foo help')
 
     def test_parses_integer_option(self):

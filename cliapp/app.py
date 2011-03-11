@@ -21,6 +21,9 @@ import re
 import sys
 
 
+import cliapp
+
+
 class Application(object):
 
     '''A framework for Unix-like command line programs.
@@ -76,69 +79,11 @@ class Application(object):
         self.fileno = 0
         self.global_lineno = 0
         self.lineno = 0
-        self._init_parser()
+        self.settings = cliapp.Settings(progname, version)
         
-    def _init_parser(self):
-        '''Initialize the option parser with default options and values.'''
-        self.parser = optparse.OptionParser(version=self.version,
-                                            prog=self.progname)
-        
-        self.add_string_setting(['output'], 
-                                'write output to named file, '
-                                    'instead of standard output')
-
-        self.add_string_setting(['log'], 'write log entries to file')
-        self.add_string_setting(['log-level'], 
-                                'log at given level, one of '
-                                    'debug, info, warning, error, critical, '
-                                    'fatal (default: %default)',
-                                default='info')
-
-        self.add_callback_setting(['dump-setting-names'],
-                                  'write out all names of settings and quit',
-                                  self._dump_setting_names, nargs=0)
-
-    def _dump_setting_names(self): # pragma: no cover
-        for option in self.parser.option_list:
-            if option.dest:
-                print option.dest
-            else:
-                x = option._long_opts[0]
-                if x.startswith('--'):
-                    x = x[2:]
-                print x
-        sys.exit(0)
-
-    def _option_names(self, names):
-        '''Turn setting names into option names.
-        
-        Names with a single letter are short options, and get prefixed
-        with one dash. The rest get prefixed with two dashes.
-        
-        '''
-
-        return ['--%s' % name if len(name) > 1 else '-%s' % name
-                for name in names]
-
-    def _attr_name(self, name):
-        '''Turn setting name into attribute name.
-        
-        Dashes get turned into underscores.
-        
-        '''
-
-        return '_'.join(name.split('-'))
-
-    def _set_default_value(self, names, value):
-        '''Set default value for a setting with names in names.'''
-        self.parser.set_default(self._attr_name(names[0]), value)
-
     def add_string_setting(self, names, help, default=''):
         '''Add a setting with a string value.'''
-        self.parser.add_option(*self._option_names(names), 
-                               action='store', 
-                               help=help)
-        self._set_default_value(names, default)
+        self.settings.add_string_setting(names, help, default=default)
 
     def add_string_list_setting(self, names, help, default=None):
         '''Add a setting which have multiple string values.
@@ -147,11 +92,7 @@ class Application(object):
         on the command line, e.g., "--exclude=foo --exclude=bar".
         
         '''
-
-        self.parser.add_option(*self._option_names(names), 
-                               action='append', 
-                               help=help)
-        self._set_default_value(names, default or [])
+        self.settings.add_string_list_setting(names, help, default=default)
 
     def add_choice_setting(self, names, possibilities, help, default=None):
         '''Add a setting which chooses from list of acceptable values.
@@ -162,65 +103,12 @@ class Application(object):
         The default value is the first possibility.
         
         '''
-
-        self.parser.add_option(*self._option_names(names), 
-                               action='store', 
-                               type='choice',
-                               choices=possibilities,
-                               help=help)
-        self._set_default_value(names, possibilities[0])
+        self.settings.add_choice_setting(names, possibilities, help, 
+                                         default=default)
 
     def add_boolean_setting(self, names, help, default=False):
         '''Add a setting with a boolean value (defaults to false).'''
-        self.parser.add_option(*self._option_names(names), 
-                               action='store_true', 
-                               help=help)
-        self._set_default_value(names, default)
-
-    def add_callback_setting(self, names, help, callback, nargs=1, 
-                             default=None):
-        '''Add a setting processed by a callback. 
-        
-        The callback will receive nargs argument strings, and will return
-        the actual value of the setting.
-        
-        '''
-        
-        def callback_wrapper(option, opt_str, value, parser):
-            if type(value) == str:
-                value = (value,)
-            setattr(parser.values, option.dest, callback(*value))
-
-        self.parser.add_option(*self._option_names(names), 
-                               action='callback',
-                               callback=callback_wrapper,
-                               nargs=nargs,
-                               type='string',
-                               help=help)
-        self._set_default_value(names, default)
-
-    def _parse_human_size(self, size):
-        '''Parse a size using suffix into plain bytes.'''
-        
-        m = re.match(r'''(?P<number>\d+(\.\d+)?) \s* 
-                         (?P<unit>k|ki|m|mi|g|gi|t|ti)? b? \s*$''',
-                     size.lower(), flags=re.X)
-        if not m:
-            return 0
-        else:
-            number = float(m.group('number'))
-            unit = m.group('unit')
-            units = {
-                'k': 10**3,
-                'm': 10**6,
-                'g': 10**9,
-                't': 10**12,
-                'ki': 2**10,
-                'mi': 2**20,
-                'gi': 2**30,
-                'ti': 2**40,
-            }
-            return int(number * units.get(unit, 1))
+        self.settings.add_boolean_setting(names, help, default=default)
 
     def add_bytesize_setting(self, names, help, default=0):
         '''Add a setting with a size in bytes.
@@ -228,32 +116,14 @@ class Application(object):
         The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
         
         '''
-
-        self.add_callback_setting(names, help, self._parse_human_size,
-                                  default=default, nargs=1)
+        self.settings.add_bytesize_setting(names, help, default=default)
 
     def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
-
-        self.parser.add_option(*self._option_names(names), 
-                               action='store',
-                               type='long',
-                               help=help)
-        self._set_default_value(names, default)
-
-    def get_setting(self, name):
-        '''Return value of setting with a given name.
-        
-        Note that you may only call this method after the command line
-        has been parsed.
-        
-        '''
-
-        option = self.parser.get_option(self._option_names([name])[0])
-        return getattr(self.options, option.dest)
+        self.settings.add_integer_setting(names, help, default=default)
 
     def __getitem__(self, setting_name):
-        return self.get_setting(setting_name)
+        return self.settings[setting_name]
         
     def add_settings(self):
         '''Add application specific settings.'''
@@ -266,7 +136,7 @@ class Application(object):
 
         if self.progname is None and sysargv:
             self.progname = sysargv[0]
-            self.parser.prog = self.progname
+            self.settings.parser.prog = self.progname
         envname = '%s_PROFILE' % self._envname(self.progname)
         profname = os.environ.get(envname, '')
         if profname: # pragma: no cover
@@ -335,7 +205,8 @@ class Application(object):
         
         '''
 
-        self.options, args = self.parser.parse_args(args)
+        args = self.settings.parse_args(args)
+        self.options = self.settings.options
         return args
 
     def process_args(self, args):

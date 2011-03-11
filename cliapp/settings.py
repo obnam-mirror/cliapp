@@ -30,12 +30,12 @@ class Settings(object):
     
     '''
 
-    def __init__(self, version):
-        self._init_parser(version)
+    def __init__(self, progname, version):
+        self._init_parser(progname, version)
         
-    def _init_parser(self, version):
+    def _init_parser(self, progname, version):
         '''Initialize the option parser with default options and values.'''
-        self.parser = optparse.OptionParser(version=version)
+        self.parser = optparse.OptionParser(prog=progname, version=version)
         
         self.add_string_setting(['output'], 
                                 'write output to named file, '

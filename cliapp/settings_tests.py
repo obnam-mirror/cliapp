@@ -25,7 +25,7 @@ import cliapp
 class SettingsTests(unittest.TestCase):
 
     def setUp(self):
-        self.settings = cliapp.Settings('1.0')
+        self.settings = cliapp.Settings('appname', '1.0')
 
     def test_creates_option_parser(self):
         self.assert_(isinstance(self.settings.parser, optparse.OptionParser))
