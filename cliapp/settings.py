@@ -81,22 +81,6 @@ class Settings(object):
             self._aliases[alias] = names[0]
         self._nargs[names[0]] = nargs
 
-    def _get_setting(self, name):
-        name = self._aliases[name]
-        if self._cp.has_option('config', name):
-            value = self._cp.get('config', name)
-            return self._getters[name](value)
-        else:
-            return KeyError(name)
-
-    def _set_setting(self, name, value):
-        name = self._aliases[name]
-        if self._cp.has_option('config', name):
-            value = self._setters[name](value)
-            self._cp.set('config', name, value)
-        else:
-            raise KeyError(name)
-
     def add_string_setting(self, names, help, default=''):
         '''Add a setting with a string value.'''
         self._add_setting(names, help, default, str, str)
@@ -184,12 +168,22 @@ class Settings(object):
         '''Add an integer setting.'''
         self._add_setting(names, help, default, long, str)
 
-    def __getitem__(self, setting_name):
-        return self._get_setting(setting_name)
+    def __getitem__(self, name):
+        if name in self._aliases:
+            name = self._aliases[name]
+            value = self._cp.get('config', name)
+            return self._getters[name](value)
+        else:
+            return KeyError(name)
 
-    def __setitem__(self, setting_name, value):
-        return self._set_setting(setting_name, value)
-        
+    def __setitem__(self, name, value):
+        if name in self._aliases:
+            name = self._aliases[name]
+            value = self._setters[name](value)
+            self._cp.set('config', name, value)
+        else:
+            raise KeyError(name)
+
     def __contains__(self, name):
         return name in self._aliases
         
