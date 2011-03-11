@@ -70,7 +70,8 @@ class Application(object):
     
     '''
 
-    def __init__(self, version='0.0.0'):
+    def __init__(self, progname=None, version='0.0.0'):
+        self.progname = progname
         self.version = version
         self.fileno = 0
         self.global_lineno = 0

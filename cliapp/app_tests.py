@@ -36,9 +36,14 @@ class ApplicationTests(unittest.TestCase):
         self.assert_(self.app.parser.has_option('--output'))
         self.assert_(self.app.parser.has_option('--log'))
         self.assert_(self.app.parser.has_option('--log-level'))
+
+    def test_sets_progname(self):
+        app = cliapp.Application(progname='foo')
+        self.assertEqual(app.progname, 'foo')
         
-    def test_gets_version(self):
+    def test_sets_version(self):
         app = cliapp.Application(version='1.2.3')
+        self.assertEqual(app.version, '1.2.3')
         self.assertEqual(app.parser.get_version(), '1.2.3')
         
     def test_calls_add_settings_only_in_run(self):
