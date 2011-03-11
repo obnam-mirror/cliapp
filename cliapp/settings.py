@@ -32,6 +32,8 @@ class Settings(object):
 
     def __init__(self, progname, version):
         self._names = list()
+        self._progname = progname
+        self._version = version
         self._init_parser(progname, version)
         
     def _init_parser(self, progname, version):
@@ -52,6 +54,17 @@ class Settings(object):
         self.add_callback_setting(['dump-setting-names'],
                                   'write out all names of settings and quit',
                                   self._dump_setting_names, nargs=0)
+
+    @property
+    def version(self):
+        return self._version
+
+    def get_progname(self):
+        return self._progname
+    def set_progname(self, progname):
+        self._progname = progname
+        self.parser.prog = progname
+    progname = property(get_progname, set_progname)
 
     def _dump_setting_names(self): # pragma: no cover
         for option in self.parser.option_list:

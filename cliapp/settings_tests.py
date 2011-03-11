@@ -26,6 +26,18 @@ class SettingsTests(unittest.TestCase):
 
     def setUp(self):
         self.settings = cliapp.Settings('appname', '1.0')
+        
+    def test_has_progname(self):
+        self.assertEqual(self.settings.progname, 'appname')
+        
+    def test_sets_progname(self):
+        self.settings.progname = 'foo'
+        self.assertEqual(self.settings.progname, 'foo')
+        self.assertEqual(self.settings.parser.get_prog_name(), 'foo')
+        
+    def test_has_version(self):
+        self.assertEqual(self.settings.version, '1.0')
+        self.assertEqual(self.settings.parser.get_version(), '1.0')
 
     def test_creates_option_parser(self):
         self.assert_(isinstance(self.settings.parser, optparse.OptionParser))
