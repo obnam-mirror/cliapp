@@ -75,6 +75,7 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = lambda args: None
         self.app.run(args=[], sysargv=['foo'])
         self.assertEqual(self.app.progname, 'foo')
+        self.assertEqual(self.app.parser.get_prog_name(), 'foo')
     
     def test_run_calls_process_args(self):
         self.called = None
