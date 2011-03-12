@@ -111,6 +111,7 @@ class Application(object):
     def _run(self, args=None, stderr=sys.stderr):
         try:
             self.add_settings()
+            self.settings.load_configs()
             args = sys.argv[1:] if args is None else args
             args = self.parse_args(args)
             
