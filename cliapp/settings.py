@@ -273,7 +273,9 @@ class Settings(object):
         
         configs.append('/etc/%s.conf' % self.progname)
         configs += self.listconfs('/etc/%s' % self.progname)
-        
+        configs.append(os.path.expanduser('~/.%s.conf' % self.progname))
+        configs += self.listconfs(
+                        os.path.expanduser('~/.config/%s' % self.progname))
         
         return configs
 
