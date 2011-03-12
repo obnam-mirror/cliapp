@@ -191,3 +191,9 @@ class SettingsTests(unittest.TestCase):
         names = self.settings.listconfs('.', listdir=mock_listdir)
         self.assertEqual(names, ['./foo.conf'])
 
+    def test_listconfs_sorts_names_in_C_locale(self):
+        def mock_listdir(dirname):
+            return ['foo.conf', 'bar.conf']
+        names = self.settings.listconfs('.', listdir=mock_listdir)
+        self.assertEqual(names, ['./bar.conf', './foo.conf'])
+

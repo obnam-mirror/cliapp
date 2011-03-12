@@ -291,7 +291,10 @@ class Settings(object):
         
         if not os.path.isdir(dirname):
             return []
-        
+
+        basenames = listdir(dirname)
+        basenames.sort()        
         return [os.path.join(dirname, x)
-                for x in listdir(dirname)
+                for x in basenames
                 if x.endswith('.conf')]
+
