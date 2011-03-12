@@ -50,6 +50,8 @@ class Settings(object):
         self.progname = progname
         
         self._add_default_settings()
+        
+        self._config_files = None
 
     def _add_default_settings(self):
         self.add_string_setting(['output'], 
@@ -297,4 +299,15 @@ class Settings(object):
         return [os.path.join(dirname, x)
                 for x in basenames
                 if x.endswith('.conf')]
+
+    def get_config_files(self):
+        if self._config_files is None:
+            return self.default_config_files
+        else:
+            return self._config_files
+
+    def set_config_files(self, config_files):
+        self._config_files = config_files
+        
+    config_files = property(get_config_files, set_config_files)
 

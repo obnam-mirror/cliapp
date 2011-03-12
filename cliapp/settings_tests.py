@@ -197,3 +197,12 @@ class SettingsTests(unittest.TestCase):
         names = self.settings.listconfs('.', listdir=mock_listdir)
         self.assertEqual(names, ['./bar.conf', './foo.conf'])
 
+    def test_has_config_files_attribute(self):
+        self.assertEqual(self.settings.config_files,
+                         self.settings.default_config_files)
+
+    def test_has_config_files_list_can_be_changed(self):
+        self.settings.config_files += ['./foo']
+        self.assertEqual(self.settings.config_files,
+                         self.settings.default_config_files + ['./foo'])
+
