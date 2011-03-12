@@ -213,15 +213,24 @@ class Settings(object):
 
         p = optparse.OptionParser(prog=self.progname, version=self.version)
         
-        def dump(*args): # pragma: no cover
+        def dump_setting_names(*args): # pragma: no cover
             for name in self._cp.options('config'):
                 print self._cp.get('config', name)
             sys.exit(0)
         p.add_option('--dump-setting-names',
                      action='callback',
                      nargs=0,
-                     callback=dump,
+                     callback=dump_setting_names,
                      help='write out all names of settings and quit')
+
+        def dump_config(*args): # pragma: no cover
+            self._cp.write(sys.stdout)
+            sys.exit(0)
+        p.add_option('--dump-config',
+                     action='callback',
+                     nargs=0,
+                     callback=dump_config,
+                     help='write out the entire current configuration')
         
         for name in self._cp.options('config'):
             names = self._find_names(name)
