@@ -2,6 +2,20 @@ NEWS for cliapp
 ===============
 
 
+Version 0.7, released 2011-03-12
+--------------------------------
+
+* Add configuration file support.
+* API change: all settings are now in a class of their own, and are accessed
+  via `app.settings`, e.g., `app.settings['output']`. See the `cliapp.Settings`
+  class. This change breaks old code, sorry. But since I am still the only
+  user, nobody minds.
+* The callback setting type is now gone.
+* Application name can now be set via the Application class's initializer
+  (optional `progname` argument), or by assigning to 
+  `cliapp.Settings.progname`. If not set explicitly, it is set from
+  `sys.argv[0]`.
+
 Version 0.6, released 2011-02-19
 --------------------------------
 
