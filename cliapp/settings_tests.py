@@ -206,3 +206,23 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings.config_files,
                          self.settings.default_config_files + ['./foo'])
 
+    def test_loads_config_files(self):
+    
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+[config]
+foo = yeehaa
+''')
+    
+        self.settings.add_string_setting(['foo'], 'foo help')
+        self.settings.config_files = ['whatever.conf']
+        self.settings.load_configs(open=mock_open)
+        self.assertEqual(self.settings['foo'], 'yeehaa')
+
+    def test_load_configs_ignore_errors_opening_a_file(self):
+        
+        def mock_open(filename, mode=None):
+            raise IOError()
+            
+        self.assertEqual(self.settings.load_configs(open=mock_open), None)
+

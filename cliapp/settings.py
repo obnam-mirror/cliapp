@@ -311,3 +311,19 @@ class Settings(object):
         
     config_files = property(get_config_files, set_config_files)
 
+    def load_configs(self, open=open):
+        '''Load all config files in self.config_files.
+        
+        Silently ignore files that do not exist.
+        
+        '''
+
+        for pathname in self.config_files:
+            try:
+                f = open(pathname)
+            except IOError:
+                pass
+            else:
+                self._cp.readfp(f)
+                f.close()
+
