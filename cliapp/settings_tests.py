@@ -177,3 +177,17 @@ class SettingsTests(unittest.TestCase):
         self.settings.parse_args(args=['--foo=123'])
         self.assertEqual(self.settings['foo'], 123)
 
+    def test_has_list_of_default_config_files(self):
+        defaults = self.settings.default_config_files
+        self.assert_(isinstance(defaults, list))
+        self.assert_(len(defaults) > 0)
+
+    def test_listconfs_returns_empty_list_for_nonexistent_directory(self):
+        self.assertEqual(self.settings.listconfs('notexist'), [])
+
+    def test_listconfs_lists_config_files_only(self):
+        def mock_listdir(dirname):
+            return ['foo.conf', 'foo.notconf']
+        names = self.settings.listconfs('.', listdir=mock_listdir)
+        self.assertEqual(names, ['./foo.conf'])
+

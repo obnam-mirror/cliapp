@@ -16,6 +16,7 @@
 
 import ConfigParser
 import optparse
+import os
 import re
 import sys
 
@@ -257,3 +258,38 @@ class Settings(object):
         options, args = p.parse_args(args)
         return args
 
+    @property
+    def default_config_files(self):
+        '''Return list of default config files to read.
+        
+        The names of the files are dependent on the name of the program,
+        as set in the progname attribute.
+        
+        The files may or may not exist.
+        
+        '''
+        
+        configs = []
+        
+        configs.append('/etc/%s.conf' % self.progname)
+        configs += self.listconfs('/etc/%s' % self.progname)
+        
+        
+        return configs
+
+    def listconfs(self, dirname, listdir=os.listdir):
+        '''Return list of pathnames to config files in dirname.
+        
+        Config files are expectd to have names ending in '.conf'.
+        
+        If dirname does not exist or is not a directory, 
+        return empty list.
+        
+        '''
+        
+        if not os.path.isdir(dirname):
+            return []
+        
+        return [os.path.join(dirname, x)
+                for x in listdir(dirname)
+                if x.endswith('.conf')]
