@@ -29,7 +29,8 @@ class ExampleApp(cliapp.Application):
     '''A little fgrep-like tool.'''
     
     def add_settings(self):
-        self.add_string_list_setting(['pattern', 'e'], 'pattern to search for')
+        self.settings.add_string_list_setting(['pattern', 'e'], 
+                                      'pattern to search for')
 
     # We override process_inputs to be able to do something after the last
     # input line.
@@ -39,11 +40,13 @@ class ExampleApp(cliapp.Application):
         self.output.write('There were %s matches.\n' % self.matches)
 
     def process_input_line(self, name, line):
-        for pattern in self['pattern']:
+        for pattern in self.settings['pattern']:
             if pattern in line:
                 self.output.write('%s:%s: %s' % (name, self.lineno, line))
                 self.matches += 1
     
     
-ExampleApp(version='0.1.2').run()
+app = ExampleApp(version='0.1.2')
+app.settings.config_files = ['example.conf']
+app.run()
 
