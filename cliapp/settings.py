@@ -293,7 +293,7 @@ class Settings(object):
             return []
 
         basenames = listdir(dirname)
-        basenames.sort()        
+        basenames.sort(key=lambda s: [ord(c) for c in s])
         return [os.path.join(dirname, x)
                 for x in basenames
                 if x.endswith('.conf')]
