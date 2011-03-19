@@ -22,6 +22,10 @@ import unittest
 import cliapp
 
 
+def devnull(msg):
+    pass
+
+
 class AppExceptionTests(unittest.TestCase):
 
     def setUp(self):
@@ -203,24 +207,32 @@ class ApplicationTests(unittest.TestCase):
                           (2, 3, 1), 
                           (2, 4, 2)])
 
-    def test_run_prints_out_error_for_exception(self):
+    def test_run_prints_out_error_for_appexception(self):
+        def raise_error(args):
+            raise cliapp.AppException('xxx')
+        self.app.process_args = raise_error
+        f = StringIO.StringIO()
+        self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
+        self.assert_('xxx' in f.getvalue())
+
+    def test_run_prints_out_stack_trace_for_not_appexception(self):
         def raise_error(args):
             raise Exception('xxx')
         self.app.process_args = raise_error
         f = StringIO.StringIO()
-        self.assertRaises(SystemExit, self.app.run, [], stderr=f)
-        self.assert_('xxx' in f.getvalue())
+        self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
+        self.assert_('Traceback' in f.getvalue())
 
     def test_run_raises_systemexit_for_systemexit(self):
         def raise_error(args):
             raise SystemExit(123)
         self.app.process_args = raise_error
         f = StringIO.StringIO()
-        self.assertRaises(SystemExit, self.app.run, [], stderr=f)
+        self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
 
     def test_run_raises_systemexit_for_keyboardint(self):
         def raise_error(args):
             raise KeyboardInterrupt()
         self.app.process_args = raise_error
         f = StringIO.StringIO()
-        self.assertRaises(SystemExit, self.app.run, [], stderr=f)
+        self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)

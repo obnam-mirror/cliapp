@@ -91,11 +91,12 @@ class Application(object):
     def add_settings(self):
         '''Add application specific settings.'''
 
-    def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv):
+    def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv, 
+            log=logging.critical):
         '''Run the application.'''
         
         def run_it():
-            self._run(args=args, stderr=stderr)
+            self._run(args=args, stderr=stderr, log=log)
 
         if self.settings.progname is None and sysargv:
             self.settings.progname = sysargv[0]
@@ -119,7 +120,7 @@ class Application(object):
         
         return ''.join(x.upper() if x in ok else '_' for x in basename)
 
-    def _run(self, args=None, stderr=sys.stderr):
+    def _run(self, args=None, stderr=sys.stderr, log=logging.critical):
         try:
             self.add_settings()
             self.settings.load_configs()
@@ -135,7 +136,7 @@ class Application(object):
             
             self.process_args(args)
         except AppException, e:
-            logging.critical(traceback.format_exc())
+            log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
         except SystemExit, e:
@@ -143,7 +144,7 @@ class Application(object):
         except KeyboardInterrupt, e:
             sys.exit(255)
         except BaseException, e:
-            logging.critical(traceback.format_exc())
+            log(traceback.format_exc())
             stderr.write(traceback.format_exc())
             sys.exit(1)
         
