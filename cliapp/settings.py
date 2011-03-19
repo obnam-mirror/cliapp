@@ -202,7 +202,7 @@ class Settings(object):
                 for name in names]
 
     def _find_names(self, name):
-        return [name] + [x for x in self._aliases if self._aliases[x] == name]
+        return [x for x in self._aliases if self._aliases[x] == name]
 
     def parse_args(self, args, suppress_errors=False):
         '''Parse the command line.
