@@ -17,7 +17,7 @@
 import logging
 import os
 import sys
-
+import traceback
 
 import cliapp
 
@@ -127,7 +127,8 @@ class Application(object):
             sys.exit(e.code)
         except KeyboardInterrupt, e:
             sys.exit(255)
-        except Exception, e:
+        except BaseException, e:
+            logging.critical(traceback.format_exc())
             stderr.write('%s\n' % str(e))
             sys.exit(1)
         
@@ -135,7 +136,7 @@ class Application(object):
         '''Set up logging.'''
         
         if self.settings['log']:
-            level_name = self.settings['log_level']
+            level_name = self.settings['log-level']
             levels = {
                 'debug': logging.DEBUG,
                 'info': logging.INFO,
