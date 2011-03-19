@@ -22,6 +22,15 @@ import unittest
 import cliapp
 
 
+class AppExceptionTests(unittest.TestCase):
+
+    def setUp(self):
+        self.e = cliapp.AppException('foo')
+        
+    def test_error_message_contains_foo(self):
+        self.assert_('foo' in str(self.e))
+
+
 class ApplicationTests(unittest.TestCase):
 
     def setUp(self):

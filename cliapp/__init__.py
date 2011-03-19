@@ -18,5 +18,5 @@ version = '0.7'
 
 
 from settings import Settings
-from app import Application
+from app import Application, AppException
 

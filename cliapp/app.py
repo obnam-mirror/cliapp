@@ -22,6 +22,17 @@ import traceback
 import cliapp
 
 
+class AppException(Exception):
+
+    '''Base class for application specific exceptions.
+    
+    Any exceptions that are subclasses of this one get printed as
+    nice errors to the user. Any other exceptions cause a Python
+    stack trace to be written to stderr.
+    
+    '''
+
+
 class Application(object):
 
     '''A framework for Unix-like command line programs.
@@ -123,13 +134,17 @@ class Application(object):
                 self.output = sys.stdout
             
             self.process_args(args)
+        except AppException, e:
+            logging.critical(traceback.format_exc())
+            stderr.write('ERROR: %s\n' % str(e))
+            sys.exit(1)
         except SystemExit, e:
             sys.exit(e.code)
         except KeyboardInterrupt, e:
             sys.exit(255)
         except BaseException, e:
             logging.critical(traceback.format_exc())
-            stderr.write('%s\n' % str(e))
+            stderr.write(traceback.format_exc())
             sys.exit(1)
         
     def setup_logging(self): # pragma: no cover
