@@ -2,6 +2,16 @@ NEWS for cliapp
 ===============
 
 
+Version 0.8, released 2011-03-20
+--------------------------------
+
+* Bugfix: duplicate option names in --help output fixed.
+* Exception handling has been improved: stack traces are now logged, and
+  there's a `cliapp.AppException` base class for application exceptions,
+  which will cause an error message to be written out, but no stack trace.
+  All other exceptions cause a stack trace, so as to make it easier to debug
+  things.
+
 Version 0.7, released 2011-03-12
 --------------------------------
 
