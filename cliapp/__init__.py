@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version = '0.7'
+version = '0.8'
 
 
 from settings import Settings
