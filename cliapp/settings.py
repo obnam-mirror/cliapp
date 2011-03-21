@@ -21,121 +21,83 @@ import re
 import sys
 
 
-class Settings(object):
+class Setting(object):
 
-    '''Settings for a cliapp application.
+    action = 'store'
+    type = 'string'
+    nargs = 1
+    choices = None
+
+    def __init__(self, names, default, help):
+        self.names = names
+        self.set_value(default)
+        self.help = help
+
+    def get_value(self):
+        return self._string_value
+        
+    def set_value(self, value):
+        self._string_value = value
+        
+    def call_get_value(self):
+        return self.get_value()
+        
+    def call_set_value(self, value):
+        self.set_value(value)
+
+    value = property(call_get_value, call_set_value)
+
+
+class StringSetting(Setting):
+
+    pass
+
+
+class StringListSetting(Setting):
+
+    action = 'append'
     
-    Settings are read from configuration files, and parsed from the
-    command line. Every setting has a name, and a type.
+    def get_value(self):
+        if self._string_value.strip():
+            return [s.strip() for s in self._string_value.split(',')]
+        else:
+            return []
+        
+    def set_value(self, strings):
+        self._string_value = ','.join(strings)
+
+
+class ChoiceSetting(Setting):
+
+    type = 'choice'
     
-    '''
+    def __init__(self, names, choices, help):
+        Setting.__init__(self, names, choices[0], help)
+        self.choices = choices
 
-    def __init__(self, progname, version):
-        # We store settings in a ConfigParser. Command line options will
-        # be put into the ConfigParser. Settings can have aliases,
-        # we store those in self._aliases, indexed by the canonical name.
-        # Further, converters for value types are stored in self._getters
-        # and self._setters, indexed by canonical name.
-        self._cp = ConfigParser.ConfigParser()
-        self._cp.add_section('config')
-        self._aliases = dict()
-        self._getters = dict()
-        self._setters = dict()
-        self._accumulators = set()
-        self._helps = dict()
-        self._nargs = dict()
-        self._choices = dict()
+    
+class BooleanSetting(Setting):
 
-        self.version = version
-        self.progname = progname
+    action = 'store_true'
+    nargs = None
+    type = None
+
+    _trues = ['yes', 'on', '1', 'true']
+    _false = 'no'
+
+    def get_value(self):
+        return self._string_value.lower() in self._trues
         
-        self._add_default_settings()
-        
-        self._config_files = None
+    def set_value(self, value):
+        if value:
+            self._string_value = self._trues[0]
+        else:
+            self._string_value = self._false
 
-    def _add_default_settings(self):
-        self.add_string_setting(['output'], 
-                                'write output to named file, '
-                                    'instead of standard output')
 
-        self.add_string_setting(['log'], 'write log entries to file')
-        self.add_string_setting(['log-level'], 
-                                'log at given level, one of '
-                                    'debug, info, warning, error, critical, '
-                                    'fatal (default: %default)',
-                                default='info')
+class ByteSizeSetting(Setting):
 
-    def _add_setting(self, names, help, default, getter, setter, nargs=1,
-                     is_accumulator=False):
-        '''Add a setting to self._cp.
-        
-        getter and setter convert the value when read from or written to
-        self._cp.
-        
-        '''
-
-        self._cp.set('config', names[0], setter(default))
-        self._helps[names[0]] = help
-        self._getters[names[0]] = getter
-        self._setters[names[0]] = setter
-        if is_accumulator:
-            self._accumulators.add(names[0])
-        for alias in names:
-            self._aliases[alias] = names[0]
-        self._nargs[names[0]] = nargs
-
-    def add_string_setting(self, names, help, default=''):
-        '''Add a setting with a string value.'''
-        self._add_setting(names, help, default, str, str)
-
-    def add_string_list_setting(self, names, help, default=None):
-        '''Add a setting which have multiple string values.
-        
-        An example would be an option that can be given multiple times
-        on the command line, e.g., "--exclude=foo --exclude=bar".
-        
-        '''
-
-        def get_stringlist(encoded):
-            if encoded:
-                return encoded.split(',')
-            else:
-                return []
-            
-        def set_stringlist(strings):
-            return ','.join(strings)
-
-        self._add_setting(names, help, default or [], 
-                          get_stringlist, set_stringlist, is_accumulator=True)
-
-    def add_choice_setting(self, names, possibilities, help):
-        '''Add a setting which chooses from list of acceptable values.
-        
-        An example would be an option to set debugging level to be
-        one of a set of accepted names: debug, info, warning, etc.
-        
-        The default value is the first possibility.
-        
-        '''
-
-        self._add_setting(names, help, possibilities[0], str, str)
-        self._choices[names[0]] = possibilities
-
-    def add_boolean_setting(self, names, help, default=False):
-        '''Add a setting with a boolean value (defaults to false).'''
-        
-        def get_boolean(encoded):
-            return encoded.lower() not in ['0', 'false', 'no', 'off']
-        def set_boolean(boolean):
-            if boolean:
-                return 'yes'
-            else:
-                return 'no'
-
-        self._add_setting(names, help, default, get_boolean, set_boolean, 
-                          nargs=0)
-
-    def _parse_human_size(self, size):
+    def parse_human_size(self, size):
         '''Parse a size using suffix into plain bytes.'''
         
         m = re.match(r'''(?P<number>\d+(\.\d+)?) \s* 
@@ -156,7 +118,101 @@ class Settings(object):
                 'gi': 2**30,
                 'ti': 2**40,
             }
-            return int(number * units.get(unit, 1))
+            return long(number * units.get(unit, 1))
+
+    def get_value(self):
+        return long(self._string_value)
+        
+    def set_value(self, value):
+        if type(value) == str:
+            value = self.parse_human_size(value)
+        self._string_value = str(value)
+
+
+class IntegerSetting(Setting):
+
+    type = 'int'
+
+    def get_value(self):
+        return long(self._string_value)
+        
+    def set_value(self, value):
+        self._string_value = str(value)
+
+
+class Settings(object):
+
+    '''Settings for a cliapp application.
+    
+    Settings are read from configuration files, and parsed from the
+    command line. Every setting has a name, and a type.
+    
+    '''
+
+    def __init__(self, progname, version):
+        self._settingses = dict()
+        self._canonical_names = list()
+
+        self.version = version
+        self.progname = progname
+        
+        self._add_default_settings()
+        
+        self._config_files = None
+
+    def _add_default_settings(self):
+        self.add_string_setting(['output'], 
+                                'write output to named file, '
+                                    'instead of standard output')
+
+        self.add_string_setting(['log'], 'write log entries to file')
+        self.add_string_setting(['log-level'], 
+                                'log at given level, one of '
+                                    'debug, info, warning, error, critical, '
+                                    'fatal (default: %default)',
+                                default='info')
+
+    def _add_setting(self, setting):
+        '''Add a setting to self._cp.
+        
+        getter and setter convert the value when read from or written to
+        self._cp.
+        
+        '''
+
+        self._canonical_names.append(setting.names[0])
+        for name in setting.names:
+            self._settingses[name] = setting
+
+    def add_string_setting(self, names, help, default=''):
+        '''Add a setting with a string value.'''
+        self._add_setting(StringSetting(names, default, help))
+
+    def add_string_list_setting(self, names, help, default=None):
+        '''Add a setting which have multiple string values.
+        
+        An example would be an option that can be given multiple times
+        on the command line, e.g., "--exclude=foo --exclude=bar".
+        
+        '''
+
+        self._add_setting(StringListSetting(names, default or [], help))
+
+    def add_choice_setting(self, names, possibilities, help):
+        '''Add a setting which chooses from list of acceptable values.
+        
+        An example would be an option to set debugging level to be
+        one of a set of accepted names: debug, info, warning, etc.
+        
+        The default value is the first possibility.
+        
+        '''
+
+        self._add_setting(ChoiceSetting(names, possibilities, help))
+
+    def add_boolean_setting(self, names, help, default=False):
+        '''Add a setting with a boolean value (defaults to false).'''
+        self._add_setting(BooleanSetting(names, default, help))
 
     def add_bytesize_setting(self, names, help, default=0):
         '''Add a setting with a size in bytes.
@@ -164,31 +220,21 @@ class Settings(object):
         The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
         
         '''
-
-        self._add_setting(names, help, default, self._parse_human_size, str)
+        
+        self._add_setting(ByteSizeSetting(names, default, help))
 
     def add_integer_setting(self, names, help, default=None):
         '''Add an integer setting.'''
-        self._add_setting(names, help, default, long, str)
+        self._add_setting(IntegerSetting(names, default, help))
 
     def __getitem__(self, name):
-        if name in self._aliases:
-            name = self._aliases[name]
-            value = self._cp.get('config', name)
-            return self._getters[name](value)
-        else:
-            raise KeyError(name)
+        return self._settingses[name].value
 
     def __setitem__(self, name, value):
-        if name in self._aliases:
-            name = self._aliases[name]
-            value = self._setters[name](value)
-            self._cp.set('config', name, value)
-        else:
-            raise KeyError(name)
+        self._settingses[name].value = value
 
     def __contains__(self, name):
-        return name in self._aliases
+        return name in self._settingses
         
     def _option_names(self, names):
         '''Turn setting names into option names.
@@ -201,8 +247,9 @@ class Settings(object):
         return ['--%s' % name if len(name) > 1 else '-%s' % name
                 for name in names]
 
-    def _find_names(self, name):
-        return [x for x in self._aliases if self._aliases[x] == name]
+    def _destname(self, name):
+        name = '_'.join(name.split('-'))
+        return name
 
     def parse_args(self, args, suppress_errors=False):
         '''Parse the command line.
@@ -214,9 +261,10 @@ class Settings(object):
         p = optparse.OptionParser(prog=self.progname, version=self.version)
         
         def dump_setting_names(*args): # pragma: no cover
-            for name in self._cp.options('config'):
-                print self._cp.get('config', name)
+            for name in self._canonical_names:
+                sys.stdout.write('%s\n' % name)
             sys.exit(0)
+
         p.add_option('--dump-setting-names',
                      action='callback',
                      nargs=0,
@@ -224,49 +272,40 @@ class Settings(object):
                      help='write out all names of settings and quit')
 
         def dump_config(*args): # pragma: no cover
-            self._cp.write(sys.stdout)
+            cp = ConfigParser.ConfigParser()
+            cp.add_section('config')
+            for name in self._canonical_names:
+                cp.set('config', name, self[name])
+            cp.write(sys.stdout)
             sys.exit(0)
+
         p.add_option('--dump-config',
                      action='callback',
                      nargs=0,
                      callback=dump_config,
                      help='write out the entire current configuration')
         
-        for name in self._cp.options('config'):
-            names = self._find_names(name)
-            option_names = self._option_names(names)
-
-            # Create a new function for callback handling.
-            # We create a new function for each option. We need nested
-            # functions to handle the 'name' variable correctly.
-            def callback(name):
-                def cb(option, opt_str, value, parser):
-                    if name in self._choices:
-                        choices = [x.lower() for x in self._choices[name]]
-                        if value.lower() not in choices:
-                            msg = ('Bad value %s for setting %s' % 
-                                   (value, opt_str))
-                            raise optparse.OptionValueError(msg)
-                    if name in self._accumulators:
-                        old = self[name]
-                        value = old + [value]
-                    elif self._nargs[name] == 0:
-                        value = True
-                    self[name] = value
-                return cb
-
+        for name in self._canonical_names:
+            s = self._settingses[name]
+            option_names = self._option_names(s.names)
             p.add_option(*option_names,
-                         action='callback',
-                         callback=callback(name),
-                         nargs=self._nargs[name],
-                         type='string',
-                         help=self._helps[name])
-            p.set_default(option_names[0], self[names[0]])
+                         action=s.action,
+                         type=s.type,
+                         nargs=s.nargs,
+                         choices=s.choices,
+                         help=s.help)
+            p.set_defaults(**{self._destname(name): s.value})
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
 
         options, args = p.parse_args(args)
+        
+        for name in self._canonical_names:
+            s = self._settingses[name]
+            value = getattr(options, self._destname(name))
+            s.value = value
+        
         return args
 
     @property
@@ -327,12 +366,18 @@ class Settings(object):
         
         '''
 
+        cp = ConfigParser.ConfigParser()
+        cp.add_section('config')
+
         for pathname in self.config_files:
             try:
                 f = open(pathname)
             except IOError:
                 pass
             else:
-                self._cp.readfp(f)
+                cp.readfp(f)
                 f.close()
+
+        for name in cp.options('config'):
+            self._settingses[name].value = cp.get('config', name)
 
