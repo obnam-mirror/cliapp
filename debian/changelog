@@ -1,3 +1,9 @@
+python-cliapp (0.9) squeeze; urgency=low
+
+  * New upstream version.
+
+ -- Lars Wirzenius <liw@liw.fi>  Mon, 21 Mar 2011 20:54:19 +0000
+
 python-cliapp (0.8) squeeze; urgency=low
 
   * New upstream version.

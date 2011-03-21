@@ -2,6 +2,11 @@ NEWS for cliapp
 ===============
 
 
+Version 0.9, released 2011-03-20
+--------------------------------
+
+* Bugfix: Boolean options now work correctly, even in --help output.
+
 Version 0.8, released 2011-03-20
 --------------------------------
 
