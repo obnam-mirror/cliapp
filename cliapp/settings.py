@@ -228,7 +228,7 @@ class Settings(object):
         
         self._add_setting(ByteSizeSetting(names, default, help, **kwargs))
 
-    def add_integer_setting(self, names, help, default=None, **kwargs):
+    def add_integer_setting(self, names, help, default=0, **kwargs):
         '''Add an integer setting.'''
         self._add_setting(IntegerSetting(names, default, help, **kwargs))
 
