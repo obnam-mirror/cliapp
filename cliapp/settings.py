@@ -28,10 +28,11 @@ class Setting(object):
     nargs = 1
     choices = None
 
-    def __init__(self, names, default, help):
+    def __init__(self, names, default, help, metavar=None):
         self.names = names
         self.set_value(default)
         self.help = help
+        self.metavar = metavar
 
     def get_value(self):
         return self._string_value
@@ -71,8 +72,8 @@ class ChoiceSetting(Setting):
 
     type = 'choice'
     
-    def __init__(self, names, choices, help):
-        Setting.__init__(self, names, choices[0], help)
+    def __init__(self, names, choices, help, metavar=None):
+        Setting.__init__(self, names, choices[0], help, metavar=metavar)
         self.choices = choices
 
     
@@ -162,15 +163,18 @@ class Settings(object):
 
     def _add_default_settings(self):
         self.add_string_setting(['output'], 
-                                'write output to named file, '
-                                    'instead of standard output')
+                                'write output to FILE, '
+                                    'instead of standard output',
+                                metavar='FILE')
 
-        self.add_string_setting(['log'], 'write log entries to file')
+        self.add_string_setting(['log'], 'write log entries to FILE',
+                                metavar='FILE')
         self.add_string_setting(['log-level'], 
                                 'log at given level, one of '
                                     'debug, info, warning, error, critical, '
                                     'fatal (default: %default)',
-                                default='info')
+                                default='info',
+                                metavar='LEVEL')
 
     def _add_setting(self, setting):
         '''Add a setting to self._cp.
@@ -184,11 +188,11 @@ class Settings(object):
         for name in setting.names:
             self._settingses[name] = setting
 
-    def add_string_setting(self, names, help, default=''):
+    def add_string_setting(self, names, help, default='', **kwargs):
         '''Add a setting with a string value.'''
-        self._add_setting(StringSetting(names, default, help))
+        self._add_setting(StringSetting(names, default, help, **kwargs))
 
-    def add_string_list_setting(self, names, help, default=None):
+    def add_string_list_setting(self, names, help, default=None, **kwargs):
         '''Add a setting which have multiple string values.
         
         An example would be an option that can be given multiple times
@@ -196,9 +200,10 @@ class Settings(object):
         
         '''
 
-        self._add_setting(StringListSetting(names, default or [], help))
+        self._add_setting(StringListSetting(names, default or [], help,
+                                            **kwargs))
 
-    def add_choice_setting(self, names, possibilities, help):
+    def add_choice_setting(self, names, possibilities, help, **kwargs):
         '''Add a setting which chooses from list of acceptable values.
         
         An example would be an option to set debugging level to be
@@ -208,24 +213,24 @@ class Settings(object):
         
         '''
 
-        self._add_setting(ChoiceSetting(names, possibilities, help))
+        self._add_setting(ChoiceSetting(names, possibilities, help, **kwargs))
 
-    def add_boolean_setting(self, names, help, default=False):
+    def add_boolean_setting(self, names, help, default=False, **kwargs):
         '''Add a setting with a boolean value (defaults to false).'''
-        self._add_setting(BooleanSetting(names, default, help))
+        self._add_setting(BooleanSetting(names, default, help, **kwargs))
 
-    def add_bytesize_setting(self, names, help, default=0):
+    def add_bytesize_setting(self, names, help, default=0, **kwargs):
         '''Add a setting with a size in bytes.
         
         The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
         
         '''
         
-        self._add_setting(ByteSizeSetting(names, default, help))
+        self._add_setting(ByteSizeSetting(names, default, help, **kwargs))
 
-    def add_integer_setting(self, names, help, default=None):
+    def add_integer_setting(self, names, help, default=None, **kwargs):
         '''Add an integer setting.'''
-        self._add_setting(IntegerSetting(names, default, help))
+        self._add_setting(IntegerSetting(names, default, help, **kwargs))
 
     def __getitem__(self, name):
         return self._settingses[name].value
@@ -293,7 +298,8 @@ class Settings(object):
                          type=s.type,
                          nargs=s.nargs,
                          choices=s.choices,
-                         help=s.help)
+                         help=s.help,
+                         metavar=s.metavar)
             p.set_defaults(**{self._destname(name): s.value})
 
         if suppress_errors:

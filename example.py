@@ -30,7 +30,8 @@ class ExampleApp(cliapp.Application):
     
     def add_settings(self):
         self.settings.add_string_list_setting(['pattern', 'e'], 
-                                      'pattern to search for')
+                                      'search for regular expression PATTERN',
+                                      metavar='REGEXP')
 
     # We override process_inputs to be able to do something after the last
     # input line.
