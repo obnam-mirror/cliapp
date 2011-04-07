@@ -1,8 +1,15 @@
 NEWS for cliapp
 ===============
 
+Version 0.10, released 2011-03-21
+--------------------------------
 
-Version 0.9, released 2011-03-20
+* The `metavar` argument for `optparse.OptionParser` can now be set for
+  settings. This makes for prettier `--help` output.
+* The default value for integer settings is now 0, not `None`.
+* [[README]] now has some more documentation of how to use the framework.
+
+Version 0.9, released 2011-03-21
 --------------------------------
 
 * Bugfix: Boolean options now work correctly, even in --help output.
