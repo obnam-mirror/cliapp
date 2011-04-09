@@ -20,3 +20,4 @@ version = '0.10'
 from settings import Settings
 from app import Application, AppException
 
+__all__ = locals()
