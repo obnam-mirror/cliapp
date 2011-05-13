@@ -151,19 +151,19 @@ class Application(object):
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
         
-        if self.settings['log']:
-            level_name = self.settings['log-level']
-            levels = {
-                'debug': logging.DEBUG,
-                'info': logging.INFO,
-                'warning': logging.WARNING,
-                'error': logging.ERROR,
-                'critical': logging.CRITICAL,
-                'fatal': logging.FATAL,
-            }
-            level = levels.get(level_name, logging.INFO)
-            
-            logging.basicConfig(filename=self.settings['log'], level=level)
+        level_name = self.settings['log-level']
+        levels = {
+            'debug': logging.DEBUG,
+            'info': logging.INFO,
+            'warning': logging.WARNING,
+            'error': logging.ERROR,
+            'critical': logging.CRITICAL,
+            'fatal': logging.FATAL,
+        }
+        level = levels.get(level_name, logging.INFO)
+
+        logfile = self.settings['log'] or '/dev/null'
+        logging.basicConfig(filename=logfile, level=level)
 
     def parse_args(self, args):
         '''Parse the command line.
