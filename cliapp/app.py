@@ -163,7 +163,9 @@ class Application(object):
         level = levels.get(level_name, logging.INFO)
 
         logfile = self.settings['log'] or '/dev/null'
-        logging.basicConfig(filename=logfile, level=level)
+        logging.basicConfig(filename=logfile, level=level,
+                            format='%(asctime)s %(levelname)s %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S')
 
     def parse_args(self, args):
         '''Parse the command line.

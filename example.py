@@ -22,6 +22,7 @@ This implements an fgrep-like utility.
 
 
 import cliapp
+import logging
 
 
 class ExampleApp(cliapp.Application):
@@ -45,6 +46,7 @@ class ExampleApp(cliapp.Application):
             if pattern in line:
                 self.output.write('%s:%s: %s' % (name, self.lineno, line))
                 self.matches += 1
+                logging.debug('Match: %s line %d' % (name, self.lineno))
     
     
 app = ExampleApp(version='0.1.2')
