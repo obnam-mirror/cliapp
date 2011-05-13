@@ -177,12 +177,7 @@ class Settings(object):
                                 metavar='LEVEL')
 
     def _add_setting(self, setting):
-        '''Add a setting to self._cp.
-        
-        getter and setter convert the value when read from or written to
-        self._cp.
-        
-        '''
+        '''Add a setting to self._cp.'''
 
         self._canonical_names.append(setting.names[0])
         for name in setting.names:
