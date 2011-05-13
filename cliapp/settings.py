@@ -183,11 +183,12 @@ class Settings(object):
         for name in setting.names:
             self._settingses[name] = setting
 
-    def add_string_setting(self, names, help, default='', **kwargs):
+    def string(self, names, help, default='', **kwargs):
         '''Add a setting with a string value.'''
         self._add_setting(StringSetting(names, default, help, **kwargs))
+    add_string_setting = string
 
-    def add_string_list_setting(self, names, help, default=None, **kwargs):
+    def string_list(self, names, help, default=None, **kwargs):
         '''Add a setting which have multiple string values.
         
         An example would be an option that can be given multiple times
@@ -197,8 +198,9 @@ class Settings(object):
 
         self._add_setting(StringListSetting(names, default or [], help,
                                             **kwargs))
+    add_string_list_setting = string_list
 
-    def add_choice_setting(self, names, possibilities, help, **kwargs):
+    def choice(self, names, possibilities, help, **kwargs):
         '''Add a setting which chooses from list of acceptable values.
         
         An example would be an option to set debugging level to be
@@ -209,12 +211,14 @@ class Settings(object):
         '''
 
         self._add_setting(ChoiceSetting(names, possibilities, help, **kwargs))
+    add_choice_setting = choice
 
-    def add_boolean_setting(self, names, help, default=False, **kwargs):
+    def boolean(self, names, help, default=False, **kwargs):
         '''Add a setting with a boolean value (defaults to false).'''
         self._add_setting(BooleanSetting(names, default, help, **kwargs))
+    add_boolean_setting = boolean
 
-    def add_bytesize_setting(self, names, help, default=0, **kwargs):
+    def bytesize(self, names, help, default=0, **kwargs):
         '''Add a setting with a size in bytes.
         
         The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
@@ -222,10 +226,12 @@ class Settings(object):
         '''
         
         self._add_setting(ByteSizeSetting(names, default, help, **kwargs))
+    add_bytesize_setting = bytesize
 
-    def add_integer_setting(self, names, help, default=0, **kwargs):
+    def integer(self, names, help, default=0, **kwargs):
         '''Add an integer setting.'''
         self._add_setting(IntegerSetting(names, default, help, **kwargs))
+    add_integer_setting = integer
 
     def __getitem__(self, name):
         return self._settingses[name].value
