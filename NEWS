@@ -1,6 +1,18 @@
 NEWS for cliapp
 ===============
 
+Version 0.11, released 2011-03-21
+---------------------------------
+
+* `pydoc cliapp` now works more usefully, and includes documentation for
+  the various classes exported, not just a list of packages.
+* Bugfix: if user specifies no log file, logging no longer happens to
+  the standard output. This prevents exceptions from being reported twice.
+* Log format now includes timestamps.
+* New settings can now be added using shorter method names:
+  `self.settings.string` rather than `self.settins.add_string_setting`.
+  The old method names continue to work.
+
 Version 0.10, released 2011-03-21
 --------------------------------
 
