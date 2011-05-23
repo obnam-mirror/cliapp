@@ -20,6 +20,7 @@ import os
 import re
 import sys
 
+import cliapp
 
 class Setting(object):
 
@@ -290,6 +291,14 @@ class Settings(object):
                      nargs=0,
                      callback=dump_config,
                      help='write out the entire current configuration')
+
+        p.add_option('--generate-manpage',
+                     action='callback',
+                     nargs=1,
+                     type='string',
+                     callback=self.generate_manpage,
+                     help='fill in manual page TEMPLATE',
+                     metavar='TEMPLATE')
         
         for name in self._canonical_names:
             s = self._settingses[name]
@@ -388,3 +397,8 @@ class Settings(object):
         for name in cp.options('config'):
             self._settingses[name].value = cp.get('config', name)
 
+    def generate_manpage(self, o, os, value, p): # pragma: no cover
+        template = open(value).read()
+        generator = genman.ManpageGenerator(template, p)
+        sys.stdout.write(generator.format_template())
+        sys.exit(0)
