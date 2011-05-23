@@ -20,6 +20,7 @@ import os
 import re
 import sys
 
+import genman
 
 class Setting(object):
 
@@ -396,8 +397,9 @@ class Settings(object):
         for name in cp.options('config'):
             self._settingses[name].value = cp.get('config', name)
 
-    def generate_manpage(self, *args, **kwargs): # pragma: no cover
-        print 'args:', args
-        print 'kwargs:', kwargs
+    def generate_manpage(self, o, os, value, p): # pragma: no cover
+        generator = genman.ManpageGenerator(value, p)
+        for option in generator.options:
+            print generator.format_option(option),
         sys.exit(0)
 
