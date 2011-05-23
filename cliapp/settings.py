@@ -20,7 +20,7 @@ import os
 import re
 import sys
 
-import genman
+import cliapp
 
 class Setting(object):
 
