@@ -399,6 +399,7 @@ class Settings(object):
 
     def generate_manpage(self, o, os, value, p): # pragma: no cover
         generator = genman.ManpageGenerator(value, p)
+        print generator.format_synopsis(),
         for option in generator.options:
             print generator.format_option(option),
         sys.exit(0)
