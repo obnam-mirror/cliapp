@@ -30,14 +30,25 @@ class ManpageGenerator(object):
         return sorted(self.parser.option_list,
                       key=lambda o: (o._long_opts + o._short_opts)[0])
                       
+    def format_template(self):
+        sections = (('SYNOPSIS', self.format_synopsis()),
+                    ('OPTIONS', self.format_options()))
+        text = self.template
+        for section, contents in sections:
+            pattern = '\n.SH %s\n' % section
+            text = text.replace(pattern, pattern + contents)
+        return text
+                      
     def format_synopsis(self):
         lines = []
+        lines += ['.nh']
         lines += ['.B %s' % self.esc_dashes(self.parser.prog)]
         
         for option in self.options:
             for spec in self.format_option_for_synopsis(option):
                 lines += ['.RB [ %s ]' % spec]
 
+        lines += ['.hy']
         return ''.join('%s\n' % line for line in lines)
                       
     def format_option_for_synopsis(self, option):
@@ -48,7 +59,11 @@ class ManpageGenerator(object):
         for name in option._short_opts + option._long_opts:
             yield '%s%s' % (self.esc_dashes(name), suffix)
 
-    def format_option(self, option):
+    def format_options(self):
+        return ''.join(self.format_option_for_options(option)
+                       for option in self.options)
+
+    def format_option_for_options(self, option):
         lines = []
         lines += ['.TP']
         shorts = [self.esc_dashes(x) for x in option._short_opts]
@@ -58,7 +73,7 @@ class ManpageGenerator(object):
         else:
             longs = ['%s' % self.esc_dashes(x)
                      for x in option._long_opts]
-        lines += ['.BP ' + ' ", " '.join(shorts + longs)]
+        lines += ['.BR ' + ' ", " '.join(shorts + longs)]
         lines += [self.esc_dots(self.expand_default(option).strip())]
         return ''.join('%s\n' % line for line in lines)
         

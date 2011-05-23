@@ -18,7 +18,7 @@
 example.py \- cliapp-based simplistic fgrep clone
 .SH SYNOPSIS
 .SH DESCRIPTION
-.B example.py'
+.B example.py
 is an example program for
 .BR cliapp ,
 a Python framework for command line utilities.
@@ -27,4 +27,3 @@ a Python framework for command line utilities.
 To find a pattern in a file:
 .IP
 python example.py --pattern=needle haystack.txt
-

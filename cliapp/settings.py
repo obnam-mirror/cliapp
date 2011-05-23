@@ -398,9 +398,7 @@ class Settings(object):
             self._settingses[name].value = cp.get('config', name)
 
     def generate_manpage(self, o, os, value, p): # pragma: no cover
-        generator = genman.ManpageGenerator(value, p)
-        print generator.format_synopsis(),
-        for option in generator.options:
-            print generator.format_option(option),
+        template = open(value).read()
+        generator = genman.ManpageGenerator(template, p)
+        sys.stdout.write(generator.format_template())
         sys.exit(0)
-
