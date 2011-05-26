@@ -194,11 +194,11 @@ class Application(object):
         if cmds:
             if not args:
                 raise SystemExit('must give subcommand')
-            cmd = self._normalize_cmd(args[0])
-            if cmd in cmds:
-                getattr(self, cmd)(args[1:])
+            method = self._normalize_cmd(args[0])
+            if method in cmds:
+                getattr(self, method)(args[1:])
             else:
-                raise SystemExit('unknown subcommand %s' % cmd)
+                raise SystemExit('unknown subcommand %s' % args[0])
         else:
             self.process_inputs(args)
 
