@@ -93,6 +93,10 @@ All options are global, not specific to the subcommand.
 All non-option arguments are passed to the method in its only
 argument.
 
+Subcommands are implemented by the `process_args` method.
+If you override that method, you need to support subcommands
+yourself (perhaps by calling the `cliapp` implementation).
+
 
 Manual pages
 ------------
