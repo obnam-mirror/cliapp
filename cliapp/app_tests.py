@@ -236,3 +236,36 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = raise_error
         f = StringIO.StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
+
+
+class DummySubcommandApp(cliapp.Application):
+
+    def cmd_help(self, args):
+        self.help_called = True
+        
+        
+class SubcommandTests(unittest.TestCase):
+
+    def setUp(self):
+        self.app = DummySubcommandApp()
+        self.trash = StringIO.StringIO()
+        
+    def test_lists_subcommands(self):
+        self.assertEqual(self.app._subcommands(), ['cmd_help'])
+
+    def test_normalizes_subcommand(self):
+        self.assertEqual(self.app._normalize_cmd('help'), 'cmd_help')
+        self.assertEqual(self.app._normalize_cmd('foo-bar'), 'cmd_foo_bar')
+        
+    def test_raises_error_for_no_subcommand(self):
+        self.assertRaises(SystemExit, self.app.run, [], 
+                          stderr=self.trash, log=devnull)
+        
+    def test_raises_error_for_unknown_subcommand(self):
+        self.assertRaises(SystemExit, self.app.run, ['what?'], 
+                          stderr=self.trash, log=devnull)
+
+    def test_calls_subcommand_method(self):
+        self.app.run(['help'], stderr=self.trash, log=devnull)
+        self.assert_(self.app.help_called)
+

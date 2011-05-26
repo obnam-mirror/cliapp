@@ -125,15 +125,15 @@ class Application(object):
             self.add_settings()
             self.settings.load_configs()
             args = sys.argv[1:] if args is None else args
-            args = self.parse_args(args)
             
+            args = self.parse_args(args)
             self.setup_logging()
             
             if self.settings['output']:
                 self.output = open(self.settings['output'], 'w')
             else:
                 self.output = sys.stdout
-            
+
             self.process_args(args)
         except AppException, e:
             log(traceback.format_exc())
@@ -147,7 +147,13 @@ class Application(object):
             log(traceback.format_exc())
             stderr.write(traceback.format_exc())
             sys.exit(1)
-        
+    
+    def _subcommands(self):
+        return [x for x in dir(self) if x.startswith('cmd_')]
+
+    def _normalize_cmd(self, cmd):
+        return 'cmd_%s' % cmd.replace('-', '_')
+
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
         
@@ -183,7 +189,18 @@ class Application(object):
         
         '''
         
-        self.process_inputs(args)
+            
+        cmds = self._subcommands()
+        if cmds:
+            if not args:
+                raise SystemExit('must give subcommand')
+            cmd = self._normalize_cmd(args[0])
+            if cmd in cmds:
+                getattr(self, cmd)(args[1:])
+            else:
+                raise SystemExit('unknown subcommand %s' % cmd)
+        else:
+            self.process_inputs(args)
 
     def process_inputs(self, args):
         '''Process all arguments as input filenames.
