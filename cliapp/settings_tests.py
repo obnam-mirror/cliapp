@@ -183,18 +183,18 @@ class SettingsTests(unittest.TestCase):
         self.assert_(len(defaults) > 0)
 
     def test_listconfs_returns_empty_list_for_nonexistent_directory(self):
-        self.assertEqual(self.settings.listconfs('notexist'), [])
+        self.assertEqual(self.settings._listconfs('notexist'), [])
 
     def test_listconfs_lists_config_files_only(self):
         def mock_listdir(dirname):
             return ['foo.conf', 'foo.notconf']
-        names = self.settings.listconfs('.', listdir=mock_listdir)
+        names = self.settings._listconfs('.', listdir=mock_listdir)
         self.assertEqual(names, ['./foo.conf'])
 
     def test_listconfs_sorts_names_in_C_locale(self):
         def mock_listdir(dirname):
             return ['foo.conf', 'bar.conf']
-        names = self.settings.listconfs('.', listdir=mock_listdir)
+        names = self.settings._listconfs('.', listdir=mock_listdir)
         self.assertEqual(names, ['./bar.conf', './foo.conf'])
 
     def test_has_config_files_attribute(self):
