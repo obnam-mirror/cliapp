@@ -3,3 +3,4 @@
 ./example2.py
 ./setup.py
 ./cliapp/genman.py
+./doc/conf.py
