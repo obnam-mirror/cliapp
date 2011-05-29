@@ -59,6 +59,9 @@ Example
                     logging.debug('Match: %s line %d' % (name, self.lineno))
 
 
+    if __name__ == '__main__':
+        ExampleApp().run()
+
 
 Walkthrough
 -----------
@@ -89,6 +92,12 @@ It can also run the rest of the code under the Python profiler,
 if the appropriate environment variable is set.
 
 
+Logging
+-------
+
+Logging support: by default, no log file is written, it must be
+requested explicitly by the user. The default log level is info.
+    
 Subcommands
 -----------
 
@@ -124,7 +133,7 @@ Manual pages
 ------------
 
 ``cliapp`` provides a way to fill in a manual page template, in
-**troff**(1) format, with information about all options. This
+**troff** format, with information about all options. This
 allows you to write the rest of the manual page without having
 to remember to update all options. This is a compromise between
 ease-of-development and manual page quality.
@@ -138,6 +147,16 @@ descriptions many times.
 To use this, use the ``--generate-manpage=TEMPLATE`` option,
 where ``TEMPLATE`` is the name of the template file. See
 ``example.1`` in the ``cliapp`` source tree for an example.
+
+
+Profiling support
+-----------------
+    
+If ``sys.argv[0]`` is ``foo``, and the environment
+variable ``FOO_PROFILE`` is set, then the execution of the 
+application (the ``run`` method) is profiled, using ``cProfile``, and
+the profile written to the file named in the environment variable.
+
 
 
 Reference manual
