@@ -151,12 +151,13 @@ class Settings(object):
     
     '''
 
-    def __init__(self, progname, version):
+    def __init__(self, progname, version, description=None):
         self._settingses = dict()
         self._canonical_names = list()
 
         self.version = version
         self.progname = progname
+        self.description = description
         
         self._add_default_settings()
         
@@ -265,7 +266,8 @@ class Settings(object):
         
         '''
 
-        p = optparse.OptionParser(prog=self.progname, version=self.version)
+        p = optparse.OptionParser(prog=self.progname, version=self.version,
+                                  description=self.description)
         
         def dump_setting_names(*args): # pragma: no cover
             for name in self._canonical_names:

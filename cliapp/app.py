@@ -82,11 +82,12 @@ class Application(object):
     
     '''
 
-    def __init__(self, progname=None, version='0.0.0'):
+    def __init__(self, progname=None, version='0.0.0', description=None):
         self.fileno = 0
         self.global_lineno = 0
         self.lineno = 0
-        self.settings = cliapp.Settings(progname, version)
+        self.settings = cliapp.Settings(progname, version, 
+                                        description=description)
         
     def add_settings(self):
         '''Add application specific settings.'''

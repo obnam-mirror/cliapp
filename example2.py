@@ -36,7 +36,10 @@ class ExampleApp(cliapp.Application):
             self.output.write('you suck, %s\n' % arg)
     
     
-app = ExampleApp(version='0.1.2')
+app = ExampleApp(version='0.1.2', description='''\
+Greet the user.
+Or possibly insult them. User's choice.
+''')
 app.settings.config_files = ['example.conf']
 app.run()
 
