@@ -142,6 +142,28 @@ class IntegerSetting(Setting):
         self._string_value = str(value)
 
 
+class FormatHelpParagraphs(optparse.IndentedHelpFormatter):
+
+    def _format_text(self, text): # pragma: no cover
+        '''Like the default, except handle paragraphs.'''
+        
+        def format_para(lines):
+            para = '\n'.join(lines)
+            return optparse.IndentedHelpFormatter._format_text(self,  para)
+        
+        paras = []
+        cur = []
+        for line in text.splitlines():
+            if line.strip():
+                cur.append(line)
+            elif cur:
+                paras.append(format_para(cur))
+                cur = []
+        if cur:
+            paras.append(format_para(cur))
+        return '\n\n'.join(paras)
+
+
 class Settings(object):
 
     '''Settings for a cliapp application.
@@ -151,12 +173,16 @@ class Settings(object):
     
     '''
 
-    def __init__(self, progname, version):
+    def __init__(self, progname, version, usage=None, description=None, 
+                 epilog=None):
         self._settingses = dict()
         self._canonical_names = list()
 
         self.version = version
         self.progname = progname
+        self.usage = usage
+        self.description = description
+        self.epilog = epilog
         
         self._add_default_settings()
         
@@ -265,7 +291,11 @@ class Settings(object):
         
         '''
 
-        p = optparse.OptionParser(prog=self.progname, version=self.version)
+        p = optparse.OptionParser(prog=self.progname, version=self.version,
+                                  formatter=FormatHelpParagraphs(),
+                                  usage=self.usage,
+                                  description=self.description,
+                                  epilog=self.epilog)
         
         def dump_setting_names(*args): # pragma: no cover
             for name in self._canonical_names:

@@ -82,11 +82,24 @@ class Application(object):
     
     '''
 
-    def __init__(self, progname=None, version='0.0.0'):
+    def __init__(self, progname=None, version='0.0.0', description=None,
+                 epilog=None):
         self.fileno = 0
         self.global_lineno = 0
         self.lineno = 0
-        self.settings = cliapp.Settings(progname, version)
+        
+        if self._subcommands():
+            usage = self._make_subcommand_usage()
+            if description is None:
+                description = ''
+            description += '\n\n' + self._make_subcommand_description()
+        else:
+            usage = None
+        
+        self.settings = cliapp.Settings(progname, version, 
+                                        usage=usage,
+                                        description=description,
+                                        epilog=epilog)
         
     def add_settings(self):
         '''Add application specific settings.'''
@@ -153,6 +166,27 @@ class Application(object):
 
     def _normalize_cmd(self, cmd):
         return 'cmd_%s' % cmd.replace('-', '_')
+
+    def _unnormalize_cmd(self, method):
+        assert method.startswith('cmd_')
+        return method[len('cmd_'):].replace('_', '-')
+
+    def _make_subcommand_usage(self):
+        lines = []
+        prefix = 'Usage:'
+        for method in self._subcommands():
+            cmd = self._unnormalize_cmd(method)
+            lines.append('%s %%prog [options] %s' % (prefix, cmd))
+            prefix = ' ' * len(prefix)
+        return '\n'.join(lines)
+
+    def _make_subcommand_description(self):
+        paras = []
+        for method in self._subcommands():
+            cmd = self._unnormalize_cmd(method)
+            doc = getattr(self, method).__doc__ or ''
+            paras.append('%s: %s' % (cmd, doc.strip()))
+        return '\n\n'.join(paras)
 
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''

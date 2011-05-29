@@ -28,15 +28,25 @@ import logging
 class ExampleApp(cliapp.Application):
 
     def cmd_greet(self, args):
+        '''Greet the user.'''
         for arg in args:
             self.output.write('greetings, %s\n' % arg)
             
     def cmd_insult(self, args):
+        '''Insult the user.'''
         for arg in args:
             self.output.write('you suck, %s\n' % arg)
     
     
-app = ExampleApp(version='0.1.2')
+app = ExampleApp(version='0.1.2', description='''
+Greet the user.
+Or possibly insult them. User's choice.
+''',
+epilog='''
+This is the epilog.
+
+I hope you like it.
+''')
 app.settings.config_files = ['example.conf']
 app.run()
 
