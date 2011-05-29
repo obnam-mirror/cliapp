@@ -1,4 +1,4 @@
-python-cliapp (0.12) squeeze; urgency=low
+python-cliapp (0.12-1) unstable; urgency=low
 
   * Upload for Debian. (Closes: #628017)
 
