@@ -1,4 +1,5 @@
 ./cliapp/__init__.py
 ./example.py
+./example2.py
 ./setup.py
 ./cliapp/genman.py

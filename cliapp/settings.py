@@ -144,7 +144,7 @@ class IntegerSetting(Setting):
 
 class FormatHelpParagraphs(optparse.IndentedHelpFormatter):
 
-    def _format_text(self, text):
+    def _format_text(self, text): # pragma: no cover
         '''Like the default, except handle paragraphs.'''
         
         def format_para(lines):
