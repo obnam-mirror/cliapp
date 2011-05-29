@@ -1,15 +1,6 @@
 Welcome to cliapp's documentation!
 ==================================
 
-Contents:
-
-
-.. toctree::
-   :maxdepth: 2
-   
-   cliapp
-
-
 ``cliapp`` is a Python framework for Unix-like command line programs,
 which typically have the following characteristics:
 
