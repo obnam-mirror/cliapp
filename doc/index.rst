@@ -10,6 +10,10 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   
+.. automodule:: cliapp
+   :members:
+   :undoc-members:
 
 Indices and tables
 ==================
