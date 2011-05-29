@@ -28,10 +28,12 @@ import logging
 class ExampleApp(cliapp.Application):
 
     def cmd_greet(self, args):
+        '''Greet the user.'''
         for arg in args:
             self.output.write('greetings, %s\n' % arg)
             
     def cmd_insult(self, args):
+        '''Insult the user.'''
         for arg in args:
             self.output.write('you suck, %s\n' % arg)
     

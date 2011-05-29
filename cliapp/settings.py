@@ -173,12 +173,14 @@ class Settings(object):
     
     '''
 
-    def __init__(self, progname, version, description=None, epilog=None):
+    def __init__(self, progname, version, usage=None, description=None, 
+                 epilog=None):
         self._settingses = dict()
         self._canonical_names = list()
 
         self.version = version
         self.progname = progname
+        self.usage = usage
         self.description = description
         self.epilog = epilog
         
@@ -291,6 +293,7 @@ class Settings(object):
 
         p = optparse.OptionParser(prog=self.progname, version=self.version,
                                   formatter=FormatHelpParagraphs(),
+                                  usage=self.usage,
                                   description=self.description,
                                   epilog=self.epilog)
         
