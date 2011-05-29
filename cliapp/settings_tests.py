@@ -178,33 +178,33 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings['foo'], 123)
 
     def test_has_list_of_default_config_files(self):
-        defaults = self.settings.default_config_files
+        defaults = self.settings._default_config_files
         self.assert_(isinstance(defaults, list))
         self.assert_(len(defaults) > 0)
 
     def test_listconfs_returns_empty_list_for_nonexistent_directory(self):
-        self.assertEqual(self.settings.listconfs('notexist'), [])
+        self.assertEqual(self.settings._listconfs('notexist'), [])
 
     def test_listconfs_lists_config_files_only(self):
         def mock_listdir(dirname):
             return ['foo.conf', 'foo.notconf']
-        names = self.settings.listconfs('.', listdir=mock_listdir)
+        names = self.settings._listconfs('.', listdir=mock_listdir)
         self.assertEqual(names, ['./foo.conf'])
 
     def test_listconfs_sorts_names_in_C_locale(self):
         def mock_listdir(dirname):
             return ['foo.conf', 'bar.conf']
-        names = self.settings.listconfs('.', listdir=mock_listdir)
+        names = self.settings._listconfs('.', listdir=mock_listdir)
         self.assertEqual(names, ['./bar.conf', './foo.conf'])
 
     def test_has_config_files_attribute(self):
         self.assertEqual(self.settings.config_files,
-                         self.settings.default_config_files)
+                         self.settings._default_config_files)
 
     def test_has_config_files_list_can_be_changed(self):
         self.settings.config_files += ['./foo']
         self.assertEqual(self.settings.config_files,
-                         self.settings.default_config_files + ['./foo'])
+                         self.settings._default_config_files + ['./foo'])
 
     def test_loads_config_files(self):
     

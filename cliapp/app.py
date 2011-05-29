@@ -37,48 +37,23 @@ class Application(object):
 
     '''A framework for Unix-like command line programs.
     
-    This is a Python framework for writing Unix command line utilities.
-    This base class contains logic to do the typical things
-    a command line program should do:
-
-    * parse command line options
-    * iterate over input files
-      - read from stdin if there are no named files
-      - also recognize '-' as a name for stdin
-    * write output to stdout
-      - or a file named with --output option
-
-    The user should subclass the base class for each application.
+    The user should subclass this base class for each application.
     The subclass does not need code for the mundane, boilerplate
     parts that are the same in every utility, and can concentrate on the 
     interesting part that is unique to it.
 
-    Many programs need to adjust some parts of this typical scenario.
-    For example, the non-option command line arguments might not be
-    filenames, but URLs. The framework allows the user to override
-    the necessary parts for this, but re-use all parts that do not need
-    to be changed.
-    
     To start the application, call the `run` method.
     
-    The framework defines some options: --help, --output, --log,
-    --log-level, perhaps others if this docstring has not been
-    updated properly. Run application with --help to see the list of
-    options.
+    The ``progname`` argument sets tne name of the program, which is
+    used for various purposes, such as determining the name of the
+    configuration file.
     
-    The application can define more options, which are called settings,
-    in preparation for configuration file support. See the
-    add_string_setting, add_string_list_setting, add_choice_setting,
-    add_integer_setting, and add_boolean_setting methods. Each setting
-    has a name and a mandatory help text, and can have a default value.
+    Similarly, ``version`` sets the version number of the program.
     
-    Logging support: by default, no log file is written, it must be
-    requested explicitly by the user. The default log level is info.
-    
-    Profiling support: if sys.argv[0] is 'foo', and the environment
-    variable 'FOO_PROFILE' is set, then the execution of the 
-    application (the 'run' method) is profiled, using cProfile, and
-    the profile written to the file named in the environment variable.
+    ``description`` and ``epilog`` are included in the output of
+    ``--help``. They are formatted to fit the screen. Unlike the
+    default behavior of ``optparse``, empty lines separate
+    paragraphs.
     
     '''
 
@@ -219,7 +194,9 @@ class Application(object):
     def process_args(self, args):
         '''Process command line non-option arguments.
         
-        The default is to call process_inputs with the argument list.
+        The default is to call process_inputs with the argument list,
+        or to invoke the requested subcommand, if subcommands have
+        been defined.
         
         '''
         
@@ -241,11 +218,11 @@ class Application(object):
         
         The default implementation calls process_input for each
         input filename. If no filenames were given, then 
-        process_input is called with '-' as the argument name.
+        process_input is called with ``-`` as the argument name.
         This implements the usual Unix command line practice of
         reading from stdin if no inputs are named.
         
-        The attributes fileno, global_lineno, and lineno are set,
+        The attributes ``fileno``, ``global_lineno``, and ``lineno`` are set,
         and count files and lines. The global line number is the
         line number as if all input files were one.
         
@@ -273,7 +250,11 @@ class Application(object):
             return open(name, mode)
 
     def process_input(self, name, stdin=sys.stdin):
-        '''Process a particular input file.'''
+        '''Process a particular input file.
+        
+        The ``stdin`` argument is meant for unit test only.
+        
+        '''
 
         self.fileno += 1
         self.lineno = 0

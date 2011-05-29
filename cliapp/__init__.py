@@ -14,11 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version = '0.11'
+__version__ = '0.12'
 
 
 from settings import Settings
 from app import Application, AppException
-from genman import ManpageGenerator
 
 __all__ = locals()

@@ -15,9 +15,11 @@
 
 
 all:
+	$(MAKE) -C doc html
 
 clean:
 	rm -rf cliapp/*.py[co] .coverage build
+	$(MAKE) -C doc clean
 
 check:
 	python -m CoverageTestRunner --ignore-missing-from=without-tests
