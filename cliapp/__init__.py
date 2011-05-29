@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-version = '0.11'
+__version__ = '0.11'
 
 
 from settings import Settings
