@@ -142,6 +142,28 @@ class IntegerSetting(Setting):
         self._string_value = str(value)
 
 
+class FormatHelpParagraphs(optparse.IndentedHelpFormatter):
+
+    def _format_text(self, text):
+        '''Like the default, except handle paragraphs.'''
+        
+        def format_para(lines):
+            para = '\n'.join(lines)
+            return optparse.IndentedHelpFormatter._format_text(self,  para)
+        
+        paras = []
+        cur = []
+        for line in text.splitlines():
+            if line.strip():
+                cur.append(line)
+            elif cur:
+                paras.append(format_para(cur))
+                cur = []
+        if cur:
+            paras.append(format_para(cur))
+        return '\n\n'.join(paras)
+
+
 class Settings(object):
 
     '''Settings for a cliapp application.
@@ -267,6 +289,7 @@ class Settings(object):
         '''
 
         p = optparse.OptionParser(prog=self.progname, version=self.version,
+                                  formatter=FormatHelpParagraphs(),
                                   description=self.description)
         
         def dump_setting_names(*args): # pragma: no cover
