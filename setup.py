@@ -20,7 +20,7 @@ from distutils.core import setup, Extension
 import cliapp
 
 setup(name='cliapp',
-      version=cliapp.version,
+      version=cliapp.__version__,
       description='Framework for Unix command line applications',
       author='Lars Wirzenius',
       author_email='liw@liw.fi',
