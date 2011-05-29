@@ -1,6 +1,14 @@
 NEWS for cliapp
 ===============
 
+Version 0.12, released 2011-05-29
+---------------------------------
+
+* The new option `--generate-manpage` allows one to fill in the OPTIONS
+  section of a manpage.
+* `cliapp` now supports **subcommands**, e.g., "git help".
+* API documentation is now formatted using Sphinx.
+
 Version 0.11, released 2011-03-21
 ---------------------------------
 
