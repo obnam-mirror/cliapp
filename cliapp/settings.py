@@ -21,6 +21,7 @@ import re
 import sys
 
 import cliapp
+from cliapp.genman import ManpageGenerator
 
 class Setting(object):
 
@@ -167,9 +168,39 @@ class FormatHelpParagraphs(optparse.IndentedHelpFormatter):
 class Settings(object):
 
     '''Settings for a cliapp application.
+
+    You probably don't need to create a settings object yourself,
+    since ``cliapp.Application`` does it for you.
     
     Settings are read from configuration files, and parsed from the
-    command line. Every setting has a name, and a type.
+    command line. Every setting has a type, name, and help text,
+    and may have a default value as well.
+    
+    For example::
+    
+        settings.boolean(['verbose', 'v'], 'show what is going on')
+        
+    This would create a new setting, ``verbose``, with a shorter alias
+    ``v``. On the command line, the options ``--verbose`` and
+    ``-v`` would work equally well. There can be any number of aliases. 
+
+    The help text is shown if the user uses ``--help`` or
+    ``--generate-manpage``.
+    You can use the ``metavar`` keyword argument to set the name shown
+    in the generated option lists; the default name is whatever
+    ``optparse`` decides (i.e., name of option).
+    
+    Use ``load_configs`` to read configuration files, and
+    ``parse_args`` to parse command line arguments.
+    
+    The current value of a setting can be accessed by indexing
+    the settings class::
+    
+        settings['verbose']
+
+    The list of configuration files for the appliation is stored
+    in ``config_files``. Add or remove from the list if you wish.
+    The files need to exist: those that don't are silently ignored.
     
     '''
 
@@ -241,7 +272,7 @@ class Settings(object):
     add_choice_setting = choice
 
     def boolean(self, names, help, default=False, **kwargs):
-        '''Add a setting with a boolean value (defaults to false).'''
+        '''Add a setting with a boolean value.'''
         self._add_setting(BooleanSetting(names, default, help, **kwargs))
     add_boolean_setting = boolean
 
@@ -287,7 +318,8 @@ class Settings(object):
     def parse_args(self, args, suppress_errors=False):
         '''Parse the command line.
         
-        Return list of non-option arguments.
+        Return list of non-option arguments. ``args`` would usually
+        be ``sys.argv[1:]``.
         
         '''
 
@@ -326,7 +358,7 @@ class Settings(object):
                      action='callback',
                      nargs=1,
                      type='string',
-                     callback=self.generate_manpage,
+                     callback=self._generate_manpage,
                      help='fill in manual page TEMPLATE',
                      metavar='TEMPLATE')
         
@@ -355,7 +387,7 @@ class Settings(object):
         return args
 
     @property
-    def default_config_files(self):
+    def _default_config_files(self):
         '''Return list of default config files to read.
         
         The names of the files are dependent on the name of the program,
@@ -368,14 +400,14 @@ class Settings(object):
         configs = []
         
         configs.append('/etc/%s.conf' % self.progname)
-        configs += self.listconfs('/etc/%s' % self.progname)
+        configs += self._listconfs('/etc/%s' % self.progname)
         configs.append(os.path.expanduser('~/.%s.conf' % self.progname))
-        configs += self.listconfs(
+        configs += self._listconfs(
                         os.path.expanduser('~/.config/%s' % self.progname))
         
         return configs
 
-    def listconfs(self, dirname, listdir=os.listdir):
+    def _listconfs(self, dirname, listdir=os.listdir):
         '''Return list of pathnames to config files in dirname.
         
         Config files are expectd to have names ending in '.conf'.
@@ -394,16 +426,16 @@ class Settings(object):
                 for x in basenames
                 if x.endswith('.conf')]
 
-    def get_config_files(self):
+    def _get_config_files(self):
         if self._config_files is None:
-            return self.default_config_files
+            return self._default_config_files
         else:
             return self._config_files
 
-    def set_config_files(self, config_files):
+    def _set_config_files(self, config_files):
         self._config_files = config_files
         
-    config_files = property(get_config_files, set_config_files)
+    config_files = property(_get_config_files, _set_config_files)
 
     def load_configs(self, open=open):
         '''Load all config files in self.config_files.
@@ -427,8 +459,8 @@ class Settings(object):
         for name in cp.options('config'):
             self._settingses[name].value = cp.get('config', name)
 
-    def generate_manpage(self, o, os, value, p): # pragma: no cover
+    def _generate_manpage(self, o, os, value, p): # pragma: no cover
         template = open(value).read()
-        generator = genman.ManpageGenerator(template, p)
+        generator = ManpageGenerator(template, p)
         sys.stdout.write(generator.format_template())
         sys.exit(0)

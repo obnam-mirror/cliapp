@@ -178,7 +178,7 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings['foo'], 123)
 
     def test_has_list_of_default_config_files(self):
-        defaults = self.settings.default_config_files
+        defaults = self.settings._default_config_files
         self.assert_(isinstance(defaults, list))
         self.assert_(len(defaults) > 0)
 
@@ -199,12 +199,12 @@ class SettingsTests(unittest.TestCase):
 
     def test_has_config_files_attribute(self):
         self.assertEqual(self.settings.config_files,
-                         self.settings.default_config_files)
+                         self.settings._default_config_files)
 
     def test_has_config_files_list_can_be_changed(self):
         self.settings.config_files += ['./foo']
         self.assertEqual(self.settings.config_files,
-                         self.settings.default_config_files + ['./foo'])
+                         self.settings._default_config_files + ['./foo'])
 
     def test_loads_config_files(self):
     

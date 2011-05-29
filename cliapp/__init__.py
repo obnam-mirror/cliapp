@@ -23,6 +23,5 @@ __version__ = '0.12'
 
 from settings import Settings
 from app import Application, AppException
-from genman import ManpageGenerator
 
 __all__ = locals()
