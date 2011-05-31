@@ -15,6 +15,7 @@
 
 
 import logging
+import logging.handlers
 import os
 import sys
 import traceback
@@ -178,13 +179,23 @@ class Application(object):
         level = levels.get(level_name, logging.INFO)
 
         if self.settings['log']:
-            logfile = self.settings['log']
+            handler = logging.handlers.RotatingFileHandler(
+                            self.settings['log'],
+                            maxBytes=self.settings['log-max'], 
+                            backupCount=self.settings['log-keep'],
+                            delay=False)
         else:
-            logfile = '/dev/null'
-            level = logging.FATAL # reduce amount of logging done
-        logging.basicConfig(filename=logfile, level=level,
-                            format='%(asctime)s %(levelname)s %(message)s',
-                            datefmt='%Y-%m-%d %H:%M:%S')
+            handler = logging.FileHandler('/dev/null')
+            # reduce amount of pointless I/O
+            level = logging.FATAL
+
+        fmt = '%(asctime)s %(levelname)s %(message)s'
+        datefmt = '%Y-%m-%d %H:%M:%S'
+        formatter = logging.Formatter(fmt, datefmt)
+
+        logger = logging.getLogger()
+        logger.addHandler(handler)
+        logger.setLevel(level)
 
     def parse_args(self, args):
         '''Parse the command line.
