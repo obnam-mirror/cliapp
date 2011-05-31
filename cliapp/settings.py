@@ -220,19 +220,22 @@ class Settings(object):
         self._config_files = None
 
     def _add_default_settings(self):
-        self.add_string_setting(['output'], 
-                                'write output to FILE, '
-                                    'instead of standard output',
-                                metavar='FILE')
+        self.string(['output'], 
+                    'write output to FILE, instead of standard output',
+                    metavar='FILE')
 
-        self.add_string_setting(['log'], 'write log entries to FILE',
-                                metavar='FILE')
-        self.add_string_setting(['log-level'], 
-                                'log at given level, one of '
-                                    'debug, info, warning, error, critical, '
-                                    'fatal (default: %default)',
-                                default='debug',
-                                metavar='LEVEL')
+        self.string(['log'], 'write log entries to FILE', metavar='FILE')
+        self.choice(['log-level'], 
+                    ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],
+                    'log at LEVEL, one of debug, info, warning, '
+                        'error, critical, fatal (default: %default)',
+                    metavar='LEVEL')
+        self.bytesize(['log-max'], 
+                      'rotate logs larger than SIZE, '
+                        'zero for never (default: %default)',
+                      metavar='SIZE', default=0)
+        self.integer(['log-keep'], 'keep last N logs (%default)',
+                     metavar='N', default=10)
 
     def _add_setting(self, setting):
         '''Add a setting to self._cp.'''
