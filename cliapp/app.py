@@ -177,7 +177,11 @@ class Application(object):
         }
         level = levels.get(level_name, logging.INFO)
 
-        logfile = self.settings['log'] or '/dev/null'
+        if self.settings['log']:
+            logfile = self.settings['log']
+        else:
+            logfile = '/dev/null'
+            level = logging.FATAL # reduce amount of logging done
         logging.basicConfig(filename=logfile, level=level,
                             format='%(asctime)s %(levelname)s %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S')

@@ -42,6 +42,7 @@ class ExampleApp(cliapp.Application):
         self.output.write('There were %s matches.\n' % self.matches)
 
     def process_input_line(self, name, line):
+        logging.debug('processing %s:%s' % (name, self.lineno))
         for pattern in self.settings['pattern']:
             if pattern in line:
                 self.output.write('%s:%s: %s' % (name, self.lineno, line))

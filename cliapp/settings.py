@@ -231,7 +231,7 @@ class Settings(object):
                                 'log at given level, one of '
                                     'debug, info, warning, error, critical, '
                                     'fatal (default: %default)',
-                                default='info',
+                                default='debug',
                                 metavar='LEVEL')
 
     def _add_setting(self, setting):
