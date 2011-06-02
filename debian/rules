@@ -6,6 +6,7 @@ override_dh_auto_install:
 	python setup.py install --prefix=debian/python-cliapp/usr
 	
 override_dh_auto_build:
-	setuppy-debian-versions-match
+	if command -v setuppy-debian-versions-match > /dev/null; then \
+		setuppy-debian-versions-match; fi
 	dh_auto_build $@ --with-buildsystem=python_distutils
 
