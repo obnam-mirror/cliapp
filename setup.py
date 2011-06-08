@@ -15,16 +15,34 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from distutils.core import setup, Extension
+from distutils.core import setup
 
 import cliapp
 
 setup(name='cliapp',
       version=cliapp.__version__,
-      description='Framework for Unix command line applications',
       author='Lars Wirzenius',
       author_email='liw@liw.fi',
       url='http://liw.fi/cliapp/',
+      description='framework for Unix command line programs',
+      long_description='''\
+cliapp makes it easier to write typical Unix command line programs,
+by taking care of the common tasks they need to do, such as
+parsing the command line, reading configuration files, setting
+up logging, iterating over lines of input files, and so on.
+''',
+      classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Operating System :: Unix',
+        'Programming Language :: Python :: 2',
+        'Topic :: Software Development :: Libraries :: Application Frameworks',
+        'Topic :: Software Development :: User Interfaces',
+        'Topic :: Text Processing :: Filters',
+        'Topic :: Utilities',
+      ],
       packages=['cliapp'],
      )
 
