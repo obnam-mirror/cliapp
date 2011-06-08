@@ -14,5 +14,6 @@ XB-Python-Version: ${python:Versions}
 Description: Python framework for Unix command line programs
  cliapp makes it easier to write typical Unix command line programs,
  by taking care of the common tasks they need to do, such as
- parsing the command line, iterating over input files, and so on.
+ parsing the command line, reading configuration files, setting
+ up logging, iterating over lines of input files, and so on.
 
