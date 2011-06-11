@@ -81,6 +81,16 @@ class SettingsTests(unittest.TestCase):
         self.settings.parse_args(['--foo=foo', '--foo', 'bar'])
         self.assertEqual(self.settings['foo'], ['foo', 'bar'])
 
+    def test_string_list_uses_nonempty_default_if_given(self):
+        self.settings.add_string_list_setting(['foo'], '', default=['bar'])
+        self.settings.parse_args([])
+        self.assertEqual(self.settings['foo'], ['bar'])
+
+    def test_string_list_uses_ignores_default_if_user_provides_values(self):
+        self.settings.add_string_list_setting(['foo'], '', default=['bar'])
+        self.settings.parse_args(['--foo=pink', '--foo=punk'])
+        self.assertEqual(self.settings['foo'], ['pink', 'punk'])
+
     def test_adds_choice_setting(self):
         self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
         self.assert_('foo' in self.settings)

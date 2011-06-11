@@ -50,6 +50,14 @@ class Setting(object):
 
     value = property(call_get_value, call_set_value)
 
+    def get_default_value(self):
+        return self.get_value()
+    
+    def call_get_default_value(self):
+        return self.get_default_value()
+    
+    default_value = property(call_get_default_value)
+
 
 class StringSetting(Setting):
 
@@ -60,11 +68,18 @@ class StringListSetting(Setting):
 
     action = 'append'
     
+    def __init__(self, names, default, help, metavar=None):
+        Setting.__init__(self, names, [], help, metavar=metavar)
+        self.default = default
+
+    def get_default_value(self):
+        return []
+
     def get_value(self):
         if self._string_value.strip():
             return [s.strip() for s in self._string_value.split(',')]
         else:
-            return []
+            return self.default
         
     def set_value(self, strings):
         self._string_value = ','.join(strings)
@@ -375,7 +390,7 @@ class Settings(object):
                          choices=s.choices,
                          help=s.help,
                          metavar=s.metavar)
-            p.set_defaults(**{self._destname(name): s.value})
+            p.set_defaults(**{self._destname(name): s.default_value})
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
