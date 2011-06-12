@@ -30,9 +30,9 @@ class ExampleApp(cliapp.Application):
     '''A little fgrep-like tool.'''
     
     def add_settings(self):
-        self.settings.add_string_list_setting(['pattern', 'e'], 
-                                      'search for regular expression PATTERN',
-                                      metavar='REGEXP')
+        self.settings.string_list(['pattern', 'e'], 
+                                  'search for regular expression PATTERN',
+                                   metavar='REGEXP')
 
     # We override process_inputs to be able to do something after the last
     # input line.
