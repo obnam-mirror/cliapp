@@ -399,7 +399,7 @@ class Settings(object):
 
         return p
 
-    def parse_args(self, args, suppress_errors=False):
+    def parse_args(self, args, parser=None, suppress_errors=False):
         '''Parse the command line.
         
         Return list of non-option arguments. ``args`` would usually
@@ -407,7 +407,7 @@ class Settings(object):
         
         '''
 
-        p = self.build_parser()
+        p = parser or self.build_parser()
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
