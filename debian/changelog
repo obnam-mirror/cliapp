@@ -1,6 +1,18 @@
+python-cliapp (0.13-1) unstable; urgency=low
+
+  * New upstream version. (Closes: #628017)
+    - previous upload was rejected (because of extra dependency),
+      and then a new upstream version happened, so this should be
+      the real first upload to Debian
+  * debian/copyright now follows current DEP5 spec.
+  * debian/control: long description tweaked a bit to more comprehensive.
+  * packaging updated to use dh_python2.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 12 Jun 2011 13:25:14 +0100
+
 python-cliapp (0.12-1) unstable; urgency=low
 
-  * Upload for Debian. (Closes: #628017)
+  * Upload for Debian.
 
  -- Lars Wirzenius <liw@liw.fi>  Sun, 29 May 2011 15:31:20 +0100
 
