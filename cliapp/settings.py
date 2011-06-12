@@ -34,7 +34,10 @@ class Setting(object):
         self.names = names
         self.set_value(default)
         self.help = help
-        self.metavar = metavar
+        self.metavar = metavar or self.default_metavar()
+
+    def default_metavar(self):
+        return None
 
     def get_value(self):
         return self._string_value
@@ -61,7 +64,8 @@ class Setting(object):
 
 class StringSetting(Setting):
 
-    pass
+    def default_metavar(self):
+        return self.names[0].upper()
 
 
 class StringListSetting(Setting):
@@ -71,6 +75,9 @@ class StringListSetting(Setting):
     def __init__(self, names, default, help, metavar=None):
         Setting.__init__(self, names, [], help, metavar=metavar)
         self.default = default
+
+    def default_metavar(self):
+        return self.names[0].upper()
 
     def get_default_value(self):
         return []
@@ -92,6 +99,9 @@ class ChoiceSetting(Setting):
     def __init__(self, names, choices, help, metavar=None):
         Setting.__init__(self, names, choices[0], help, metavar=metavar)
         self.choices = choices
+
+    def default_metavar(self):
+        return self.names[0].upper()
 
     
 class BooleanSetting(Setting):
@@ -138,6 +148,9 @@ class ByteSizeSetting(Setting):
             }
             return long(number * units.get(unit, 1))
 
+    def default_metavar(self):
+        return 'SIZE'
+
     def get_value(self):
         return long(self._string_value)
         
@@ -150,6 +163,9 @@ class ByteSizeSetting(Setting):
 class IntegerSetting(Setting):
 
     type = 'int'
+
+    def default_metavar(self):
+        return self.names[0].upper()
 
     def get_value(self):
         return long(self._string_value)
