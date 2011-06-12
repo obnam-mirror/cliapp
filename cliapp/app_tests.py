@@ -49,7 +49,7 @@ class ApplicationTests(unittest.TestCase):
             def process_args(self, args):
                 pass
             def add_settings(self):
-                self.settings.add_string_setting(['foo'], '')
+                self.settings.string(['foo'], '')
         foo = Foo()
         self.assertFalse('foo' in foo.settings)
         foo.run(args=[])
@@ -112,8 +112,8 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app._envname('foo_bar'), 'FOO_BAR')
 
     def test_parses_options(self):
-        self.app.settings.add_string_setting(['foo'], 'foo help')
-        self.app.settings.add_boolean_setting(['bar'], 'bar help')
+        self.app.settings.string(['foo'], 'foo help')
+        self.app.settings.boolean(['bar'], 'bar help')
         self.app.parse_args(['--foo=foovalue', '--bar'])
         self.assertEqual(self.app.settings['foo'], 'foovalue')
         self.assertEqual(self.app.settings['bar'], True)

@@ -262,7 +262,6 @@ class Settings(object):
     def string(self, names, help, default='', **kwargs):
         '''Add a setting with a string value.'''
         self._add_setting(StringSetting(names, default, help, **kwargs))
-    add_string_setting = string
 
     def string_list(self, names, help, default=None, **kwargs):
         '''Add a setting which have multiple string values.
@@ -274,7 +273,6 @@ class Settings(object):
 
         self._add_setting(StringListSetting(names, default or [], help,
                                             **kwargs))
-    add_string_list_setting = string_list
 
     def choice(self, names, possibilities, help, **kwargs):
         '''Add a setting which chooses from list of acceptable values.
@@ -287,12 +285,10 @@ class Settings(object):
         '''
 
         self._add_setting(ChoiceSetting(names, possibilities, help, **kwargs))
-    add_choice_setting = choice
 
     def boolean(self, names, help, default=False, **kwargs):
         '''Add a setting with a boolean value.'''
         self._add_setting(BooleanSetting(names, default, help, **kwargs))
-    add_boolean_setting = boolean
 
     def bytesize(self, names, help, default=0, **kwargs):
         '''Add a setting with a size in bytes.
@@ -302,12 +298,10 @@ class Settings(object):
         '''
         
         self._add_setting(ByteSizeSetting(names, default, help, **kwargs))
-    add_bytesize_setting = bytesize
 
     def integer(self, names, help, default=0, **kwargs):
         '''Add an integer setting.'''
         self._add_setting(IntegerSetting(names, default, help, **kwargs))
-    add_integer_setting = integer
 
     def __getitem__(self, name):
         return self._settingses[name].value

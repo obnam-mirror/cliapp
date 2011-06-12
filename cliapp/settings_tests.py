@@ -43,8 +43,8 @@ class SettingsTests(unittest.TestCase):
         self.assert_('log-level' in self.settings)
 
     def test_parses_options(self):
-        self.settings.add_string_setting(['foo'], 'foo help')
-        self.settings.add_boolean_setting(['bar'], 'bar help')
+        self.settings.string(['foo'], 'foo help')
+        self.settings.boolean(['bar'], 'bar help')
         self.settings.parse_args(['--foo=foovalue', '--bar'])
         self.assertEqual(self.settings['foo'], 'foovalue')
         self.assertEqual(self.settings['bar'], True)
@@ -59,73 +59,73 @@ class SettingsTests(unittest.TestCase):
         self.assertRaises(KeyError, self.settings.__setitem__, 'foo', 'bar')
 
     def test_adds_string_setting(self):
-        self.settings.add_string_setting(['foo'], 'foo help')
+        self.settings.string(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
 
     def test_adds_string_list_setting(self):
-        self.settings.add_string_list_setting(['foo'], 'foo help')
+        self.settings.string_list(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
 
     def test_string_list_is_empty_list_by_default(self):
-        self.settings.add_string_list_setting(['foo'], '')
+        self.settings.string_list(['foo'], '')
         self.settings.parse_args([])
         self.assertEqual(self.settings['foo'], [])
 
     def test_string_list_parses_one_item(self):
-        self.settings.add_string_list_setting(['foo'], '')
+        self.settings.string_list(['foo'], '')
         self.settings.parse_args(['--foo=foo'])
         self.assertEqual(self.settings['foo'], ['foo'])
 
     def test_string_list_parses_two_items(self):
-        self.settings.add_string_list_setting(['foo'], '')
+        self.settings.string_list(['foo'], '')
         self.settings.parse_args(['--foo=foo', '--foo', 'bar'])
         self.assertEqual(self.settings['foo'], ['foo', 'bar'])
 
     def test_string_list_uses_nonempty_default_if_given(self):
-        self.settings.add_string_list_setting(['foo'], '', default=['bar'])
+        self.settings.string_list(['foo'], '', default=['bar'])
         self.settings.parse_args([])
         self.assertEqual(self.settings['foo'], ['bar'])
 
     def test_string_list_uses_ignores_default_if_user_provides_values(self):
-        self.settings.add_string_list_setting(['foo'], '', default=['bar'])
+        self.settings.string_list(['foo'], '', default=['bar'])
         self.settings.parse_args(['--foo=pink', '--foo=punk'])
         self.assertEqual(self.settings['foo'], ['pink', 'punk'])
 
     def test_adds_choice_setting(self):
-        self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.settings.choice(['foo'], ['foo', 'bar'], 'foo help')
         self.assert_('foo' in self.settings)
 
     def test_choice_defaults_to_first_one(self):
-        self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.settings.choice(['foo'], ['foo', 'bar'], 'foo help')
         self.settings.parse_args([])
         self.assertEqual(self.settings['foo'], 'foo')
 
     def test_choice_accepts_any_valid_value(self):
-        self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.settings.choice(['foo'], ['foo', 'bar'], 'foo help')
         self.settings.parse_args(['--foo=foo'])
         self.assertEqual(self.settings['foo'], 'foo')
         self.settings.parse_args(['--foo=bar'])
         self.assertEqual(self.settings['foo'], 'bar')
 
     def test_choice_raises_error_for_unacceptable_value(self):
-        self.settings.add_choice_setting(['foo'], ['foo', 'bar'], 'foo help')
+        self.settings.choice(['foo'], ['foo', 'bar'], 'foo help')
         self.assertRaises(SystemExit,
                           self.settings.parse_args, ['--foo=xyzzy'],
                           suppress_errors=True)
 
     def test_adds_boolean_setting(self):
-        self.settings.add_boolean_setting(['foo'], 'foo help')
+        self.settings.boolean(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
         
     def test_sets_boolean_setting_to_true_for_many_true_values(self):
-        self.settings.add_boolean_setting(['foo'], 'foo help')
+        self.settings.boolean(['foo'], 'foo help')
         self.settings['foo'] = True
         self.assert_(self.settings['foo'])
         self.settings['foo'] = 1
         self.assert_(self.settings['foo'])
         
     def test_sets_boolean_setting_to_false_for_many_false_values(self):
-        self.settings.add_boolean_setting(['foo'], 'foo help')
+        self.settings.boolean(['foo'], 'foo help')
         self.settings['foo'] = False
         self.assertFalse(self.settings['foo'])
         self.settings['foo'] = 0
@@ -138,11 +138,11 @@ class SettingsTests(unittest.TestCase):
         self.assertFalse(self.settings['foo'])
         
     def test_adds_bytesize_setting(self):
-        self.settings.add_bytesize_setting(['foo'], 'foo help')
+        self.settings.bytesize(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
 
     def test_parses_bytesize_option(self):
-        self.settings.add_bytesize_setting(['foo'], 'foo help')
+        self.settings.bytesize(['foo'], 'foo help')
 
         self.settings.parse_args(args=['--foo=xyzzy'])
         self.assertEqual(self.settings['foo'], 0)
@@ -175,11 +175,11 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings['foo'], 123 * 1024**4)
         
     def test_adds_integer_setting(self):
-        self.settings.add_integer_setting(['foo'], 'foo help')
+        self.settings.integer(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
 
     def test_parses_integer_option(self):
-        self.settings.add_integer_setting(['foo'], 'foo help', default=123)
+        self.settings.integer(['foo'], 'foo help', default=123)
 
         self.settings.parse_args(args=[])
         self.assertEqual(self.settings['foo'], 123)
@@ -224,7 +224,7 @@ class SettingsTests(unittest.TestCase):
 foo = yeehaa
 ''')
     
-        self.settings.add_string_setting(['foo'], 'foo help')
+        self.settings.string(['foo'], 'foo help')
         self.settings.config_files = ['whatever.conf']
         self.settings.load_configs(open=mock_open)
         self.assertEqual(self.settings['foo'], 'yeehaa')
