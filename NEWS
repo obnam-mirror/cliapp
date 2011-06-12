@@ -1,6 +1,23 @@
 NEWS for cliapp
 ===============
 
+Version 0.13, released 2011-06-12
+---------------------------------
+
+* Change default log level to be `debug`. Nothing is logged unless the
+  user requests it, and if they do, they probably want to debug something,
+  so this seems like the natural default.
+* Log files are now rotated. See options --log-max, --log-keep.
+* Log files are formatted in a nicer way now.
+* Now registered with PyPI.
+* String list settings now have a more sensible handling of default values.
+  Previously the default value would always be used and user-supplied
+  values would be appended to the default. Now user-supplied values
+  replace the default value entirely.
+* The old API for adding settings (`self.settings.add_string_setting` etc)
+  is gone. This should not bother anyone, since I am the only known user
+  of cliapp so far, and I've fixed my stuff already.
+
 Version 0.12, released 2011-05-29
 ---------------------------------
 
