@@ -343,13 +343,8 @@ class Settings(object):
         name = '_'.join(name.split('-'))
         return name
 
-    def parse_args(self, args, suppress_errors=False):
-        '''Parse the command line.
-        
-        Return list of non-option arguments. ``args`` would usually
-        be ``sys.argv[1:]``.
-        
-        '''
+    def build_parser(self):
+        '''Build OptionParser for parsing command line.'''
 
         p = optparse.OptionParser(prog=self.progname, version=self.version,
                                   formatter=FormatHelpParagraphs(),
@@ -401,6 +396,18 @@ class Settings(object):
                          help=s.help,
                          metavar=s.metavar)
             p.set_defaults(**{self._destname(name): s.default_value})
+
+        return p
+
+    def parse_args(self, args, suppress_errors=False):
+        '''Parse the command line.
+        
+        Return list of non-option arguments. ``args`` would usually
+        be ``sys.argv[1:]``.
+        
+        '''
+
+        p = self.build_parser()
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
