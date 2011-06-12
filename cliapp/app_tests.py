@@ -237,6 +237,20 @@ class ApplicationTests(unittest.TestCase):
         f = StringIO.StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
 
+    def test_runcmd_executes_true(self):
+        self.assertEqual(self.app.runcmd(['true']), '')
+    
+    def test_runcmd_raises_error_on_failure(self):
+        self.assertRaises(cliapp.AppException, self.app.runcmd, ['false'])
+    
+    def test_runcmd_returns_stdout_of_command(self):
+        self.assertEqual(self.app.runcmd(['echo', 'hello', 'world']),
+                         'hello world\n')
+
+    def test_runcmd_pipes_stdin_through_command(self):
+        self.assertEqual(self.app.runcmd(['cat'], stdin='hello, world'),
+                         'hello, world')
+
 
 class DummySubcommandApp(cliapp.Application):
 

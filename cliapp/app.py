@@ -17,6 +17,7 @@
 import logging
 import logging.handlers
 import os
+import subprocess
 import sys
 import traceback
 
@@ -290,4 +291,22 @@ class Application(object):
         
         '''
         
+    def runcmd(self, argv, stdin=None, *args, **kwargs):
+        '''Run external command.
+
+        Return the standard output of the command.
+        
+        Raise ``cliapp.AppException`` if external command returns
+        non-zero exit code. ``*args`` and ``**kwargs`` are passed
+        onto ``subprocess.Popen``.
+        
+        '''
+
+        p = subprocess.Popen(argv, stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate(stdin)
+        if p.returncode:
+            raise cliapp.AppException('command failed: %s\n%s' %
+                                       (' '. join(argv), err))
+        return out
 
