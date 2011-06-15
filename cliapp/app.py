@@ -291,7 +291,7 @@ class Application(object):
         
         '''
         
-    def runcmd(self, argv, stdin=None, *args, **kwargs):
+    def runcmd(self, argv, stdin=None, ignore_fail=False, *args, **kwargs):
         '''Run external command.
 
         Return the standard output of the command.
@@ -306,7 +306,11 @@ class Application(object):
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate(stdin)
         if p.returncode:
-            raise cliapp.AppException('command failed: %s\n%s' %
-                                       (' '. join(argv), err))
+            msg = 'Command failed: %s\n%s' % (' '.join(argv), err)
+            if ignore_fail:
+                logging.info(msg)
+            else:
+                logging.error(msg)
+                raise cliapp.AppException(msg)
         return out
 

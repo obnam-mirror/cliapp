@@ -251,6 +251,9 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app.runcmd(['cat'], stdin='hello, world'),
                          'hello, world')
 
+    def test_runcmd_ignores_failures_on_request(self):
+        self.assertEqual(self.app.runcmd(['false'], ignore_fail=True), '')
+
 
 class DummySubcommandApp(cliapp.Application):
 
