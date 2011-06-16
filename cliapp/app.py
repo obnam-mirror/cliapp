@@ -89,7 +89,7 @@ class Application(object):
             self._run(args=args, stderr=stderr, log=log)
 
         if self.settings.progname is None and sysargv:
-            self.settings.progname = sysargv[0]
+            self.settings.progname = os.path.basename(sysargv[0])
         envname = '%s_PROFILE' % self._envname(self.settings.progname)
         profname = os.environ.get(envname, '')
         if profname: # pragma: no cover
