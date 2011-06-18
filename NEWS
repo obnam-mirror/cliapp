@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 0.13, released 2011-06-12
+Version 0.13, released 2011-06-18
 ---------------------------------
 
 * Change default log level to be `debug`. Nothing is logged unless the
@@ -17,6 +17,17 @@ Version 0.13, released 2011-06-12
 * The old API for adding settings (`self.settings.add_string_setting` etc)
   is gone. This should not bother anyone, since I am the only known user
   of cliapp so far, and I've fixed my stuff already.
+* A `metavar` is provided if caller does not provide one. This fixes
+  `--generate-manpage` issue where an option would be documented as not
+  having an argument unless `metavar` was set explicitly.
+* `cliapp.Application.runcmd` runs external programs and captures their
+  standard output.
+* The option parser is now created in a separate method than the one that
+  uses it. This allows applications to modify the option parser in whatever
+  way they want.
+* Only the basename of a program (from `sys.argv[0]`) is used when
+  determining `progname`. This fixes a problem where config files
+  could not be found because `progname` contained slashes.
 
 Version 0.12, released 2011-05-29
 ---------------------------------
