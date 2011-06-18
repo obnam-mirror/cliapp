@@ -7,6 +7,7 @@ python-cliapp (0.13-1) unstable; urgency=low
   * debian/copyright now follows current DEP5 spec.
   * debian/control: long description tweaked a bit to more comprehensive.
   * packaging updated to use dh_python2.
+  * debian/rules: cleans up better.
 
  -- Lars Wirzenius <liw@liw.fi>  Sun, 12 Jun 2011 13:25:14 +0100
 
