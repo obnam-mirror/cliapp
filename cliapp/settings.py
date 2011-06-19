@@ -60,6 +60,9 @@ class Setting(object):
         return self.get_default_value()
     
     default_value = property(call_get_default_value)
+    
+    def has_value(self):
+        return self.value is not None
 
 
 class StringSetting(Setting):
@@ -90,6 +93,9 @@ class StringListSetting(Setting):
         
     def set_value(self, strings):
         self._string_value = ','.join(strings)
+
+    def has_value(self):
+        return self.value != []
 
 
 class ChoiceSetting(Setting):
@@ -327,6 +333,17 @@ class Settings(object):
 
     def __contains__(self, name):
         return name in self._settingses
+
+    def require(self, name):
+        '''Raise exception if setting has not been set.
+        
+        Option must have a value, and a default value is OK.
+        
+        '''
+        
+        if not self._settingses[name].has_value():
+            raise cliapp.AppException('Setting %s has no value, '
+                                        'but one is required' % name)
         
     def _option_names(self, names):
         '''Turn setting names into option names.

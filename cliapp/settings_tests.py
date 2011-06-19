@@ -236,3 +236,46 @@ foo = yeehaa
             
         self.assertEqual(self.settings.load_configs(open=mock_open), None)
 
+    def test_require_raises_error_if_string_unset(self):
+        self.settings.string(['foo'], 'foo help', default=None)
+        self.assertRaises(cliapp.AppException, self.settings.require, 
+                          'foo')
+
+    def test_require_is_ok_with_set_string(self):
+        self.settings.string(['foo'], 'foo help', default=None)
+        self.settings['foo'] = 'bar'
+        self.assertEqual(self.settings.require('foo'), None)
+
+    def test_require_is_ok_with_default_string(self):
+        self.settings.string(['foo'], 'foo help', default='foo default')
+        self.assertEqual(self.settings.require('foo'), None)
+
+    def test_require_raises_error_if_string_list_unset(self):
+        self.settings.string_list(['foo'], 'foo help')
+        self.assertRaises(cliapp.AppException, self.settings.require, 'foo')
+
+    def test_require_is_ok_with_set_string_list(self):
+        self.settings.string(['foo'], 'foo help')
+        self.settings['foo'] = ['foo', 'bar']
+        self.assertEqual(self.settings.require('foo'), None)
+
+    def test_require_is_ok_with_default_string_list(self):
+        self.settings.string(['foo'], 'foo help', default=['foo'])
+        self.assertEqual(self.settings.require('foo'), None)
+
+    def test_require_is_ok_with_unset_choice(self):
+        self.settings.choice(['foo'], ['foo', 'bar'], 'foo help')
+        self.assertEqual(self.settings.require('foo'), None)
+
+    def test_require_is_ok_with_unset_boolean(self):
+        self.settings.boolean(['foo'], 'foo help')
+        self.assertEqual(self.settings.require('foo'), None)
+
+    def test_require_is_ok_with_unset_bytesize(self):
+        self.settings.bytesize(['foo'], 'foo help')
+        self.assertEqual(self.settings.require('foo'), None)
+
+    def test_require_is_ok_with_unset_integer(self):
+        self.settings.integer(['foo'], 'foo help')
+        self.assertEqual(self.settings.require('foo'), None)
+
