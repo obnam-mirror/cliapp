@@ -1,3 +1,39 @@
+python-cliapp (0.13-1squeeze6) squeeze; urgency=low
+
+  * Build for squeeze.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 19 Jun 2011 18:25:21 +0100
+
+python-cliapp (0.13-1squeeze5) squeeze; urgency=low
+
+  * Build for squeeze.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 19 Jun 2011 18:24:45 +0100
+
+python-cliapp (0.13-1squeeze4) squeeze; urgency=low
+
+  * Build for squeeze.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 19 Jun 2011 18:24:07 +0100
+
+python-cliapp (0.13-1squeeze3) squeeze; urgency=low
+
+  * Build for squeeze.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 19 Jun 2011 18:22:08 +0100
+
+python-cliapp (0.13-1squeeze2) squeeze; urgency=low
+
+  * Build for squeeze.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 19 Jun 2011 18:20:30 +0100
+
+python-cliapp (0.13-1squeeze1) squeeze; urgency=low
+
+  * Build for squeeze.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 19 Jun 2011 18:16:08 +0100
+
 python-cliapp (0.13-1) unstable; urgency=low
 
   * New upstream version. (Closes: #628017)

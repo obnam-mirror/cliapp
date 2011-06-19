@@ -254,6 +254,9 @@ class ApplicationTests(unittest.TestCase):
     def test_runcmd_ignores_failures_on_request(self):
         self.assertEqual(self.app.runcmd(['false'], ignore_fail=True), '')
 
+    def test_runcmd_obeys_cwd(self):
+        self.assertEqual(self.app.runcmd(['pwd'], cwd='/'), '/\n')
+
 
 class DummySubcommandApp(cliapp.Application):
 
