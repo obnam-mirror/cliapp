@@ -302,6 +302,7 @@ class Application(object):
         
         '''
 
+        logging.debug('run external command: %s' % ' '.join(argv))
         p = subprocess.Popen(argv, stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate(stdin)
