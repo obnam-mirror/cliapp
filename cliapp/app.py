@@ -118,6 +118,8 @@ class Application(object):
             
             args = self.parse_args(args)
             self.setup_logging()
+            logging.info('%s version %s starts' % 
+                         (self.settings.progname, self.settings.version))
             
             if self.settings['output']:
                 self.output = open(self.settings['output'], 'w')
@@ -137,6 +139,9 @@ class Application(object):
             log(traceback.format_exc())
             stderr.write(traceback.format_exc())
             sys.exit(1)
+
+        logging.info('%s version %s ends normally' % 
+                     (self.settings.progname, self.settings.version))
     
     def _subcommands(self):
         return [x for x in dir(self) if x.startswith('cmd_')]
