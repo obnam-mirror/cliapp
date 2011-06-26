@@ -117,6 +117,10 @@ class SettingsTests(unittest.TestCase):
         self.settings.boolean(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
         
+    def test_boolean_setting_is_false_by_default(self):
+        self.settings.boolean(['foo'], 'foo help')
+        self.assertFalse(self.settings['foo'])
+        
     def test_sets_boolean_setting_to_true_for_many_true_values(self):
         self.settings.boolean(['foo'], 'foo help')
         self.settings['foo'] = True
