@@ -64,22 +64,30 @@ class Application(object):
         self.fileno = 0
         self.global_lineno = 0
         self.lineno = 0
-        
-        if self._subcommands():
-            usage = self._make_subcommand_usage()
-            if description is None:
-                description = ''
-            description += '\n\n' + self._make_subcommand_description()
-        else:
-            usage = None
+        self._description = description
         
         self.settings = cliapp.Settings(progname, version, 
-                                        usage=usage,
-                                        description=description,
+                                        usage=self._format_usage,
+                                        description=self._format_description,
                                         epilog=epilog)
         
     def add_settings(self):
         '''Add application specific settings.'''
+
+    def _format_usage(self):
+        '''Format usage, possibly also subcommands, if any.'''
+        if self._subcommands():
+            return self._make_subcommand_usage()
+        else:
+            return None
+
+    def _format_description(self):
+        '''Format OptionParser description, with subcommand support.'''
+        if self._subcommands():
+            return '%s\n\n%s' % (self._description or '',
+                                  self._make_subcommand_description())
+        else:
+            return self._description
 
     def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv, 
             log=logging.critical):
