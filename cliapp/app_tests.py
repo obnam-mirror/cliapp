@@ -271,7 +271,7 @@ class SubcommandTests(unittest.TestCase):
         self.trash = StringIO.StringIO()
         
     def test_lists_subcommands(self):
-        self.assertEqual(self.app._subcommands(), ['cmd_help'])
+        self.assertEqual(self.app._subcommand_methodnames(), ['cmd_help'])
 
     def test_normalizes_subcommand(self):
         self.assertEqual(self.app._normalize_cmd('help'), 'cmd_help')

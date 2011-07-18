@@ -65,6 +65,11 @@ class Application(object):
         self.global_lineno = 0
         self.lineno = 0
         self._description = description
+
+        self._subcommands = {}
+        for method_name in self._subcommand_methodnames():
+            cmd = self._unnormalize_cmd(method_name)
+            self._subcommands[cmd] = getattr(self, method_name)
         
         self.settings = cliapp.Settings(progname, version, 
                                         usage=self._format_usage,
@@ -136,7 +141,7 @@ class Application(object):
         logging.info('%s version %s ends normally' % 
                      (self.settings.progname, self.settings.version))
     
-    def _subcommands(self):
+    def _subcommand_methodnames(self):
         return [x for x in dir(self) if x.startswith('cmd_')]
 
     def _normalize_cmd(self, cmd):
@@ -148,11 +153,10 @@ class Application(object):
 
     def _format_usage(self):
         '''Format usage, possibly also subcommands, if any.'''
-        if self._subcommands():
+        if self._subcommands:
             lines = []
             prefix = 'Usage:'
-            for method in self._subcommands():
-                cmd = self._unnormalize_cmd(method)
+            for cmd in sorted(self._subcommands.keys()):
                 lines.append('%s %%prog [options] %s' % (prefix, cmd))
                 prefix = ' ' * len(prefix)
             return '\n'.join(lines)
@@ -161,11 +165,11 @@ class Application(object):
 
     def _format_description(self):
         '''Format OptionParser description, with subcommand support.'''
-        if self._subcommands():
+        if self._subcommands:
             paras = []
-            for method in self._subcommands():
-                cmd = self._unnormalize_cmd(method)
-                doc = getattr(self, method).__doc__ or ''
+            for cmd in sorted(self._subcommands.keys()):
+                method = self._subcommands[cmd]
+                doc = method.__doc__ or ''
                 paras.append('%s: %s' % (cmd, doc.strip()))
             cmd_desc = '\n\n'.join(paras)
             return '%s\n\n%s' % (self._description or '', cmd_desc)
@@ -225,13 +229,12 @@ class Application(object):
         '''
         
             
-        cmds = self._subcommands()
-        if cmds:
+        if self._subcommands:
             if not args:
                 raise SystemExit('must give subcommand')
-            method = self._normalize_cmd(args[0])
-            if method in cmds:
-                getattr(self, method)(args[1:])
+            if args[0] in self._subcommands:
+                method = self._subcommands[args[0]]
+                method(args[1:])
             else:
                 raise SystemExit('unknown subcommand %s' % args[0])
         else:
