@@ -298,5 +298,8 @@ class ExtensibleSubcommandTests(unittest.TestCase):
     def test_lists_no_subcommands(self):
         self.assertEqual(self.app._subcommands, {})
         
-    
+    def test_adds_subcommand(self):
+        help = lambda args: None
+        self.app.add_subcommand('help', help)
+        self.assertEqual(self.app._subcommands, {'help': help})
 

@@ -141,6 +141,22 @@ class Application(object):
         logging.info('%s version %s ends normally' % 
                      (self.settings.progname, self.settings.version))
     
+    def add_subcommand(self, name, func):
+        '''Add a subcommand.
+        
+        Normally, subcommands are defined by add ``cmd_foo`` methods
+        to the application class. However, sometimes it is more convenient
+        to have them elsewhere (e.g., in plugins). This method allows
+        doing that.
+        
+        The callback function must accept a list of command line
+        non-option arguments.
+        
+        '''
+        
+        if name not in self._subcommands:
+            self._subcommands[name] = func
+    
     def _subcommand_methodnames(self):
         return [x for x in dir(self) if x.startswith('cmd_')]
 
