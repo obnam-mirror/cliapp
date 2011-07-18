@@ -289,3 +289,14 @@ class SubcommandTests(unittest.TestCase):
         self.app.run(['help'], stderr=self.trash, log=devnull)
         self.assert_(self.app.help_called)
 
+
+class ExtensibleSubcommandTests(unittest.TestCase):
+
+    def setUp(self):
+        self.app = cliapp.Application()
+    
+    def test_lists_no_subcommands(self):
+        self.assertEqual(self.app._subcommands, {})
+        
+    
+
