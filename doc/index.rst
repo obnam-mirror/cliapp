@@ -120,6 +120,8 @@ forms the name of the subcommand. Any underscores in the method
 name get converted to dashes in the command line. Case is
 preserved.
 
+Subcommands may also be added using the ``add_subcommand`` method.
+
 All options are global, not specific to the subcommand.
 All non-option arguments are passed to the method in its only
 argument.
