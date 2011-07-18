@@ -64,18 +64,16 @@ class Application(object):
         self.fileno = 0
         self.global_lineno = 0
         self.lineno = 0
-        
-        if self._subcommands():
-            usage = self._make_subcommand_usage()
-            if description is None:
-                description = ''
-            description += '\n\n' + self._make_subcommand_description()
-        else:
-            usage = None
+        self._description = description
+
+        self._subcommands = {}
+        for method_name in self._subcommand_methodnames():
+            cmd = self._unnormalize_cmd(method_name)
+            self._subcommands[cmd] = getattr(self, method_name)
         
         self.settings = cliapp.Settings(progname, version, 
-                                        usage=usage,
-                                        description=description,
+                                        usage=self._format_usage,
+                                        description=self._format_description,
                                         epilog=epilog)
         
     def add_settings(self):
@@ -143,7 +141,23 @@ class Application(object):
         logging.info('%s version %s ends normally' % 
                      (self.settings.progname, self.settings.version))
     
-    def _subcommands(self):
+    def add_subcommand(self, name, func):
+        '''Add a subcommand.
+        
+        Normally, subcommands are defined by add ``cmd_foo`` methods
+        to the application class. However, sometimes it is more convenient
+        to have them elsewhere (e.g., in plugins). This method allows
+        doing that.
+        
+        The callback function must accept a list of command line
+        non-option arguments.
+        
+        '''
+        
+        if name not in self._subcommands:
+            self._subcommands[name] = func
+    
+    def _subcommand_methodnames(self):
         return [x for x in dir(self) if x.startswith('cmd_')]
 
     def _normalize_cmd(self, cmd):
@@ -153,22 +167,30 @@ class Application(object):
         assert method.startswith('cmd_')
         return method[len('cmd_'):].replace('_', '-')
 
-    def _make_subcommand_usage(self):
-        lines = []
-        prefix = 'Usage:'
-        for method in self._subcommands():
-            cmd = self._unnormalize_cmd(method)
-            lines.append('%s %%prog [options] %s' % (prefix, cmd))
-            prefix = ' ' * len(prefix)
-        return '\n'.join(lines)
+    def _format_usage(self):
+        '''Format usage, possibly also subcommands, if any.'''
+        if self._subcommands:
+            lines = []
+            prefix = 'Usage:'
+            for cmd in sorted(self._subcommands.keys()):
+                lines.append('%s %%prog [options] %s' % (prefix, cmd))
+                prefix = ' ' * len(prefix)
+            return '\n'.join(lines)
+        else:
+            return None
 
-    def _make_subcommand_description(self):
-        paras = []
-        for method in self._subcommands():
-            cmd = self._unnormalize_cmd(method)
-            doc = getattr(self, method).__doc__ or ''
-            paras.append('%s: %s' % (cmd, doc.strip()))
-        return '\n\n'.join(paras)
+    def _format_description(self):
+        '''Format OptionParser description, with subcommand support.'''
+        if self._subcommands:
+            paras = []
+            for cmd in sorted(self._subcommands.keys()):
+                method = self._subcommands[cmd]
+                doc = method.__doc__ or ''
+                paras.append('%s: %s' % (cmd, doc.strip()))
+            cmd_desc = '\n\n'.join(paras)
+            return '%s\n\n%s' % (self._description or '', cmd_desc)
+        else:
+            return self._description
 
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
@@ -223,13 +245,12 @@ class Application(object):
         '''
         
             
-        cmds = self._subcommands()
-        if cmds:
+        if self._subcommands:
             if not args:
                 raise SystemExit('must give subcommand')
-            method = self._normalize_cmd(args[0])
-            if method in cmds:
-                getattr(self, method)(args[1:])
+            if args[0] in self._subcommands:
+                method = self._subcommands[args[0]]
+                method(args[1:])
             else:
                 raise SystemExit('unknown subcommand %s' % args[0])
         else:

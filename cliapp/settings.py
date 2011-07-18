@@ -363,10 +363,17 @@ class Settings(object):
     def build_parser(self):
         '''Build OptionParser for parsing command line.'''
 
+        def getit(x):
+            if x is None or type(x) in [str, unicode]:
+                return x
+            else:
+                return x()
+        usage = getit(self.usage)
+        description = getit(self.description)
         p = optparse.OptionParser(prog=self.progname, version=self.version,
                                   formatter=FormatHelpParagraphs(),
-                                  usage=self.usage,
-                                  description=self.description,
+                                  usage=usage,
+                                  description=description,
                                   epilog=self.epilog)
         
         def dump_setting_names(*args): # pragma: no cover

@@ -271,7 +271,7 @@ class SubcommandTests(unittest.TestCase):
         self.trash = StringIO.StringIO()
         
     def test_lists_subcommands(self):
-        self.assertEqual(self.app._subcommands(), ['cmd_help'])
+        self.assertEqual(self.app._subcommand_methodnames(), ['cmd_help'])
 
     def test_normalizes_subcommand(self):
         self.assertEqual(self.app._normalize_cmd('help'), 'cmd_help')
@@ -288,4 +288,18 @@ class SubcommandTests(unittest.TestCase):
     def test_calls_subcommand_method(self):
         self.app.run(['help'], stderr=self.trash, log=devnull)
         self.assert_(self.app.help_called)
+
+
+class ExtensibleSubcommandTests(unittest.TestCase):
+
+    def setUp(self):
+        self.app = cliapp.Application()
+    
+    def test_lists_no_subcommands(self):
+        self.assertEqual(self.app._subcommands, {})
+        
+    def test_adds_subcommand(self):
+        help = lambda args: None
+        self.app.add_subcommand('help', help)
+        self.assertEqual(self.app._subcommands, {'help': help})
 
