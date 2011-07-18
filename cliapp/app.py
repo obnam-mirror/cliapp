@@ -74,21 +74,6 @@ class Application(object):
     def add_settings(self):
         '''Add application specific settings.'''
 
-    def _format_usage(self):
-        '''Format usage, possibly also subcommands, if any.'''
-        if self._subcommands():
-            return self._make_subcommand_usage()
-        else:
-            return None
-
-    def _format_description(self):
-        '''Format OptionParser description, with subcommand support.'''
-        if self._subcommands():
-            return '%s\n\n%s' % (self._description or '',
-                                  self._make_subcommand_description())
-        else:
-            return self._description
-
     def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv, 
             log=logging.critical):
         '''Run the application.'''
@@ -161,22 +146,31 @@ class Application(object):
         assert method.startswith('cmd_')
         return method[len('cmd_'):].replace('_', '-')
 
-    def _make_subcommand_usage(self):
-        lines = []
-        prefix = 'Usage:'
-        for method in self._subcommands():
-            cmd = self._unnormalize_cmd(method)
-            lines.append('%s %%prog [options] %s' % (prefix, cmd))
-            prefix = ' ' * len(prefix)
-        return '\n'.join(lines)
+    def _format_usage(self):
+        '''Format usage, possibly also subcommands, if any.'''
+        if self._subcommands():
+            lines = []
+            prefix = 'Usage:'
+            for method in self._subcommands():
+                cmd = self._unnormalize_cmd(method)
+                lines.append('%s %%prog [options] %s' % (prefix, cmd))
+                prefix = ' ' * len(prefix)
+            return '\n'.join(lines)
+        else:
+            return None
 
-    def _make_subcommand_description(self):
-        paras = []
-        for method in self._subcommands():
-            cmd = self._unnormalize_cmd(method)
-            doc = getattr(self, method).__doc__ or ''
-            paras.append('%s: %s' % (cmd, doc.strip()))
-        return '\n\n'.join(paras)
+    def _format_description(self):
+        '''Format OptionParser description, with subcommand support.'''
+        if self._subcommands():
+            paras = []
+            for method in self._subcommands():
+                cmd = self._unnormalize_cmd(method)
+                doc = getattr(self, method).__doc__ or ''
+                paras.append('%s: %s' % (cmd, doc.strip()))
+            cmd_desc = '\n\n'.join(paras)
+            return '%s\n\n%s' % (self._description or '', cmd_desc)
+        else:
+            return self._description
 
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
