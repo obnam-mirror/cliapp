@@ -363,9 +363,13 @@ class Settings(object):
     def build_parser(self):
         '''Build OptionParser for parsing command line.'''
 
+        if self.usage is None or type(self.usage) in [str, unicode]:
+            usage = self.usage
+        else:
+            usage = self.usage()
         p = optparse.OptionParser(prog=self.progname, version=self.version,
                                   formatter=FormatHelpParagraphs(),
-                                  usage=self.usage,
+                                  usage=usage,
                                   description=self.description,
                                   epilog=self.epilog)
         

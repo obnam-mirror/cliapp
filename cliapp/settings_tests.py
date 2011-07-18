@@ -37,6 +37,11 @@ class SettingsTests(unittest.TestCase):
     def test_has_version(self):
         self.assertEqual(self.settings.version, '1.0')
 
+    def test_sets_usage_from_func(self):
+        s = cliapp.Settings('appname', '1.0', usage=lambda: 'xyzzy')
+        p = s.build_parser()
+        self.assert_('xyzzy' in p.usage)
+
     def test_adds_default_options_and_settings(self):
         self.assert_('output' in self.settings)
         self.assert_('log' in self.settings)
