@@ -12,7 +12,8 @@ See the API documentation on the `doc` subdirectory for details
 Example
 -------
 
-See the file `example.py` for an example of how to use the framework.
+See the files `example.py` and `example2.py` for examples of how to 
+use the framework.
 
 Legalese
 --------

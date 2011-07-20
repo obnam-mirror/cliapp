@@ -1,3 +1,19 @@
+python-cliapp (0.14-1) unstable; urgency=low
+
+  * New upstream release.
+    - Start and end of program are now logged. This makes it easier to read
+      log files.
+    - Commands run by the `runcmd` method are now logged.
+    - Bugfix: `runcmd` now passes extra arguments to `subprocess.Popen`.
+    - A `Settings.require` method is added, so that it's easy to fail if the
+      user has failed the give an option that is required in a given situation.
+      (Mandatory options are a bit weird, but sometimes they happen.)
+    - Subcommands may now be added explicitly, using the 
+      `Application.add_subcommand` method. This is helpful for applications 
+      that support plugins, for example.
+
+ -- Lars Wirzenius <liw@liw.fi>  Wed, 20 Jul 2011 20:33:04 +0100
+
 python-cliapp (0.13-1) unstable; urgency=low
 
   * New upstream version. (Closes: #628017)
