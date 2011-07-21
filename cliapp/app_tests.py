@@ -296,10 +296,10 @@ class ExtensibleSubcommandTests(unittest.TestCase):
         self.app = cliapp.Application()
     
     def test_lists_no_subcommands(self):
-        self.assertEqual(self.app._subcommands, {})
+        self.assertEqual(self.app.subcommands, {})
         
     def test_adds_subcommand(self):
         help = lambda args: None
         self.app.add_subcommand('help', help)
-        self.assertEqual(self.app._subcommands, {'help': help})
+        self.assertEqual(self.app.subcommands, {'help': help})
 

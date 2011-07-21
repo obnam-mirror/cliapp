@@ -66,10 +66,10 @@ class Application(object):
         self.lineno = 0
         self._description = description
 
-        self._subcommands = {}
+        self.subcommands = {}
         for method_name in self._subcommand_methodnames():
             cmd = self._unnormalize_cmd(method_name)
-            self._subcommands[cmd] = getattr(self, method_name)
+            self.subcommands[cmd] = getattr(self, method_name)
         
         self.settings = cliapp.Settings(progname, version, 
                                         usage=self._format_usage,
@@ -154,8 +154,8 @@ class Application(object):
         
         '''
         
-        if name not in self._subcommands:
-            self._subcommands[name] = func
+        if name not in self.subcommands:
+            self.subcommands[name] = func
     
     def _subcommand_methodnames(self):
         return [x for x in dir(self) if x.startswith('cmd_')]
@@ -169,10 +169,10 @@ class Application(object):
 
     def _format_usage(self):
         '''Format usage, possibly also subcommands, if any.'''
-        if self._subcommands:
+        if self.subcommands:
             lines = []
             prefix = 'Usage:'
-            for cmd in sorted(self._subcommands.keys()):
+            for cmd in sorted(self.subcommands.keys()):
                 lines.append('%s %%prog [options] %s' % (prefix, cmd))
                 prefix = ' ' * len(prefix)
             return '\n'.join(lines)
@@ -181,10 +181,10 @@ class Application(object):
 
     def _format_description(self):
         '''Format OptionParser description, with subcommand support.'''
-        if self._subcommands:
+        if self.subcommands:
             paras = []
-            for cmd in sorted(self._subcommands.keys()):
-                method = self._subcommands[cmd]
+            for cmd in sorted(self.subcommands.keys()):
+                method = self.subcommands[cmd]
                 doc = method.__doc__ or ''
                 paras.append('%s: %s' % (cmd, doc.strip()))
             cmd_desc = '\n\n'.join(paras)
@@ -245,11 +245,11 @@ class Application(object):
         '''
         
             
-        if self._subcommands:
+        if self.subcommands:
             if not args:
                 raise SystemExit('must give subcommand')
-            if args[0] in self._subcommands:
-                method = self._subcommands[args[0]]
+            if args[0] in self.subcommands:
+                method = self.subcommands[args[0]]
                 method(args[1:])
             else:
                 raise SystemExit('unknown subcommand %s' % args[0])
