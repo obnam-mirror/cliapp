@@ -401,6 +401,17 @@ class Settings(object):
                      callback=dump_config,
                      help='write out the entire current configuration')
 
+        def list_config_files(*args): # pragma: no cover
+            for filename in self.config_files:
+                print filename
+            sys.exit(0)
+
+        p.add_option('--list-config-files',
+                     action='callback',
+                     nargs=0,
+                     callback=list_config_files,
+                     help='list all possible config files')
+
         p.add_option('--generate-manpage',
                      action='callback',
                      nargs=1,
