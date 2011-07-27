@@ -67,7 +67,7 @@ class Setting(object):
     def parse_value(self, string):
         self.value = string
 
-    def format(self):
+    def format(self): # pragma: no cover
         return self.value
 
 
@@ -106,7 +106,7 @@ class StringListSetting(Setting):
     def parse_value(self, string):
         self.value = [s.strip() for s in string.split(',')]
         
-    def format(self):
+    def format(self): # pragma: no cover
         return ', '.join(self.value)
 
 
