@@ -67,6 +67,9 @@ class Setting(object):
     def parse_value(self, string):
         self.value = string
 
+    def format(self):
+        return self.value
+
 
 class StringSetting(Setting):
 
@@ -102,6 +105,9 @@ class StringListSetting(Setting):
         
     def parse_value(self, string):
         self.value = [s.strip() for s in string.split(',')]
+        
+    def format(self):
+        return ', '.join(self.value)
 
 
 class ChoiceSetting(Setting):
@@ -397,7 +403,7 @@ class Settings(object):
             cp = ConfigParser.ConfigParser()
             cp.add_section('config')
             for name in self._canonical_names:
-                cp.set('config', name, self[name])
+                cp.set('config', name, self._settingses[name].format())
             cp.write(sys.stdout)
             sys.exit(0)
 
