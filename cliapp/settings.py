@@ -53,14 +53,6 @@ class Setting(object):
 
     value = property(call_get_value, call_set_value)
 
-    def get_default_value(self):
-        return self.get_value()
-    
-    def call_get_default_value(self):
-        return self.get_default_value()
-    
-    default_value = property(call_get_default_value)
-    
     def has_value(self):
         return self.value is not None
 
@@ -84,12 +76,10 @@ class StringListSetting(Setting):
     def __init__(self, names, default, help, metavar=None):
         Setting.__init__(self, names, [], help, metavar=metavar)
         self.default = default
+        self.using_default_value = True
 
     def default_metavar(self):
         return self.names[0].upper()
-
-    def get_default_value(self):
-        return []
 
     def get_value(self):
         if self._string_value.strip():
@@ -99,6 +89,7 @@ class StringListSetting(Setting):
         
     def set_value(self, strings):
         self._string_value = ','.join(strings)
+        self.using_default_value = False
 
     def has_value(self):
         return self.value != []
@@ -431,18 +422,32 @@ class Settings(object):
                      callback=self._generate_manpage,
                      help='fill in manual page TEMPLATE',
                      metavar='TEMPLATE')
+
+        def set_value(option, opt_str, value, parser, setting):
+            if setting.action == 'append':
+                if setting.using_default_value:
+                    setting.value = [value]
+                else:
+                    setting.value += [value]
+            elif setting.action == 'store_true':
+                setting.value = True
+            else:
+                assert setting.action == 'store'
+                setting.value = value
         
         for name in self._canonical_names:
             s = self._settingses[name]
             option_names = self._option_names(s.names)
             p.add_option(*option_names,
-                         action=s.action,
+                         action='callback',
+                         callback=set_value,
+                         callback_args=(s,),
                          type=s.type,
                          nargs=s.nargs,
                          choices=s.choices,
                          help=s.help,
                          metavar=s.metavar)
-            p.set_defaults(**{self._destname(name): s.default_value})
+            p.set_defaults(**{self._destname(name): s.value})
 
         return p
 
@@ -460,12 +465,6 @@ class Settings(object):
             p.error = lambda msg: sys.exit(1)
 
         options, args = p.parse_args(args)
-        
-        for name in self._canonical_names:
-            s = self._settingses[name]
-            value = getattr(options, self._destname(name))
-            s.value = value
-        
         return args
 
     @property
