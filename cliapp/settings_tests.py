@@ -254,6 +254,36 @@ bar = ping, pong
         self.assertEqual(self.settings['foo'], ['yeehaa'])
         self.assertEqual(self.settings['bar'], ['ping', 'pong'])
 
+    def test_handles_defaults_with_config_files(self):
+    
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+[config]
+''')
+    
+        self.settings.string(['foo'], 'foo help', default='foo')
+        self.settings.string_list(['bar'], 'bar help', default=['bar'])
+        self.settings.config_files = ['whatever.conf']
+        self.settings.load_configs(open=mock_open)
+        self.assertEqual(self.settings['foo'], 'foo')
+        self.assertEqual(self.settings['bar'], ['bar'])
+
+    def test_handles_overridden_defaults_with_config_files(self):
+    
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+[config]
+foo = yeehaa
+bar = ping, pong
+''')
+    
+        self.settings.string(['foo'], 'foo help', default='foo')
+        self.settings.string_list(['bar'], 'bar help', default=['bar'])
+        self.settings.config_files = ['whatever.conf']
+        self.settings.load_configs(open=mock_open)
+        self.assertEqual(self.settings['foo'], 'yeehaa')
+        self.assertEqual(self.settings['bar'], ['ping', 'pong'])
+
     def test_load_configs_ignore_errors_opening_a_file(self):
         
         def mock_open(filename, mode=None):
