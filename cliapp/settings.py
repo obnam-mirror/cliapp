@@ -64,6 +64,9 @@ class Setting(object):
     def has_value(self):
         return self.value is not None
 
+    def parse_value(self, string):
+        self.value = string
+
 
 class StringSetting(Setting):
 
@@ -96,6 +99,9 @@ class StringListSetting(Setting):
 
     def has_value(self):
         return self.value != []
+        
+    def parse_value(self, string):
+        self.value = [s.strip() for s in string.split(',')]
 
 
 class ChoiceSetting(Setting):
@@ -527,7 +533,7 @@ class Settings(object):
                 f.close()
 
         for name in cp.options('config'):
-            self._settingses[name].value = cp.get('config', name)
+            self._settingses[name].parse_value(cp.get('config', name))
 
     def _generate_manpage(self, o, os, value, p): # pragma: no cover
         template = open(value).read()

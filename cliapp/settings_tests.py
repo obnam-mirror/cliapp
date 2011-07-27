@@ -238,6 +238,22 @@ foo = yeehaa
         self.settings.load_configs(open=mock_open)
         self.assertEqual(self.settings['foo'], 'yeehaa')
 
+    def test_loads_string_list_from_config_files(self):
+    
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+[config]
+foo = yeehaa
+bar = ping, pong
+''')
+    
+        self.settings.string_list(['foo'], 'foo help')
+        self.settings.string_list(['bar'], 'bar help')
+        self.settings.config_files = ['whatever.conf']
+        self.settings.load_configs(open=mock_open)
+        self.assertEqual(self.settings['foo'], ['yeehaa'])
+        self.assertEqual(self.settings['bar'], ['ping', 'pong'])
+
     def test_load_configs_ignore_errors_opening_a_file(self):
         
         def mock_open(filename, mode=None):
