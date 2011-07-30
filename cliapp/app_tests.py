@@ -257,6 +257,14 @@ class ApplicationTests(unittest.TestCase):
     def test_runcmd_obeys_cwd(self):
         self.assertEqual(self.app.runcmd(['pwd'], cwd='/'), '/\n')
 
+    def test_runcmd_unchecked_returns_values_on_success(self):
+        self.assertEqual(self.app.runcmd_unchecked(['echo', 'foo']), 
+                         (0, 'foo\n', ''))
+
+    def test_runcmd_unchecked_returns_values_on_failure(self):
+        self.assertEqual(self.app.runcmd_unchecked(['false']), 
+                         (1, '', ''))
+
 
 class DummySubcommandApp(cliapp.Application):
 
