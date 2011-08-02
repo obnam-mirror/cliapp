@@ -1,6 +1,31 @@
 NEWS for cliapp
 ===============
 
+Version 0.15, released 2011-08-02
+---------------------------------
+
+* `cliapp.Application` now has a `subcommands` attribute, which is a
+  directory mapping subcommand names to the functions that implement
+  them. This provides an alternative way to define new subcommands,
+  which may be useful in plugin-based applications.
+* New method `cliapp.Application.runcmd_unchecked`.
+* There are some new options provided by defaults:
+  - `--list-config-files` lists the config files the application will try
+    to read
+  - `--config=FILE` adds a file to the list of configuration files to be
+    read
+  - `--no-default-configs` prevents any of the default configuration files
+    from being used; any `--config` options used after this one will still
+    be read
+* Parsing of string list values in config files has been fixed. INI files
+  have no standard syntax for presenting files (maybe JSON would be a 
+  better option), but I invented something. How very clever of me.
+  At the same time, `--dump-config` now formats string list values
+  properly.
+* Default values for string lists work better now: the default is used,
+  unless the user specifies some values, in which only the values from
+  the user are used.
+
 Version 0.14, released 2011-07-20
 ---------------------------------
 
