@@ -404,6 +404,15 @@ class Settings(object):
                      callback=dump_config,
                      help='write out the entire current configuration')
 
+        def reset_configs(option, opt_str, value, parser):
+            self.config_files = []
+
+        p.add_option('--no-default-configs',
+                     action='callback',
+                     nargs=0,
+                     callback=reset_configs,
+                     help='clear list of configuration files to read')
+
         def append_to_configs(option, opt_str, value, parser):
             self.config_files.append(value)
 
