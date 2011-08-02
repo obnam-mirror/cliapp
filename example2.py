@@ -47,6 +47,5 @@ This is the epilog.
 
 I hope you like it.
 ''')
-app.settings.config_files = ['example.conf']
 app.run()
 

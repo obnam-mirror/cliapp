@@ -291,6 +291,19 @@ bar = ping, pong
             
         self.assertEqual(self.settings.load_configs(open=mock_open), None)
 
+    def test_adds_config_file_with_dash_dash_config(self):
+        self.settings.parse_args(['--config=foo.conf'])
+        self.assertEqual(self.settings.config_files,
+                         self.settings._default_config_files + ['foo.conf'])
+
+    def test_ignores_default_configs(self):
+        self.settings.parse_args(['--no-default-configs'])
+        self.assertEqual(self.settings.config_files, [])
+
+    def test_ignores_then_adds_configs_works(self):
+        self.settings.parse_args(['--no-default-configs', '--config=foo.conf'])
+        self.assertEqual(self.settings.config_files, ['foo.conf'])
+
     def test_require_raises_error_if_string_unset(self):
         self.settings.string(['foo'], 'foo help', default=None)
         self.assertRaises(cliapp.AppException, self.settings.require, 
