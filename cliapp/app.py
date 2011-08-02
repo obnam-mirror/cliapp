@@ -111,10 +111,17 @@ class Application(object):
     def _run(self, args=None, stderr=sys.stderr, log=logging.critical):
         try:
             self.add_settings()
-            self.settings.load_configs()
-            args = sys.argv[1:] if args is None else args
             
+            # A little bit of trickery here to make --no-default-configs and
+            # --config=foo work right: we first parse the command line once,
+            # and pick up any config files. Then we read configs. Finally,
+            # we re-parse the command line to allow any options to override
+            # config file settings.
+            args = sys.argv[1:] if args is None else args
+            self.parse_args(args)
+            self.settings.load_configs()
             args = self.parse_args(args)
+
             self.setup_logging()
             logging.info('%s version %s starts' % 
                          (self.settings.progname, self.settings.version))

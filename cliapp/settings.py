@@ -404,6 +404,26 @@ class Settings(object):
                      callback=dump_config,
                      help='write out the entire current configuration')
 
+        def reset_configs(option, opt_str, value, parser):
+            self.config_files = []
+
+        p.add_option('--no-default-configs',
+                     action='callback',
+                     nargs=0,
+                     callback=reset_configs,
+                     help='clear list of configuration files to read')
+
+        def append_to_configs(option, opt_str, value, parser):
+            self.config_files.append(value)
+
+        p.add_option('--config',
+                     action='callback',
+                     nargs=1,
+                     type='string',
+                     callback=append_to_configs,
+                     help='add FILE to config files',
+                     metavar='FILE')
+
         def list_config_files(*args): # pragma: no cover
             for filename in self.config_files:
                 print filename
@@ -509,9 +529,8 @@ class Settings(object):
 
     def _get_config_files(self):
         if self._config_files is None:
-            return self._default_config_files
-        else:
-            return self._config_files
+            self._config_files = self._default_config_files
+        return self._config_files
 
     def _set_config_files(self, config_files):
         self._config_files = config_files
