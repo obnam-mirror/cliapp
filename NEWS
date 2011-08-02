@@ -12,6 +12,11 @@ Version 0.15, released 2011-08-02
 * There are some new options provided by defaults:
   - `--list-config-files` lists the config files the application will try
     to read
+  - `--config=FILE` adds a file to the list of configuration files to be
+    read
+  - `--no-default-configs` prevents any of the default configuration files
+    from being used; any `--config` options used after this one will still
+    be read
 * Parsing of string list values in config files has been fixed. INI files
   have no standard syntax for presenting files (maybe JSON would be a 
   better option), but I invented something. How very clever of me.
