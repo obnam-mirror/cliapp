@@ -55,6 +55,17 @@ class ApplicationTests(unittest.TestCase):
         foo.run(args=[])
         self.assert_('foo' in foo.settings)
 
+    def test_run_uses_string_list_options_only_once(self):
+        
+        class Foo(cliapp.Application):
+            def add_settings(self):
+                self.settings.string_list(['foo'], '')
+            def process_args(self, args):
+                pass
+        foo = Foo()
+        foo.run(args=['--foo=yo'])
+        self.assertEqual(foo.settings['foo'], ['yo'])
+
     def test_run_sets_up_logging(self):
         self.called = False
         def setup():
@@ -97,7 +108,7 @@ class ApplicationTests(unittest.TestCase):
                 self.output = None
                 self.log = None
         self.called = None
-        self.app.parse_args = lambda args: setattr(self, 'called', args)
+        self.app.parse_args = lambda args, **kw: setattr(self, 'called', args)
         self.app.process_args = lambda args: None
         self.app.settings.options = DummyOptions()
         self.app.run(args=['foo', 'bar'])

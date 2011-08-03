@@ -363,8 +363,10 @@ class Settings(object):
         name = '_'.join(name.split('-'))
         return name
 
-    def build_parser(self):
+    def build_parser(self, configs_only=False):
         '''Build OptionParser for parsing command line.'''
+
+        maybe = lambda func: (lambda *args: None) if configs_only else func
 
         def getit(x):
             if x is None or type(x) in [str, unicode]:
@@ -387,7 +389,7 @@ class Settings(object):
         p.add_option('--dump-setting-names',
                      action='callback',
                      nargs=0,
-                     callback=dump_setting_names,
+                     callback=maybe(dump_setting_names),
                      help='write out all names of settings and quit')
 
         def dump_config(*args): # pragma: no cover
@@ -401,7 +403,7 @@ class Settings(object):
         p.add_option('--dump-config',
                      action='callback',
                      nargs=0,
-                     callback=dump_config,
+                     callback=maybe(dump_config),
                      help='write out the entire current configuration')
 
         def reset_configs(option, opt_str, value, parser):
@@ -432,14 +434,14 @@ class Settings(object):
         p.add_option('--list-config-files',
                      action='callback',
                      nargs=0,
-                     callback=list_config_files,
+                     callback=maybe(list_config_files),
                      help='list all possible config files')
 
         p.add_option('--generate-manpage',
                      action='callback',
                      nargs=1,
                      type='string',
-                     callback=self._generate_manpage,
+                     callback=maybe(self._generate_manpage),
                      help='fill in manual page TEMPLATE',
                      metavar='TEMPLATE')
 
@@ -460,7 +462,7 @@ class Settings(object):
             option_names = self._option_names(s.names)
             p.add_option(*option_names,
                          action='callback',
-                         callback=set_value,
+                         callback=maybe(set_value),
                          callback_args=(s,),
                          type=s.type,
                          nargs=s.nargs,
@@ -471,7 +473,8 @@ class Settings(object):
 
         return p
 
-    def parse_args(self, args, parser=None, suppress_errors=False):
+    def parse_args(self, args, parser=None, suppress_errors=False,
+                    configs_only=False):
         '''Parse the command line.
         
         Return list of non-option arguments. ``args`` would usually
@@ -479,7 +482,7 @@ class Settings(object):
         
         '''
 
-        p = parser or self.build_parser()
+        p = parser or self.build_parser(configs_only=configs_only)
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)

@@ -118,7 +118,7 @@ class Application(object):
             # we re-parse the command line to allow any options to override
             # config file settings.
             args = sys.argv[1:] if args is None else args
-            self.parse_args(args)
+            self.parse_args(args, configs_only=True)
             self.settings.load_configs()
             args = self.parse_args(args)
 
@@ -233,14 +233,14 @@ class Application(object):
         logger.addHandler(handler)
         logger.setLevel(level)
 
-    def parse_args(self, args):
+    def parse_args(self, args, configs_only=False):
         '''Parse the command line.
         
         Return list of non-option arguments.
         
         '''
 
-        return self.settings.parse_args(args)
+        return self.settings.parse_args(args, configs_only=configs_only)
 
     def process_args(self, args):
         '''Process command line non-option arguments.
