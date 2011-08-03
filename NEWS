@@ -1,6 +1,17 @@
 NEWS for cliapp
 ===============
 
+Version 0.15.1, released 2011-08-03
+-----------------------------------
+
+* Fix parsing of string list options: their values were being added
+  twice so `-foo=bar` would result in `settings['foo']` having the
+  values `['bar', 'bar']`. Oops. As a result, the `parse_args` method
+  has a new keyword argument, `configs_only`, which it should pass
+  onto `Settings.parse_args`.
+* The argument names for the `process_input_line` method have been
+  improved.
+
 Version 0.15, released 2011-08-02
 ---------------------------------
 
