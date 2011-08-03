@@ -316,7 +316,7 @@ class Application(object):
         if f != stdin:
             f.close()
 
-    def process_input_line(self, name, f):
+    def process_input_line(self, filename, line):
         '''Process one line of the input file.
         
         Applications that are line-oriented can redefine only this method in
