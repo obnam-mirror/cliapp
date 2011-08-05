@@ -1,3 +1,9 @@
+python-cliapp (99.99.99-99.99) UNRELEASED; urgency=low
+
+  * Replace embedded copy of jquery.js with symlink to libjs-jquery's copy.
+
+ -- Lars Wirzenius <liw@liw.fi>  Fri, 05 Aug 2011 17:05:36 +0100
+
 python-cliapp (0.15.1-1) unstable; urgency=low
 
   * New upstream release.
