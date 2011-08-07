@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import errno
 import logging
 import logging.handlers
 import os
@@ -140,6 +141,16 @@ class Application(object):
             sys.exit(e.code)
         except KeyboardInterrupt, e:
             sys.exit(255)
+        except IOError, e:
+            if e.errno == errno.EPIPE and e.filename is None:
+                # We're writing to stdout, and it broke. This almost always
+                # happens when we're being piped to less, and the user quits
+                # less before we finish writing everything out. So we ignore
+                # the error in that case.
+                sys.exit(1)
+            log(traceback.format_exc())
+            stderr.write(traceback.format_exc())
+            sys.exit(1)
         except BaseException, e:
             log(traceback.format_exc())
             stderr.write(traceback.format_exc())
