@@ -7,6 +7,7 @@ Version 0.16.1, released UNRELEASED
 * An EPIPE error when writing to stdout is suppressed. This avoids a Python
   stack trace or other error when user pipes output to, say, less, and 
   quits less before the application finishes writing everything to stdout.
+* Improve description of --log. (Thanks, Tapani Tarvainen.)
 
 Version 0.15.1, released 2011-08-03
 -----------------------------------

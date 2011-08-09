@@ -264,7 +264,10 @@ class Settings(object):
                     'write output to FILE, instead of standard output',
                     metavar='FILE')
 
-        self.string(['log'], 'write log entries to FILE', metavar='FILE')
+        self.string(['log'], 
+                    'write log entries to FILE (default is to not write log '
+                        'files at all)',
+                    metavar='FILE')
         self.choice(['log-level'], 
                     ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],
                     'log at LEVEL, one of debug, info, warning, '
