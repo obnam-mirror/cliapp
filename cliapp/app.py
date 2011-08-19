@@ -141,7 +141,7 @@ class Application(object):
             sys.exit(e.code)
         except KeyboardInterrupt, e:
             sys.exit(255)
-        except IOError, e:
+        except IOError, e: # pragma: no cover
             if e.errno == errno.EPIPE and e.filename is None:
                 # We're writing to stdout, and it broke. This almost always
                 # happens when we're being piped to less, and the user quits
