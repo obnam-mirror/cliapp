@@ -1,8 +1,8 @@
 NEWS for cliapp
 ===============
 
-Version 0.16.1, released UNRELEASED
------------------------------------
+Version 0.16, released 2011-08-19
+---------------------------------
 
 * An EPIPE error when writing to stdout is suppressed. This avoids a Python
   stack trace or other error when user pipes output to, say, less, and 
