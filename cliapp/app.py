@@ -149,7 +149,11 @@ class Application(object):
                 # the error in that case.
                 sys.exit(1)
             log(traceback.format_exc())
-            stderr.write(traceback.format_exc())
+            stderr.write('ERROR: %s\n' % str(e))
+            sys.exit(1)
+        except OSError, e:
+            log(traceback.format_exc())
+            stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
         except BaseException, e:
             log(traceback.format_exc())

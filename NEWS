@@ -1,6 +1,11 @@
 NEWS for cliapp
 ===============
 
+Version 0.17, released UNRELEASED
+---------------------------------
+
+* Give more humane error messages for IOError and OSError exceptions.
+
 Version 0.16, released 2011-08-19
 ---------------------------------
 
