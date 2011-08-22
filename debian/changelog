@@ -1,3 +1,9 @@
+python-cliapp (0.17-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Lars Wirzenius <liw@liw.fi>  Mon, 22 Aug 2011 21:29:43 +0100
+
 python-cliapp (0.16-1) unstable; urgency=low
 
   * Replace embedded copy of jquery.js with symlink to libjs-jquery's copy.
