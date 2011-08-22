@@ -151,11 +151,11 @@ class Application(object):
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
-        except OSError, e:
+        except OSError, e: # pragma: no cover
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
-        except BaseException, e:
+        except BaseException, e: # pragma: no cover
             log(traceback.format_exc())
             stderr.write(traceback.format_exc())
             sys.exit(1)
@@ -377,4 +377,51 @@ class Application(object):
         p = subprocess.Popen(argv, stdin=subprocess.PIPE, *args, **kwargs)
         out, err = p.communicate(stdin)
         return p.returncode, out, err
+
+    def _vmrss(self): # pragma: no cover
+        '''Return current resident memory use, in KiB.'''
+        f = open('/proc/self/status')
+        rss = 0
+        for line in f:
+            if line.startswith('VmRSS'):
+                rss = line.split()[1]
+        f.close()
+        return rss
+
+    def dump_memory_profile(self, msg): # pragma: no cover
+        '''Log memory profiling information.
+        
+        Get the memory profiling method from the dump-memory-profile
+        setting, and log the results at DEBUG level. ``msg`` is a
+        message the caller provides to identify at what point the profiling
+        happens.
+        
+        '''
+
+        kind = self.settings['dump-memory-profile']
+
+        if kind == 'none':
+            return
+
+        logging.debug('dumping memory profiling data: %s' % msg)
+        logging.debug('VmRSS: %s KiB' % self._vmrss())
+        
+        if kind == 'simple':
+            return
+
+        # These are fairly expensive operations, so we only log them
+        # if we're doing expensive stuff anyway.
+        logging.debug('# objects: %d' % len(gc.get_objects()))
+        logging.debug('# garbage: %d' % len(gc.garbage))
+
+        if kind == 'heapy':
+            from guppy import hpy
+            h = hpy()
+            logging.debug('memory profile:\n%s' % h.heap())
+        elif kind == 'meliae':
+            filename = 'obnam-%d.meliae' % self.memory_dump_counter
+            logging.debug('memory profile: see %s' % filename)
+            from meliae import scanner
+            scanner.dump_all_objects(filename)
+            self.memory_dump_counter += 1
 

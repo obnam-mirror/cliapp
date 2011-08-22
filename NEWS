@@ -7,6 +7,11 @@ Version 0.17, released UNRELEASED
 * Give more humane error messages for IOError and OSError exceptions.
 * The `runcmd` and `runcmd_unchecked` methods now allow overriding
   the standard output and error redirections.
+* Memory profiling statistics can now be logged by the application,
+  by calling the `cliapp.Application.dump_memory_profile` method.
+  The `--dump-memory-profile` setting is provided by the user to 
+  specify how the profiling is done: simple RSS memory size, and
+  meliae and heapy Python memory profilers are supported.
 
 Version 0.16, released 2011-08-19
 ---------------------------------

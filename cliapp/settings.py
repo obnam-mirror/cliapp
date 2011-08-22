@@ -280,6 +280,13 @@ class Settings(object):
         self.integer(['log-keep'], 'keep last N logs (%default)',
                      metavar='N', default=10)
 
+        self.choice(['dump-memory-profile'],
+                    ['simple', 'none', 'meliae', 'heapy'],
+                    'make memory profiling dumps using METHOD, which is one '
+                        'of: none, simple, meliae, or heapy '
+                        '(default: %default)',
+                    metavar='METHOD')
+
     def _add_setting(self, setting):
         '''Add a setting to self._cp.'''
 
