@@ -5,6 +5,8 @@ Version 0.17, released UNRELEASED
 ---------------------------------
 
 * Give more humane error messages for IOError and OSError exceptions.
+* The `runcmd` and `runcmd_unchecked` methods now allow overriding
+  the standard output and error redirections.
 
 Version 0.16, released 2011-08-19
 ---------------------------------

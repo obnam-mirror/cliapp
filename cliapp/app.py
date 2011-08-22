@@ -370,10 +370,11 @@ class Application(object):
         '''
 
         logging.debug('run external command: %s' % ' '.join(argv))
-        p = subprocess.Popen(argv, stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE, 
-                             stderr=subprocess.PIPE,
-                             *args, **kwargs)
+        if 'stdout' not in kwargs:
+            kwargs['stdout'] = subprocess.PIPE
+        if 'stderr' not in kwargs:
+            kwargs['stderr'] = subprocess.PIPE
+        p = subprocess.Popen(argv, stdin=subprocess.PIPE, *args, **kwargs)
         out, err = p.communicate(stdin)
         return p.returncode, out, err
 
