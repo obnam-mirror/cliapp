@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 0.18, released UNRELEASED
+Version 0.18, released 2011-08-24
 ---------------------------------
 
 * New `cliapp.Settings.dump_config` method, which can be useful, for example,
