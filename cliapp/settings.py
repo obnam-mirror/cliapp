@@ -402,18 +402,14 @@ class Settings(object):
                      callback=maybe(dump_setting_names),
                      help='write out all names of settings and quit')
 
-        def dump_config(*args): # pragma: no cover
-            cp = ConfigParser.ConfigParser()
-            cp.add_section('config')
-            for name in self._canonical_names:
-                cp.set('config', name, self._settingses[name].format())
-            cp.write(sys.stdout)
+        def call_dump_config(*args): # pragma: no cover
+            self.dump_config(sys.stdout)
             sys.exit(0)
 
         p.add_option('--dump-config',
                      action='callback',
                      nargs=0,
-                     callback=maybe(dump_config),
+                     callback=maybe(call_dump_config),
                      help='write out the entire current configuration')
 
         def reset_configs(option, opt_str, value, parser):
@@ -577,3 +573,11 @@ class Settings(object):
         generator = ManpageGenerator(template, p)
         sys.stdout.write(generator.format_template())
         sys.exit(0)
+
+    def dump_config(self, output): # pragma: no cover
+        cp = ConfigParser.ConfigParser()
+        cp.add_section('config')
+        for name in self._canonical_names:
+            cp.set('config', name, self._settingses[name].format())
+        cp.write(output)
+

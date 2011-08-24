@@ -1,6 +1,12 @@
 NEWS for cliapp
 ===============
 
+Version 0.18, released UNRELEASED
+---------------------------------
+
+* New `cliapp.Settings.dump_config` method, which can be useful, for example,
+  if an application wants to save its configuration, or log it at startup.
+
 Version 0.17, released 2011-08-22
 ---------------------------------
 
