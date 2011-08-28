@@ -206,14 +206,43 @@ class Application(object):
         if self.subcommands:
             paras = []
             for cmd in sorted(self.subcommands.keys()):
-                method = self.subcommands[cmd]
-                doc = method.__doc__ or ''
-                paras.append('%s: %s' % (cmd, doc.strip()))
+                paras.append(self._format_subcommand_description(cmd))
             cmd_desc = '\n\n'.join(paras)
             return '%s\n\n%s' % (self._description or '', cmd_desc)
         else:
             return self._description
 
+    def _format_subcommand_description(self, cmd): # pragma: no cover
+
+        def remove_empties(lines):
+            while lines and not lines[0].strip():
+                del lines[0]
+
+        def split_para(lines):
+            para = []
+            while lines and lines[0].strip():
+                para.append(lines[0].strip())
+                del lines[0]
+            return para
+
+        indent = ' ' * 4
+        method = self.subcommands[cmd]
+        doc = method.__doc__ or ''
+        lines = doc.splitlines()
+        remove_empties(lines)
+        if lines:
+            result = ['* %s: %s' % (cmd, lines[0])]
+            del lines[0]
+            remove_empties(lines)
+            while lines:
+                para = split_para(lines)
+                result.append('')
+                result.append(indent + (' '.join(para)))
+                remove_empties(lines)
+            return '\n'.join(result)
+        else:
+            return '* %s' % cmd
+        
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
         
