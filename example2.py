@@ -28,7 +28,12 @@ import logging
 class ExampleApp(cliapp.Application):
 
     def cmd_greet(self, args):
-        '''Greet the user.'''
+        '''Greet the user.
+        
+        The user is treated to a a courteus,
+        but terse form of greeting.
+        
+        '''
         for arg in args:
             self.output.write('greetings, %s\n' % arg)
             
