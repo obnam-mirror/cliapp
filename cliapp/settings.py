@@ -566,7 +566,10 @@ class Settings(object):
                 f.close()
 
         for name in cp.options('config'):
-            self._settingses[name].parse_value(cp.get('config', name))
+            s = self._settingses[name]
+            s.parse_value(cp.get('config', name))
+            if hasattr(s, 'using_default_value'):
+                s.using_default_value = True
 
     def _generate_manpage(self, o, os, value, p): # pragma: no cover
         template = open(value).read()
