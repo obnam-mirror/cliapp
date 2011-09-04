@@ -1,6 +1,14 @@
 NEWS for cliapp
 ===============
 
+Version 0.19, released 2011-09-04
+---------------------------------
+
+* Subcommand descriptions are formatted more prettily, in --help output.
+* When a string list setting is set in a configuration file, any use of
+  the corresponding option overrides the value from the configuration
+  file, rather than appending to it.
+
 Version 0.18, released 2011-08-24
 ---------------------------------
 
