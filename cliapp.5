@@ -1,0 +1,125 @@
+.\" Copyright 2011 Lars Wirzenius <liw@liw.fi>
+.\" 
+.\" This program is free software: you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\" 
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.\"
+.TH CLIAPP 5
+.SH NAME
+cliapp \- config file and option conventions for Python command line framework
+.SH DESCRIPTION
+.B cliapp
+is a Python programming framework for writing command line applications
+for Unix-like operating systems.
+This manual page describes the conventions for configuration files and
+command line parsing provided by 
+.BR cliapp .
+.PP
+.I "Configuration file variables" 
+and 
+.I "command line options"
+are handled by
+.B cliapp
+under a uniform abstraction:
+every setting is available both in configuration files and command
+line options.
+There are a few settings,
+provided by the framework itself,
+which are only available on the command line.
+For example,
+.B \-\-help
+outputs a short help text,
+listing all the available options,
+and
+.B \-\-dump\-config
+outputs a list of current configuration settings.
+.PP
+.I "Command line parsing"
+follows GNU conventions:
+short options start with a single dash,
+long options with two dashes,
+and options may be used anywhere on the command line.
+The order of options versus non-options does not matter.
+The exception is some of the options provided by the framework,
+which are executed immediately when found,
+and may be prevent the rest of the options from being parsed.
+.RB ( \-\-dump\-config
+is one of these,
+so use it at the end of the command line only.)
+.PP
+Some settings may have aliases,
+which can be only a single character,
+and in that case they're parsed as single-character option names.
+.PP
+Some applications have
+.IR subcommands ,
+which means that the first non-option argument is used to tell the
+application what to do.
+This is similar to what many version control systems do, for example
+CVS, svn, bzr, and git.
+Options are global,
+and are not specific to subcommands.
+Thus,
+.B \-\-foo
+means the same thing,
+regardless of what subcommand is being used.
+.SS "Configuration files"
+Configuration files use INI file syntax.
+All the settings are in the
+.B [config]
+section.
+Other sections are allowed,
+but it is up to the application to give meaning to them.
+.PP
+Multiple configuration files may be read.
+Settings from later ones override settings from earlier ones.
+Options override settings from the configuration files.
+.SS "String list settings"
+Some settings may be a list of values (each value being a string).
+For example,
+there might be a setting for patterns to search for,
+and multiple patterns are allowed.
+On the command line,
+that happens by using the option multiple times.
+In the configuration file,
+all values are given on one line,
+separated by commas.
+This is a non-standard extension to the INI file syntax.
+There is no way to escape commas.
+.PP
+Example:
+.IP
+.nf
+[config]
+pattern = foo, bar, foobar
+.SH FILES
+.B cliapp
+reads a list of configuration files at startup,
+on behalf of the application.
+The name of the application is included in the name.
+In the filenames below,
+the application name is 
+.IR progname .
+.TP
+.BR /etc/progname.conf
+Global configuration file.
+.TP
+.BR /etc/progname/*.conf
+More global configuration files.
+These are read in ASCII sorted order.
+.TP
+.BR ~/.progname.conf
+Per-user configuration file.
+.TP
+.BR ~/.config/progname/*.conf
+More per-user configuration files.
+Again, ASCII sorted order.

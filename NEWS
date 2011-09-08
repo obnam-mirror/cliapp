@@ -1,6 +1,12 @@
 NEWS for cliapp
 ===============
 
+Version 0.20, released UNRELEASED
+---------------------------------
+
+* `cliapp(5)` manual page added, to explain in one place how applications
+  built on cliapp will parse command lines and configuration files.
+
 Version 0.19, released 2011-09-04
 ---------------------------------
 
