@@ -27,6 +27,11 @@ import logging
 
 class ExampleApp(cliapp.Application):
 
+    cmd_synopsis = {
+        'greet': '[USER]...',
+        'insult': '[USER]...',
+    }
+    
     def cmd_greet(self, args):
         '''Greet the user.
         
