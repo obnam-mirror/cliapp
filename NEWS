@@ -6,6 +6,8 @@ Version 0.20, released UNRELEASED
 
 * `cliapp(5)` manual page added, to explain in one place how applications
   built on cliapp will parse command lines and configuration files.
+* The manual pages can now specify how the non-option arguments are formatted,
+  in manual pages, including for each subcommand separately.
 
 Version 0.19, released 2011-09-04
 ---------------------------------
