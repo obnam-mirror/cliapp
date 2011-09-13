@@ -15,15 +15,18 @@
 
 
 import optparse
+import re
 
 
 class ManpageGenerator(object):
 
     '''Fill in a manual page template from an OptionParser instance.'''
     
-    def __init__(self, template, parser):
+    def __init__(self, template, parser, arg_synopsis, cmd_synopsis):
         self.template = template
         self.parser = parser
+        self.arg_synopsis = arg_synopsis
+        self.cmd_synopsis = cmd_synopsis
         
     @property
     def options(self):
@@ -47,6 +50,17 @@ class ManpageGenerator(object):
         for option in self.options:
             for spec in self.format_option_for_synopsis(option):
                 lines += ['.RB [ %s ]' % spec]
+
+        if self.cmd_synopsis:
+            lines += ['.PP']
+            for cmd in self.cmd_synopsis:
+                lines += ['.br',
+                          '.B %s' % self.esc_dashes(self.parser.prog),
+                          '.RI [ options ]',
+                          self.esc_dashes(cmd)]
+                lines += self.format_argspec(self.cmd_synopsis[cmd])
+        elif self.arg_synopsis:
+            lines += self.format_argspec(self.arg_synopsis)
 
         lines += ['.hy']
         return ''.join('%s\n' % line for line in lines)
@@ -93,3 +107,23 @@ class ManpageGenerator(object):
             return '\\' + line
         else:
             return line
+            
+    def format_argspec(self, argspec):
+        roman = re.compile(r'[^A-Z]+')
+        italic = re.compile(r'[A-Z]+')
+        words = ['.RI']
+        while argspec:
+            m = roman.match(argspec)
+            if m:
+                words += [self.esc_dashes(m.group(0))]
+                argspec = argspec[m.end():]
+            else:
+                words += ['""']
+            m = italic.match(argspec)
+            if m:
+                words += [self.esc_dashes(m.group(0))]
+                argspec = argspec[m.end():]
+            else:
+                words += ['""']
+        return [' '.join(words)]
+
