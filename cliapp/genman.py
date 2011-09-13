@@ -52,7 +52,7 @@ class ManpageGenerator(object):
                 lines += ['.RB [ %s ]' % spec]
 
         if self.cmd_synopsis:
-            lines += ['.br']
+            lines += ['.PP']
             for cmd in self.cmd_synopsis:
                 lines += ['.br',
                           '.B %s' % self.esc_dashes(self.parser.prog),
