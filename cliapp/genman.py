@@ -24,6 +24,8 @@ class ManpageGenerator(object):
     def __init__(self, template, parser, arg_synopsis, cmd_synopsis):
         self.template = template
         self.parser = parser
+        self.arg_synopsis = arg_synopsis
+        self.cmd_synopsis = cmd_synopsis
         
     @property
     def options(self):
@@ -47,6 +49,9 @@ class ManpageGenerator(object):
         for option in self.options:
             for spec in self.format_option_for_synopsis(option):
                 lines += ['.RB [ %s ]' % spec]
+
+        if self.arg_synopsis:
+            lines += [self.format_argspec(self.arg_synopsis)]
 
         lines += ['.hy']
         return ''.join('%s\n' % line for line in lines)
@@ -93,3 +98,7 @@ class ManpageGenerator(object):
             return '\\' + line
         else:
             return line
+            
+    def format_argspec(self, argspec):
+        return argspec
+
