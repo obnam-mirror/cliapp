@@ -66,8 +66,10 @@ class Application(object):
         self.global_lineno = 0
         self.lineno = 0
         self._description = description
-        self.arg_synopsis = '[FILE]...'
-        self.cmd_synopsis = {}
+        if not hasattr(self, 'arg_synopsis'):
+            self.arg_synopsis = '[FILE]...'
+        if not hasattr(self, 'cmd_synopsis'):
+            self.cmd_synopsis = {}
 
         self.subcommands = {}
         for method_name in self._subcommand_methodnames():
