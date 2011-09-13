@@ -287,7 +287,9 @@ class Application(object):
         
         '''
 
-        return self.settings.parse_args(args, configs_only=configs_only)
+        return self.settings.parse_args(args, configs_only=configs_only,
+                                         arg_synopsis=self.arg_synopsis,
+                                         cmd_synopsis=self.cmd_synopsis)
 
     def process_args(self, args):
         '''Process command line non-option arguments.
