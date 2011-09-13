@@ -15,6 +15,7 @@
 
 
 import optparse
+import re
 
 
 class ManpageGenerator(object):
@@ -51,7 +52,7 @@ class ManpageGenerator(object):
                 lines += ['.RB [ %s ]' % spec]
 
         if self.arg_synopsis:
-            lines += [self.format_argspec(self.arg_synopsis)]
+            lines += self.format_argspec(self.arg_synopsis)
 
         lines += ['.hy']
         return ''.join('%s\n' % line for line in lines)
@@ -100,5 +101,21 @@ class ManpageGenerator(object):
             return line
             
     def format_argspec(self, argspec):
-        return argspec
+        roman = re.compile(r'[^A-Z]+')
+        italic = re.compile(r'[A-Z]+')
+        words = ['.RI']
+        while argspec:
+            m = roman.match(argspec)
+            if m:
+                words += [self.esc_dashes(m.group(0))]
+                argspec = argspec[m.end():]
+            else:
+                words += ['""']
+            m = italic.match(argspec)
+            if m:
+                words += [self.esc_dashes(m.group(0))]
+                argspec = argspec[m.end():]
+            else:
+                words += ['""']
+        return [' '.join(words)]
 
