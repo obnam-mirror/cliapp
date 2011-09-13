@@ -373,7 +373,8 @@ class Settings(object):
         name = '_'.join(name.split('-'))
         return name
 
-    def build_parser(self, configs_only=False):
+    def build_parser(self, configs_only=False, arg_synopsis=None,
+                     cmd_synopsis=None):
         '''Build OptionParser for parsing command line.'''
 
         maybe = lambda func: (lambda *args: None) if configs_only else func
@@ -443,6 +444,8 @@ class Settings(object):
                      callback=maybe(list_config_files),
                      help='list all possible config files')
 
+        self._arg_synopsis = arg_synopsis
+        self._cmd_synopsis = cmd_synopsis
         p.add_option('--generate-manpage',
                      action='callback',
                      nargs=1,
@@ -480,7 +483,8 @@ class Settings(object):
         return p
 
     def parse_args(self, args, parser=None, suppress_errors=False,
-                    configs_only=False):
+                    configs_only=False, arg_synopsis=None,
+                    cmd_synopsis=None):
         '''Parse the command line.
         
         Return list of non-option arguments. ``args`` would usually
@@ -488,7 +492,9 @@ class Settings(object):
         
         '''
 
-        p = parser or self.build_parser(configs_only=configs_only)
+        p = parser or self.build_parser(configs_only=configs_only,
+                                        arg_synopsis=arg_synopsis,
+                                        cmd_synopsis=cmd_synopsis)
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
@@ -573,7 +579,8 @@ class Settings(object):
 
     def _generate_manpage(self, o, os, value, p): # pragma: no cover
         template = open(value).read()
-        generator = ManpageGenerator(template, p)
+        generator = ManpageGenerator(template, p, self._arg_synopsis,
+                                     self._cmd_synopsis)
         sys.stdout.write(generator.format_template())
         sys.exit(0)
 

@@ -21,7 +21,7 @@ class ManpageGenerator(object):
 
     '''Fill in a manual page template from an OptionParser instance.'''
     
-    def __init__(self, template, parser):
+    def __init__(self, template, parser, arg_synopsis, cmd_synopsis):
         self.template = template
         self.parser = parser
         

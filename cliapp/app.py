@@ -66,6 +66,8 @@ class Application(object):
         self.global_lineno = 0
         self.lineno = 0
         self._description = description
+        self.arg_synopsis = '[FILE]...'
+        self.cmd_synopsis = {}
 
         self.subcommands = {}
         for method_name in self._subcommand_methodnames():
@@ -163,7 +165,7 @@ class Application(object):
         logging.info('%s version %s ends normally' % 
                      (self.settings.progname, self.settings.version))
     
-    def add_subcommand(self, name, func):
+    def add_subcommand(self, name, func, arg_synopsis=None):
         '''Add a subcommand.
         
         Normally, subcommands are defined by add ``cmd_foo`` methods
@@ -178,6 +180,7 @@ class Application(object):
         
         if name not in self.subcommands:
             self.subcommands[name] = func
+            self.cmd_synopsis[name] = arg_synopsis
     
     def _subcommand_methodnames(self):
         return [x for x in dir(self) if x.startswith('cmd_')]
