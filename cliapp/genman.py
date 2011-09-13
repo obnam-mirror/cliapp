@@ -51,7 +51,15 @@ class ManpageGenerator(object):
             for spec in self.format_option_for_synopsis(option):
                 lines += ['.RB [ %s ]' % spec]
 
-        if self.arg_synopsis:
+        if self.cmd_synopsis:
+            lines += ['.br']
+            for cmd in self.cmd_synopsis:
+                lines += ['.br',
+                          '.B %s' % self.esc_dashes(self.parser.prog),
+                          '.RI [ options ]',
+                          self.esc_dashes(cmd)]
+                lines += self.format_argspec(self.cmd_synopsis[cmd])
+        elif self.arg_synopsis:
             lines += self.format_argspec(self.arg_synopsis)
 
         lines += ['.hy']
