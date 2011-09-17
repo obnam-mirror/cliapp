@@ -15,6 +15,7 @@
 
 
 import errno
+import inspect
 import logging
 import logging.handlers
 import os
@@ -185,7 +186,10 @@ class Application(object):
             self.cmd_synopsis[name] = arg_synopsis
     
     def _subcommand_methodnames(self):
-        return [x for x in dir(self) if x.startswith('cmd_')]
+        return [x 
+                 for x in dir(self) 
+                 if x.startswith('cmd_') and 
+                    inspect.ismethod(getattr(self, x))]
 
     def _normalize_cmd(self, cmd):
         return 'cmd_%s' % cmd.replace('-', '_')
