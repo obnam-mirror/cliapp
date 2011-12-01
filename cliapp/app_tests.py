@@ -259,7 +259,7 @@ class ApplicationTests(unittest.TestCase):
                          'hello world\n')
 
     def test_runcmd_pipes_stdin_through_command(self):
-        self.assertEqual(self.app.runcmd(['cat'], stdin='hello, world'),
+        self.assertEqual(self.app.runcmd(['cat'], feed_stdin='hello, world'),
                          'hello, world')
 
     def test_runcmd_ignores_failures_on_request(self):
