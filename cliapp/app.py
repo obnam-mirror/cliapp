@@ -267,14 +267,16 @@ class Application(object):
         }
         level = levels.get(level_name, logging.INFO)
 
-        if self.settings['log']:
+        if self.settings['log'] == 'syslog':
+            handler = logging.handlers.SysLogHandler(address='/dev/log')
+        elif self.settings['log']:
             handler = logging.handlers.RotatingFileHandler(
                             self.settings['log'],
                             maxBytes=self.settings['log-max'], 
                             backupCount=self.settings['log-keep'],
                             delay=False)
         else:
-            handler = logging.FileHandler('/dev/null')
+            handler = logging.NullHandler()
             # reduce amount of pointless I/O
             level = logging.FATAL
 
