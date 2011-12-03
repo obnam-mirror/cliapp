@@ -1,6 +1,11 @@
 NEWS for cliapp
 ===============
 
+Version 0.22, released UNRELEASED
+---------------------------------
+
+* Syslog support has been added. Use `--log=syslog`.
+
 Version 0.21, released 2011-10-02
 ---------------------------------
 
