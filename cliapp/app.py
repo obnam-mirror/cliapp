@@ -403,7 +403,7 @@ class Application(object):
                 raise cliapp.AppException(msg)
         return out
         
-    def runcmd_unchecked(self, argv, stdin=None, ignore_fail=False, *args, 
+    def runcmd_unchecked(self, argv, feed_stdin=None, ignore_fail=False, *args, 
                          **kwargs):
         '''Run external command.
 
@@ -417,8 +417,10 @@ class Application(object):
             kwargs['stdout'] = subprocess.PIPE
         if 'stderr' not in kwargs:
             kwargs['stderr'] = subprocess.PIPE
-        p = subprocess.Popen(argv, stdin=subprocess.PIPE, *args, **kwargs)
-        out, err = p.communicate(stdin)
+        if feed_stdin is not None and 'stdin' not in kwargs:
+            kwargs['stdin'] = subprocess.PIPE
+        p = subprocess.Popen(argv, *args, **kwargs)
+        out, err = p.communicate(feed_stdin)
         return p.returncode, out, err
 
     def _vmrss(self): # pragma: no cover

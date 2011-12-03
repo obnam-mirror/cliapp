@@ -1,9 +1,14 @@
 NEWS for cliapp
 ===============
 
+
 Version 0.22, released UNRELEASED
 ---------------------------------
 
+* The `runcmd` and `runcmd_unchecked` methods have had an API change: the
+  `stdin` argument is now called `feed_stdin`. This is so that callers may
+  use `stdin` to control how the `subprocess.Popen` module sets up the
+  child program's standard input.
 * Syslog support has been added. Use `--log=syslog`.
 
 Version 0.21, released 2011-10-02
