@@ -276,7 +276,7 @@ class Application(object):
                             backupCount=self.settings['log-keep'],
                             delay=False)
         else:
-            handler = logging.NullHandler()
+            handler = logging.FileHandler('/dev/null')
             # reduce amount of pointless I/O
             level = logging.FATAL
 
