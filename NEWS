@@ -2,7 +2,7 @@ NEWS for cliapp
 ===============
 
 
-Version 0.23, released UNRELEASED
+Version 0.23, released 2011-12-18
 ---------------------------------
 
 * Back off from using the `logging.NullHandler` class, since that exists
