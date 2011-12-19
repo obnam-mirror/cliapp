@@ -205,7 +205,7 @@ class Application(object):
             lines = []
             prefix = 'Usage:'
             for cmd in sorted(self.subcommands.keys()):
-                args = self.cmd_synopsis[cmd]
+                args = self.cmd_synopsis.get(cmd, '')
                 lines.append('%s %%prog [options] %s %s' % (prefix, cmd, args))
                 prefix = ' ' * len(prefix)
             return '\n'.join(lines)
