@@ -242,13 +242,15 @@ class Application(object):
         lines = doc.splitlines()
         remove_empties(lines)
         if lines:
-            result = ['* %s: %s' % (cmd, lines[0])]
+            heading = '* %s -- %s' % (cmd, lines[0])
+            result = [heading]
             del lines[0]
             remove_empties(lines)
             while lines:
-                para = split_para(lines)
                 result.append('')
-                result.append(indent + (' '.join(para)))
+                para_lines = split_para(lines)
+                para_text = ' '.join(para_lines)
+                result.append(para_text)
                 remove_empties(lines)
             return '\n'.join(result)
         else:

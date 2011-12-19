@@ -44,7 +44,12 @@ class ExampleApp(cliapp.Application):
             self.output.write('greetings, %s\n' % arg)
             
     def cmd_insult(self, args):
-        '''Insult the user.'''
+        '''Insult the user.
+        
+        Sometimes, though rarely, it happens that a user is really a bit of 
+        a prat, and needs to be told off. This is the command for that.
+        
+        '''
         for arg in args:
             self.output.write('you suck, %s\n' % arg)
     
