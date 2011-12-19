@@ -54,7 +54,7 @@ class ManpageGenerator(object):
 
         if self.cmd_synopsis:
             lines += ['.PP']
-            for cmd in self.cmd_synopsis:
+            for cmd in sorted(self.cmd_synopsis):
                 lines += ['.br',
                           '.B %s' % self.esc_dashes(self.parser.prog),
                           '.RI [ options ]',
