@@ -2,6 +2,12 @@ NEWS for cliapp
 ===============
 
 
+Version 0.24, released UNRELEASED
+---------------------------------
+
+* Bug fix: setting a boolean setting to false in a configuration file now
+  works. Thanks to Richard Maw for the bug report.
+
 Version 0.23, released 2011-12-18
 ---------------------------------
 

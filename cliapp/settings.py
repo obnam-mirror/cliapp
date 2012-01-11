@@ -127,7 +127,13 @@ class BooleanSetting(Setting):
         return self._string_value.lower() in self._trues
         
     def set_value(self, value):
-        if value:
+        def is_true():
+            if value is True or value is False:
+                return value
+            if type(value) in [str, unicode]:
+                return value.lower() in self._trues
+            return value
+        if is_true():
             self._string_value = self._trues[0]
         else:
             self._string_value = self._false
