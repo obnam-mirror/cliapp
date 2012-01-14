@@ -146,6 +146,20 @@ class SettingsTests(unittest.TestCase):
         self.assertFalse(self.settings['foo'])
         self.settings['foo'] = ''
         self.assertFalse(self.settings['foo'])
+
+    def test_sets_boolean_to_true_from_config_file(self):
+        def fake_open(filename):
+            return StringIO.StringIO('[config]\nfoo = yes\n')
+        self.settings.boolean(['foo'], 'foo help')
+        self.settings.load_configs(open=fake_open)
+        self.assertEqual(self.settings['foo'], True)
+        
+    def test_sets_boolean_to_false_from_config_file(self):
+        def fake_open(filename):
+            return StringIO.StringIO('[config]\nfoo = False\n')
+        self.settings.boolean(['foo'], 'foo help')
+        self.settings.load_configs(open=fake_open)
+        self.assertEqual(self.settings['foo'], False)
         
     def test_adds_bytesize_setting(self):
         self.settings.bytesize(['foo'], 'foo help')
