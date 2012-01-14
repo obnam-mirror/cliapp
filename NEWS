@@ -2,7 +2,7 @@ NEWS for cliapp
 ===============
 
 
-Version 0.24, released UNRELEASED
+Version 0.24, released 2012-01-14
 ---------------------------------
 
 * Show the subcommand synopsis in --help output.
