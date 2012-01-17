@@ -2,6 +2,11 @@ NEWS for cliapp
 ===============
 
 
+Version 0.25, released UNRELEASED
+---------------------------------
+
+* Improved error message for when executing a non-existent command.
+
 Version 0.24, released 2012-01-14
 ---------------------------------
 
