@@ -159,7 +159,12 @@ class Application(object):
             sys.exit(1)
         except OSError, e: # pragma: no cover
             log(traceback.format_exc())
-            stderr.write('ERROR: %s\n' % str(e))
+            if hasattr(e, 'filename') and e.filename:
+                stderr.write('ERROR: %s: %s\n' % (e.filename, e.strerror))
+            else:
+                stderr.write('ERROR: %s\n' % e.strerror)
+            stderr.write('dir(e): %s\n' % dir(e))
+            stderr.write('e.filename: %s\n' % repr(e.filename))
             sys.exit(1)
         except BaseException, e: # pragma: no cover
             log(traceback.format_exc())
@@ -422,8 +427,15 @@ class Application(object):
             kwargs['stderr'] = subprocess.PIPE
         if feed_stdin is not None and 'stdin' not in kwargs:
             kwargs['stdin'] = subprocess.PIPE
-        p = subprocess.Popen(argv, *args, **kwargs)
-        out, err = p.communicate(feed_stdin)
+        try:
+            p = subprocess.Popen(argv, *args, **kwargs)
+            out, err = p.communicate(feed_stdin)
+        except OSError, e: # pragma: no cover
+            if e.errno == errno.ENOENT and e.filename is None:
+                e.filename = argv[0]
+                raise e
+            else:
+                raise
         return p.returncode, out, err
 
     def _vmrss(self): # pragma: no cover
