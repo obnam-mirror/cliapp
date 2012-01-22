@@ -522,7 +522,7 @@ class Application(object):
                 wlist.append(procs[0].stdin)
 
             if rlist or wlist:
-                r, w, x = select.select(rlist, wlist, [], 1.0)
+                r, w, x = select.select(rlist, wlist, [])
             else:
                 r = w = []
 

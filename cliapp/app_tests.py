@@ -289,7 +289,7 @@ class ApplicationTests(unittest.TestCase):
                                                    ['cat'],
                                                    ['wc', '-c']),
                          (0, '4\n', ''))
-                            
+
     def test_runcmd_redirects_stdin_from_file(self):
         fd, filename = tempfile.mkstemp()
         os.write(fd, 'foobar')
