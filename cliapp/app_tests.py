@@ -306,6 +306,16 @@ class ApplicationTests(unittest.TestCase):
             data = f.read()
         self.assertEqual(exit, 0)
         self.assertEqual(data, 'foo\n')
+                            
+    def test_runcmd_redirects_stderr_to_file(self):
+        fd, filename = tempfile.mkstemp()
+        exit, out, err = self.app.runcmd_unchecked(['ls', 'notexist'], 
+                                                   stderr=fd)
+        os.close(fd)
+        with open(filename) as f:
+            data = f.read()
+        self.assertNotEqual(exit, 0)
+        self.assertNotEqual(data, '')
 
 class DummySubcommandApp(cliapp.Application):
 
