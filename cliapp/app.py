@@ -466,7 +466,7 @@ class Application(object):
                         kwargs):
         procs = []
         for i, argv in enumerate(argvs):
-            if i == 0 and i == len(argv) - 1:
+            if i == 0 and i == len(argvs) - 1:
                 stdin = pipe_stdin
                 stdout = pipe_stdout
                 stderr = pipe_stderr
@@ -476,7 +476,7 @@ class Application(object):
                 stderr = pipe_stderr
             elif i == len(argv) - 1:
                 stdin = procs[-1].stdout
-                stdout = subprocess.PIPE
+                stdout = pipe_stdout
                 stderr = pipe_stderr
             else:
                 stdin = procs[-1].stdout
@@ -488,11 +488,6 @@ class Application(object):
 
         return procs
 
-    def _still_running(self, procs):
-        for p in procs:
-            p.poll()
-        return all(p.returncode is None for p in procs)
-
     def _run_pipeline(self, procs, feed_stdin, pipe_stdin, pipe_stdout,
                       pipe_stderr):
         stdout_eof = False
@@ -500,8 +495,22 @@ class Application(object):
         out = []
         err = []
         pos = 0
-        while (self._still_running(procs) or pos < len(feed_stdin) or
-               not stdout_eof or not stderr_eof):
+        
+        def still_running():
+            for p in procs:
+                p.poll()
+            for p in procs:
+                if p.returncode is None:
+                    return True
+            if pos < len(feed_stdin):
+                return True
+            if pipe_stdout == subprocess.PIPE and not stdout_eof:
+                return True
+            if pipe_stderr == subprocess.PIPE and not stderr_eof:
+                return True
+            return False
+        
+        while still_running():
             rlist = []
             if not stdout_eof and pipe_stdout == subprocess.PIPE:
                 rlist.append(procs[-1].stdout)

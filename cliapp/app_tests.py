@@ -297,7 +297,15 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app.runcmd_unchecked(['cat'], stdin=fd),
                          (0, 'foobar', ''))
         os.close(fd)
-    
+                            
+    def test_runcmd_redirects_stdout_to_file(self):
+        fd, filename = tempfile.mkstemp()
+        exit, out, err = self.app.runcmd_unchecked(['echo', 'foo'], stdout=fd)
+        os.close(fd)
+        with open(filename) as f:
+            data = f.read()
+        self.assertEqual(exit, 0)
+        self.assertEqual(data, 'foo\n')
 
 class DummySubcommandApp(cliapp.Application):
 
