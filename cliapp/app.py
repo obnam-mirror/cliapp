@@ -502,8 +502,6 @@ class Application(object):
             for p in procs:
                 if p.returncode is None:
                     return True
-            if pos < len(feed_stdin):
-                return True
             if pipe_stdout == subprocess.PIPE and not stdout_eof:
                 return True
             if pipe_stderr == subprocess.PIPE and not stderr_eof:
