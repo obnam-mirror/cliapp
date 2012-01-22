@@ -260,6 +260,12 @@ class ApplicationTests(unittest.TestCase):
     def test_runcmd_returns_stdout_of_command(self):
         self.assertEqual(self.app.runcmd(['echo', 'hello', 'world']),
                          'hello world\n')
+    
+    def test_runcmd_returns_stderr_of_command(self):
+        exit, out, err = self.app.runcmd_unchecked(['ls', 'notexist'])
+        self.assertNotEqual(exit, 0)
+        self.assertEqual(out, '')
+        self.assertNotEqual(err, '')
 
     def test_runcmd_pipes_stdin_through_command(self):
         self.assertEqual(self.app.runcmd(['cat'], feed_stdin='hello, world'),
