@@ -277,6 +277,11 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app.runcmd_unchecked(['false']), 
                          (1, '', ''))
 
+    def test_runcmd_unchecked_runs_simple_pipeline(self):
+        self.assertEqual(self.app.runcmd_unchecked(['echo', 'foo'], 
+                                                   ['wc', 'c']),
+                         (0, '4\n', ''))
+                            
 
 class DummySubcommandApp(cliapp.Application):
 
