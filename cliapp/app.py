@@ -392,7 +392,10 @@ class Application(object):
         '''
         
     def runcmd(self, argv, ignore_fail=False, *args, **kwargs):
-        '''Run external command.
+        '''Run external command or pipeline.
+
+        Example: ``runcmd(['grep', 'foo'], ['wc', '-l'], 
+                          feed_stdin='foo\nbar\n')``
 
         Return the standard output of the command.
         
@@ -413,10 +416,12 @@ class Application(object):
         return out
         
     def runcmd_unchecked(self, argv, *argvs, **kwargs):
-        '''Run external command.
+        '''Run external command or pipeline.
 
         Return the exit code, and contents of standard output and error
         of the command.
+        
+        See also ``runcmd``.
         
         '''
 
