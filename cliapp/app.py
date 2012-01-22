@@ -411,8 +411,7 @@ class Application(object):
                 raise cliapp.AppException(msg)
         return out
         
-    def runcmd_unchecked(self, argv, feed_stdin=None, ignore_fail=False, *args, 
-                         **kwargs):
+    def runcmd_unchecked(self, argv, *argvs, **kwargs):
         '''Run external command.
 
         Return the exit code, and contents of standard output and error
@@ -421,14 +420,28 @@ class Application(object):
         '''
 
         logging.debug('run external command: %s' % ' '.join(argv))
+        
+        if 'feed_stdin' in kwargs:
+            feed_stdin = kwargs['feed_stdin']
+            del kwargs['feed_stdin']
+        else:
+            feed_stdin = None
+
+        if 'ignore_fail' in kwargs:
+            ignore_fail = kwargs['ignore_fail']
+            del kwargs['ignore_fail']
+        else:
+            ignore_fail = None
+
         if 'stdout' not in kwargs:
             kwargs['stdout'] = subprocess.PIPE
         if 'stderr' not in kwargs:
             kwargs['stderr'] = subprocess.PIPE
+
         if feed_stdin is not None and 'stdin' not in kwargs:
             kwargs['stdin'] = subprocess.PIPE
         try:
-            p = subprocess.Popen(argv, *args, **kwargs)
+            p = subprocess.Popen(argv, **kwargs)
             out, err = p.communicate(feed_stdin)
         except OSError, e: # pragma: no cover
             if e.errno == errno.ENOENT and e.filename is None:
