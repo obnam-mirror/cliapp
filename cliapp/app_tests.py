@@ -279,7 +279,13 @@ class ApplicationTests(unittest.TestCase):
 
     def test_runcmd_unchecked_runs_simple_pipeline(self):
         self.assertEqual(self.app.runcmd_unchecked(['echo', 'foo'], 
-                                                   ['wc', 'c']),
+                                                   ['wc', '-c']),
+                         (0, '4\n', ''))
+
+    def test_runcmd_unchecked_runs_longer_pipeline(self):
+        self.assertEqual(self.app.runcmd_unchecked(['echo', 'foo'], 
+                                                   ['cat'],
+                                                   ['wc', '-c']),
                          (0, '4\n', ''))
                             
 

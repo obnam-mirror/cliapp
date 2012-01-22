@@ -20,6 +20,7 @@ import inspect
 import logging
 import logging.handlers
 import os
+import select
 import subprocess
 import sys
 import traceback
@@ -420,36 +421,123 @@ class Application(object):
         '''
 
         logging.debug('run external command: %s' % ' '.join(argv))
-        
+
         if 'feed_stdin' in kwargs:
             feed_stdin = kwargs['feed_stdin']
             del kwargs['feed_stdin']
         else:
-            feed_stdin = None
+            feed_stdin = ''
 
-        if 'ignore_fail' in kwargs:
-            ignore_fail = kwargs['ignore_fail']
-            del kwargs['ignore_fail']
+        if 'stdin' in kwargs:
+            pipe_stdin = kwargs['stdin']
+            del kwargs['stdin']
         else:
-            ignore_fail = None
+            pipe_stdin = subprocess.PIPE
 
-        if 'stdout' not in kwargs:
-            kwargs['stdout'] = subprocess.PIPE
-        if 'stderr' not in kwargs:
-            kwargs['stderr'] = subprocess.PIPE
+        if 'stdout' in kwargs:
+            pipe_stdout = kwargs['stdout']
+            del kwargs['stdout']
+        else:
+            pipe_stdout = subprocess.PIPE
 
-        if feed_stdin is not None and 'stdin' not in kwargs:
-            kwargs['stdin'] = subprocess.PIPE
+        if 'stderr' in kwargs:
+            pipe_stderr = kwargs['stderr']
+            del kwargs['stderr']
+        else:
+            pipe_stderr = subprocess.PIPE
+
+        pipeline = self._build_pipeline([argv] + list(argvs),
+                                        pipe_stdin,
+                                        pipe_stdout,
+                                        pipe_stderr,
+                                        kwargs)
+        
         try:
-            p = subprocess.Popen(argv, **kwargs)
-            out, err = p.communicate(feed_stdin)
+            return self._run_pipeline(pipeline, feed_stdin, pipe_stdin,
+                                      pipe_stdout, pipe_stderr)
         except OSError, e: # pragma: no cover
             if e.errno == errno.ENOENT and e.filename is None:
                 e.filename = argv[0]
                 raise e
             else:
                 raise
-        return p.returncode, out, err
+
+    def _build_pipeline(self, argvs, pipe_stdin, pipe_stdout, pipe_stderr,
+                        kwargs):
+        procs = []
+        for i, argv in enumerate(argvs):
+            if i == 0 and i == len(argv) - 1:
+                stdin = pipe_stdin
+                stdout = pipe_stdout
+                stderr = pipe_stderr
+            elif i == 0:
+                stdin = pipe_stdin
+                stdout = subprocess.PIPE
+                stderr = pipe_stderr
+            elif i == len(argv) - 1:
+                stdin = procs[-1].stdout
+                stdout = subprocess.PIPE
+                stderr = pipe_stderr
+            else:
+                stdin = procs[-1].stdout
+                stdout = subprocess.PIPE
+                stderr = pipe_stderr
+            p = subprocess.Popen(argv, stdin=stdin, stdout=stdout, 
+                                 stderr=stderr, **kwargs)
+            procs.append(p)
+
+        return procs
+
+    def _still_running(self, procs):
+        for p in procs:
+            p.poll()
+        return all(p.returncode is None for p in procs)
+
+    def _run_pipeline(self, procs, feed_stdin, pipe_stdin, pipe_stdout,
+                      pipe_stderr):
+        stdout_eof = False
+        stderr_eof = False
+        out = []
+        err = []
+        pos = 0
+        while (self._still_running(procs) or pos < len(feed_stdin) or
+               not stdout_eof or not stderr_eof):
+            rlist = []
+            if not stdout_eof and pipe_stdout == subprocess.PIPE:
+                rlist.append(procs[-1].stdout)
+            if not stderr_eof and pipe_stderr == subprocess.PIPE:
+                rlist.append(procs[-1].stderr)
+            
+            wlist = []
+            if pipe_stdin == subprocess.PIPE and pos < len(feed_stdin):
+                wlist.append(procs[0].stdin)
+
+            if rlist or wlist:
+                r, w, x = select.select(rlist, wlist, [], 1.0)
+            else:
+                r = w = []
+
+            if procs[0].stdin in w and pos < len(feed_stdin):
+                procs[0].stdin.write(feed_stdin[pos])
+                pos += 1
+                if pos >= len(feed_stdin):
+                    procs[0].stdin.close()
+
+            if procs[-1].stdout in r:
+                data = procs[-1].stdout.read(1)
+                if data:
+                    out.append(data)
+                else:
+                    stdout_eof = True
+
+            if procs[-1].stderr in r:
+                data = procs[-1].stderr.read(1)
+                if data:
+                    err.append(data)
+                else:
+                    stderr_eof = True
+
+        return procs[-1].returncode, ''.join(out), ''.join(err)
 
     def _vmrss(self): # pragma: no cover
         '''Return current resident memory use, in KiB.'''
