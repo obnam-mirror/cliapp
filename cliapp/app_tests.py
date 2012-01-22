@@ -16,8 +16,10 @@
 
 
 import optparse
+import os
 import StringIO
 import sys
+import tempfile
 import unittest
 
 import cliapp
@@ -288,6 +290,14 @@ class ApplicationTests(unittest.TestCase):
                                                    ['wc', '-c']),
                          (0, '4\n', ''))
                             
+    def test_runcmd_redirects_stdin_from_file(self):
+        fd, filename = tempfile.mkstemp()
+        os.write(fd, 'foobar')
+        os.lseek(fd, 0, os.SEEK_SET)
+        self.assertEqual(self.app.runcmd_unchecked(['cat'], stdin=fd),
+                         (0, 'foobar', ''))
+        os.close(fd)
+    
 
 class DummySubcommandApp(cliapp.Application):
 
