@@ -272,7 +272,7 @@ class ApplicationTests(unittest.TestCase):
                          'hello, world')
 
     def test_runcmd_pipes_stdin_through_command_with_lots_of_data(self):
-        data = 'x' * (100*1024)
+        data = 'x' * (1024**2)
         self.assertEqual(self.app.runcmd(['cat'], feed_stdin=data),
                          data)
 

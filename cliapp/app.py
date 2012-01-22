@@ -16,6 +16,7 @@
 
 
 import errno
+import fcntl
 import inspect
 import logging
 import logging.handlers
@@ -500,6 +501,19 @@ class Application(object):
         out = []
         err = []
         pos = 0
+        io_size = 1024
+
+        def set_nonblocking(fd):
+            flags = fcntl.fcntl(fd, fcntl.F_GETFL, 0)
+            flags = flags | os.O_NONBLOCK
+            fcntl.fcntl(fd, fcntl.F_SETFL, flags)
+
+        if feed_stdin and pipe_stdin == subprocess.PIPE:
+            set_nonblocking(procs[0].stdin.fileno())
+        if pipe_stdout == subprocess.PIPE:
+            set_nonblocking(procs[-1].stdout.fileno())
+        if pipe_stderr == subprocess.PIPE:
+            set_nonblocking(procs[-1].stderr.fileno())
         
         def still_running():
             for p in procs:
@@ -512,7 +526,7 @@ class Application(object):
             if pipe_stderr == subprocess.PIPE and not stderr_eof:
                 return True
             return False
-        
+
         while still_running():
             rlist = []
             if not stdout_eof and pipe_stdout == subprocess.PIPE:
@@ -530,20 +544,21 @@ class Application(object):
                 r = w = []
 
             if procs[0].stdin in w and pos < len(feed_stdin):
-                procs[0].stdin.write(feed_stdin[pos])
-                pos += 1
+                data = feed_stdin[pos : pos+io_size]
+                procs[0].stdin.write(data)
+                pos += len(data)
                 if pos >= len(feed_stdin):
                     procs[0].stdin.close()
 
             if procs[-1].stdout in r:
-                data = procs[-1].stdout.read(1)
+                data = procs[-1].stdout.read(io_size)
                 if data:
                     out.append(data)
                 else:
                     stdout_eof = True
 
             if procs[-1].stderr in r:
-                data = procs[-1].stderr.read(1)
+                data = procs[-1].stderr.read(io_size)
                 if data:
                     err.append(data)
                 else:
