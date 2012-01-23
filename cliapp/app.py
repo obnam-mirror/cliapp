@@ -428,29 +428,18 @@ class Application(object):
 
         logging.debug('run external command: %s' % ' '.join(argv))
 
-        if 'feed_stdin' in kwargs:
-            feed_stdin = kwargs['feed_stdin']
-            del kwargs['feed_stdin']
-        else:
-            feed_stdin = ''
+        def pop_kwarg(name, default):
+            if name in kwargs:
+                value = kwargs[name]
+                del kwargs[name]
+                return value
+            else:
+                return default
 
-        if 'stdin' in kwargs:
-            pipe_stdin = kwargs['stdin']
-            del kwargs['stdin']
-        else:
-            pipe_stdin = subprocess.PIPE
-
-        if 'stdout' in kwargs:
-            pipe_stdout = kwargs['stdout']
-            del kwargs['stdout']
-        else:
-            pipe_stdout = subprocess.PIPE
-
-        if 'stderr' in kwargs:
-            pipe_stderr = kwargs['stderr']
-            del kwargs['stderr']
-        else:
-            pipe_stderr = subprocess.PIPE
+        feed_stdin = pop_kwarg('feed_stdin', '')
+        pipe_stdin = pop_kwarg('stdin', subprocess.PIPE)
+        pipe_stdout = pop_kwarg('stdout', subprocess.PIPE)
+        pipe_stderr = pop_kwarg('stderr', subprocess.PIPE)
 
         pipeline = self._build_pipeline([argv] + list(argvs),
                                         pipe_stdin,
