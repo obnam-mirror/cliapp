@@ -132,6 +132,26 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app.settings['foo'], 'foovalue')
         self.assertEqual(self.app.settings['bar'], True)
 
+    def test_calls_setup(self):
+        class App(cliapp.Application):
+            def setup(self):
+                self.setup_called = True
+            def process_inputs(self, args):
+                pass
+        app = App()
+        app.run(args=[])
+        self.assertTrue(app.setup_called)
+
+    def test_calls_cleanup(self):
+        class App(cliapp.Application):
+            def cleanup(self):
+                self.cleanup_called = True
+            def process_inputs(self, args):
+                pass
+        app = App()
+        app.run(args=[])
+        self.assertTrue(app.cleanup_called)
+
     def test_process_args_calls_process_inputs(self):
         self.called = False
         def process_inputs(args):

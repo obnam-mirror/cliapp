@@ -140,7 +140,9 @@ class Application(object):
             else:
                 self.output = sys.stdout
 
+            self.setup()
             self.process_args(args)
+            self.cleanup()
         except AppException, e:
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
@@ -309,6 +311,26 @@ class Application(object):
         return self.settings.parse_args(args, configs_only=configs_only,
                                          arg_synopsis=self.arg_synopsis,
                                          cmd_synopsis=self.cmd_synopsis)
+
+    def setup(self):
+        '''Prepare for process_args.
+        
+        This method is called just before process_args. By default it
+        does nothing, but subclasses may override it with a suitable
+        implementation. This is easier than overriding process_args
+        itself.
+        
+        '''
+
+    def cleanup(self):
+        '''Clean up after process_args.
+        
+        This method is called just after process_args. By default it
+        does nothing, but subclasses may override it with a suitable
+        implementation. This is easier than overriding process_args
+        itself.
+        
+        '''
 
     def process_args(self, args):
         '''Process command line non-option arguments.

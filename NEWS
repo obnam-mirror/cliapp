@@ -8,6 +8,8 @@ Version 0.25, released UNRELEASED
 * Improved error message for when executing a non-existent command.
 * `cliapp.Application.runcmd` and `runcmd_unchecked` can now execute a
   pipeline.
+* New overrideable methods `cliapp.Application.setup` and `cleanup` make
+  it easier to add code to be run just before and after `process_args`.
 
 Version 0.24, released 2012-01-14
 ---------------------------------
