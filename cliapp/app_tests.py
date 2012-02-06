@@ -16,8 +16,10 @@
 
 
 import optparse
+import os
 import StringIO
 import sys
+import tempfile
 import unittest
 
 import cliapp
@@ -258,10 +260,21 @@ class ApplicationTests(unittest.TestCase):
     def test_runcmd_returns_stdout_of_command(self):
         self.assertEqual(self.app.runcmd(['echo', 'hello', 'world']),
                          'hello world\n')
+    
+    def test_runcmd_returns_stderr_of_command(self):
+        exit, out, err = self.app.runcmd_unchecked(['ls', 'notexist'])
+        self.assertNotEqual(exit, 0)
+        self.assertEqual(out, '')
+        self.assertNotEqual(err, '')
 
     def test_runcmd_pipes_stdin_through_command(self):
         self.assertEqual(self.app.runcmd(['cat'], feed_stdin='hello, world'),
                          'hello, world')
+
+    def test_runcmd_pipes_stdin_through_command_with_lots_of_data(self):
+        data = 'x' * (1024**2)
+        self.assertEqual(self.app.runcmd(['cat'], feed_stdin=data),
+                         data)
 
     def test_runcmd_ignores_failures_on_request(self):
         self.assertEqual(self.app.runcmd(['false'], ignore_fail=True), '')
@@ -277,6 +290,44 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app.runcmd_unchecked(['false']), 
                          (1, '', ''))
 
+    def test_runcmd_unchecked_runs_simple_pipeline(self):
+        self.assertEqual(self.app.runcmd_unchecked(['echo', 'foo'], 
+                                                   ['wc', '-c']),
+                         (0, '4\n', ''))
+
+    def test_runcmd_unchecked_runs_longer_pipeline(self):
+        self.assertEqual(self.app.runcmd_unchecked(['echo', 'foo'], 
+                                                   ['cat'],
+                                                   ['wc', '-c']),
+                         (0, '4\n', ''))
+
+    def test_runcmd_redirects_stdin_from_file(self):
+        fd, filename = tempfile.mkstemp()
+        os.write(fd, 'foobar')
+        os.lseek(fd, 0, os.SEEK_SET)
+        self.assertEqual(self.app.runcmd_unchecked(['cat'], stdin=fd),
+                         (0, 'foobar', ''))
+        os.close(fd)
+                            
+    def test_runcmd_redirects_stdout_to_file(self):
+        fd, filename = tempfile.mkstemp()
+        exit, out, err = self.app.runcmd_unchecked(['echo', 'foo'], stdout=fd)
+        os.close(fd)
+        with open(filename) as f:
+            data = f.read()
+        self.assertEqual(exit, 0)
+        self.assertEqual(data, 'foo\n')
+                            
+    def test_runcmd_redirects_stderr_to_file(self):
+        fd, filename = tempfile.mkstemp()
+        exit, out, err = self.app.runcmd_unchecked(['ls', 'notexist'], 
+                                                   stderr=fd)
+        os.close(fd)
+        with open(filename) as f:
+            data = f.read()
+        self.assertNotEqual(exit, 0)
+        self.assertNotEqual(data, '')
+    
 
 class DummySubcommandApp(cliapp.Application):
 
