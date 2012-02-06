@@ -513,7 +513,7 @@ class Application(object):
             if pipe_stdout == subprocess.PIPE and not stdout_eof:
                 return True
             if pipe_stderr == subprocess.PIPE and not stderr_eof:
-                return True
+                return True # pragma: no cover
             return False
 
         while still_running():
@@ -530,7 +530,7 @@ class Application(object):
             if rlist or wlist:
                 r, w, x = select.select(rlist, wlist, [])
             else:
-                r = w = []
+                r = w = [] # pragma: no cover
 
             if procs[0].stdin in w and pos < len(feed_stdin):
                 data = feed_stdin[pos : pos+io_size]

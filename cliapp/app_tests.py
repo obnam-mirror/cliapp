@@ -327,6 +327,7 @@ class ApplicationTests(unittest.TestCase):
             data = f.read()
         self.assertNotEqual(exit, 0)
         self.assertNotEqual(data, '')
+    
 
 class DummySubcommandApp(cliapp.Application):
 
