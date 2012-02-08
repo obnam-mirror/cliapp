@@ -2,6 +2,12 @@ NEWS for cliapp
 ===============
 
 
+Version 0.25.2, released 2012-02-08
+---------------------------------
+
+* Fixed another bug in the process pipelining support. This time it was
+  a silly Python optional argument handling problem.
+
 Version 0.25.1, released 2012-02-08
 ---------------------------------
 

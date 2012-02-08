@@ -414,7 +414,7 @@ class Application(object):
         
         '''
         
-    def runcmd(self, argv, ignore_fail=False, *args, **kwargs):
+    def runcmd(self, argv, *args, **kwargs):
         '''Run external command or pipeline.
 
         Example: ``runcmd(['grep', 'foo'], ['wc', '-l'], 
@@ -427,6 +427,12 @@ class Application(object):
         onto ``subprocess.Popen``.
         
         '''
+
+        if 'ignore_fail' in kwargs:
+            ignore_fail = kwargs['ignore_fail']
+            del kwargs['ignore_fail']
+        else:
+            ignore_fail = False
 
         exit, out, err = self.runcmd_unchecked(argv, *args, **kwargs)
         if exit != 0:
