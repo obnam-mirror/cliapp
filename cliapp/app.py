@@ -448,7 +448,8 @@ class Application(object):
         
         '''
 
-        logging.debug('run external command: %s' % ' '.join(argv))
+        argvs = [argv] + list(argvs)
+        logging.debug('run external command: %s' % repr(argvs))
 
         def pop_kwarg(name, default):
             if name in kwargs:
@@ -463,12 +464,12 @@ class Application(object):
         pipe_stdout = pop_kwarg('stdout', subprocess.PIPE)
         pipe_stderr = pop_kwarg('stderr', subprocess.PIPE)
 
-        pipeline = self._build_pipeline([argv] + list(argvs),
+        pipeline = self._build_pipeline(argvs,
                                         pipe_stdin,
                                         pipe_stdout,
                                         pipe_stderr,
                                         kwargs)
-        
+
         try:
             return self._run_pipeline(pipeline, feed_stdin, pipe_stdin,
                                       pipe_stdout, pipe_stderr)
@@ -500,7 +501,7 @@ class Application(object):
                 stdout = subprocess.PIPE
                 stderr = pipe_stderr
             p = subprocess.Popen(argv, stdin=stdin, stdout=stdout, 
-                                 stderr=stderr, **kwargs)
+                                 stderr=stderr, close_fds=True, **kwargs)
             procs.append(p)
 
         return procs
@@ -513,7 +514,7 @@ class Application(object):
         err = []
         pos = 0
         io_size = 1024
-
+        
         def set_nonblocking(fd):
             flags = fcntl.fcntl(fd, fcntl.F_GETFL, 0)
             flags = flags | os.O_NONBLOCK
