@@ -15,7 +15,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-__version__ = '0.25'
+__version__ = '0.25.1'
 
 
 from settings import Settings

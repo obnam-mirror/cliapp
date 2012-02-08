@@ -2,6 +2,11 @@ NEWS for cliapp
 ===============
 
 
+Version 0.25.1, released 2012-02-08
+---------------------------------
+
+* Fix bug in the process pipelining support.
+
 Version 0.25, released 2012-02-06
 ---------------------------------
 
