@@ -379,3 +379,11 @@ bar = ping, pong
         self.settings.integer(['foo'], 'foo help')
         self.assertEqual(self.settings.require('foo'), None)
 
+    def test_exports_configparser_with_settings(self):
+        self.settings.integer(['foo'], 'foo help', default=1)
+        self.settings.string(['bar'], 'bar help', default='yo')
+        cp = self.settings.as_cp()
+        self.assertEqual(cp.get('config', 'foo'), '1')
+        self.assertEqual(cp.get('config', 'bar'), 'yo')
+
+

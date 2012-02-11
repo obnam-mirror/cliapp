@@ -61,7 +61,7 @@ class Setting(object):
         self.value = string
 
     def format(self): # pragma: no cover
-        return self.value
+        return str(self.value)
 
 
 class StringSetting(Setting):
@@ -590,6 +590,14 @@ class Settings(object):
                                      self._cmd_synopsis)
         sys.stdout.write(generator.format_template())
         sys.exit(0)
+
+    def as_cp(self):
+        '''Return a ConfigParser instance with current values of settings.'''
+        cp = ConfigParser.ConfigParser()
+        cp.add_section('config')
+        for name in self._canonical_names:
+            cp.set('config', name, self._settingses[name].format())
+        return cp
 
     def dump_config(self, output): # pragma: no cover
         cp = ConfigParser.ConfigParser()
