@@ -1,3 +1,9 @@
+python-cliapp (0.26-1) unstable; urgency=low
+
+  * New upsream version.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sat, 11 Feb 2012 13:52:45 +0000
+
 python-cliapp (0.25.2-1) unstable; urgency=low
 
   * New upstream release.
