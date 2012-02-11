@@ -61,7 +61,7 @@ class Setting(object):
         self.value = string
 
     def format(self): # pragma: no cover
-        return self.value
+        return str(self.value)
 
 
 class StringSetting(Setting):
@@ -265,6 +265,7 @@ class Settings(object):
         self._add_default_settings()
         
         self._config_files = None
+        self._cp = ConfigParser.ConfigParser()
 
     def _add_default_settings(self):
         self.string(['output'], 
@@ -584,6 +585,9 @@ class Settings(object):
             if hasattr(s, 'using_default_value'):
                 s.using_default_value = True
 
+        # Remember the ConfigParser for use in as_cp later on.
+        self._cp = cp
+
     def _generate_manpage(self, o, os, value, p): # pragma: no cover
         template = open(value).read()
         generator = ManpageGenerator(template, p, self._arg_synopsis,
@@ -591,10 +595,23 @@ class Settings(object):
         sys.stdout.write(generator.format_template())
         sys.exit(0)
 
-    def dump_config(self, output): # pragma: no cover
+    def as_cp(self):
+        '''Return a ConfigParser instance with current values of settings.'''
         cp = ConfigParser.ConfigParser()
         cp.add_section('config')
         for name in self._canonical_names:
             cp.set('config', name, self._settingses[name].format())
+
+        for section in self._cp.sections():
+            if section != 'config':
+                cp.add_section(section)
+                for option in self._cp.options(section):
+                    value = self._cp.get(section, option)
+                    cp.set(section, option, value)
+
+        return cp
+
+    def dump_config(self, output): # pragma: no cover
+        cp = self.as_cp()
         cp.write(output)
 

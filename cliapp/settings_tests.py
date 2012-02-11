@@ -379,3 +379,31 @@ bar = ping, pong
         self.settings.integer(['foo'], 'foo help')
         self.assertEqual(self.settings.require('foo'), None)
 
+    def test_exports_configparser_with_settings(self):
+        self.settings.integer(['foo'], 'foo help', default=1)
+        self.settings.string(['bar'], 'bar help', default='yo')
+        cp = self.settings.as_cp()
+        self.assertEqual(cp.get('config', 'foo'), '1')
+        self.assertEqual(cp.get('config', 'bar'), 'yo')
+
+    def test_exports_all_config_sections_via_as_cp(self):
+    
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+[config]
+foo = yeehaa
+
+[other]
+bar = dodo
+''')
+    
+        self.settings.string(['foo'], 'foo help', default='foo')
+        self.settings.config_files = ['whatever.conf']
+        self.settings.load_configs(open=mock_open)
+        cp = self.settings.as_cp()
+
+        self.assertEqual(sorted(cp.sections()), ['config', 'other'])
+        self.assertEqual(cp.get('config', 'foo'), 'yeehaa')
+        self.assertEqual(cp.options('other'), ['bar'])
+        self.assertEqual(cp.get('other', 'bar'), 'dodo')
+

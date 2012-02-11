@@ -2,6 +2,15 @@ NEWS for cliapp
 ===============
 
 
+Version 0.26, released UNRELEASED
+---------------------------------
+
+* `cliapp.Settings` now allows access to all sections in configuration 
+  files. The new `as_cp` method returns a `ConfigParser` instance, which  
+  is set to the current value of every registered setting, in the `config` 
+  section, plus any additional sections in the configuraiton files that
+  have been read.
+
 Version 0.25.2, released 2012-02-08
 ---------------------------------
 
