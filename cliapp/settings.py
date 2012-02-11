@@ -560,6 +560,12 @@ class Settings(object):
         
     config_files = property(_get_config_files, _set_config_files)
 
+    def set_from_raw_string(self, name, raw_string):
+        '''Set value of a setting from a raw, unparsed string value.'''
+        s = self._settingses[name]
+        s.parse_value(raw_string)
+        return s
+
     def load_configs(self, open=open):
         '''Load all config files in self.config_files.
         
@@ -580,8 +586,8 @@ class Settings(object):
                 f.close()
 
         for name in cp.options('config'):
-            s = self._settingses[name]
-            s.parse_value(cp.get('config', name))
+            value = cp.get('config', name)
+            s = self.set_from_raw_string(name, value)
             if hasattr(s, 'using_default_value'):
                 s.using_default_value = True
 
