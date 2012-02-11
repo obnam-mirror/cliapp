@@ -600,9 +600,6 @@ class Settings(object):
         return cp
 
     def dump_config(self, output): # pragma: no cover
-        cp = ConfigParser.ConfigParser()
-        cp.add_section('config')
-        for name in self._canonical_names:
-            cp.set('config', name, self._settingses[name].format())
+        cp = self.as_cp()
         cp.write(output)
 
