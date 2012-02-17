@@ -2,6 +2,14 @@ NEWS for cliapp
 ===============
 
 
+Version 0.27, released UNRELEASED
+---------------------------------
+
+* Bug fix: The `runcmd` and `runcmd_unchecked` methods now properly add the
+  name of the program that failed to execute to the error message. This
+  did not always happen previously, depending on race conditions on getting
+  errors from a child process.
+
 Version 0.26, released 2012-02-11
 ---------------------------------
 

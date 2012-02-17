@@ -167,8 +167,6 @@ class Application(object):
                 stderr.write('ERROR: %s: %s\n' % (e.filename, e.strerror))
             else:
                 stderr.write('ERROR: %s\n' % e.strerror)
-            stderr.write('dir(e): %s\n' % dir(e))
-            stderr.write('e.filename: %s\n' % repr(e.filename))
             sys.exit(1)
         except BaseException, e: # pragma: no cover
             log(traceback.format_exc())
@@ -470,13 +468,12 @@ class Application(object):
         pipe_stdout = pop_kwarg('stdout', subprocess.PIPE)
         pipe_stderr = pop_kwarg('stderr', subprocess.PIPE)
 
-        pipeline = self._build_pipeline(argvs,
-                                        pipe_stdin,
-                                        pipe_stdout,
-                                        pipe_stderr,
-                                        kwargs)
-
         try:
+            pipeline = self._build_pipeline(argvs,
+                                            pipe_stdin,
+                                            pipe_stdout,
+                                            pipe_stderr,
+                                            kwargs)
             return self._run_pipeline(pipeline, feed_stdin, pipe_stdin,
                                       pipe_stdout, pipe_stderr)
         except OSError, e: # pragma: no cover
