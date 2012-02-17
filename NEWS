@@ -2,7 +2,7 @@ NEWS for cliapp
 ===============
 
 
-Version 0.27, released UNRELEASED
+Version 0.27, released 2012-02-17
 ---------------------------------
 
 * Bug fix: The `runcmd` and `runcmd_unchecked` methods now properly add the
