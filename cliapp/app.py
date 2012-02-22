@@ -38,6 +38,23 @@ class AppException(Exception):
     stack trace to be written to stderr.
     
     '''
+    
+    
+class LogHandler(logging.handlers.RotatingFileHandler): # pragma: no cover
+
+    '''Like RotatingFileHandler, but set permissions of new files.'''
+    
+    def __init__(self, filename, perms=0600, *args, **kwargs):
+        self._perms = perms
+        logging.handlers.RotatingFileHandler.__init__(self, filename, 
+                                                      *args, **kwargs)
+
+    def _open(self):
+        if not os.path.exists(self.baseFilename):
+            flags = os.O_CREAT | os.O_WRONLY
+            fd = os.open(self.baseFilename, flags, self._perms)
+            os.close(fd)
+        return logging.handlers.RotatingFileHandler._open(self)
 
 
 class Application(object):
@@ -280,8 +297,9 @@ class Application(object):
         if self.settings['log'] == 'syslog':
             handler = logging.handlers.SysLogHandler(address='/dev/log')
         elif self.settings['log']:
-            handler = logging.handlers.RotatingFileHandler(
+            handler = LogHandler(
                             self.settings['log'],
+                            perms=int(self.settings['log-mode'], 8),
                             maxBytes=self.settings['log-max'], 
                             backupCount=self.settings['log-keep'],
                             delay=False)

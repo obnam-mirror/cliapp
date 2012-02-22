@@ -287,6 +287,10 @@ class Settings(object):
                       metavar='SIZE', default=0)
         self.integer(['log-keep'], 'keep last N logs (%default)',
                      metavar='N', default=10)
+        self.string(['log-mode'], 
+                    'set permissions of new log files to MODE (octal; '
+                        'default %default)',
+                    metavar='MODE', default='0600')
 
         self.choice(['dump-memory-profile'],
                     ['simple', 'none', 'meliae', 'heapy'],
