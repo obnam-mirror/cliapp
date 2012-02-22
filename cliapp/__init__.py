@@ -21,4 +21,11 @@ __version__ = '0.27'
 from settings import Settings
 from app import Application, AppException
 
+# The plugin system
+from hook import Hook, FilterHook
+from hookmgr import HookManager
+from plugin import Plugin
+from pluginmgr import PluginManager
+
+
 __all__ = locals()
