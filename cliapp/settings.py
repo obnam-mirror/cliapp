@@ -354,6 +354,15 @@ class Settings(object):
 
     def __contains__(self, name):
         return name in self._settingses
+        
+    def __iter__(self):
+        '''Iterate over canonical settings names.'''
+        for name in self._canonical_names:
+            yield name
+
+    def keys(self):
+        '''Return canonical settings names.'''
+        return self._canonical_names[:]
 
     def require(self, name):
         '''Raise exception if setting has not been set.

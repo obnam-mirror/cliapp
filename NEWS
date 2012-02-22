@@ -2,6 +2,13 @@ NEWS for cliapp
 ===============
 
 
+Version 0.28, released UNRELEASED
+---------------------------------
+
+* `for name in settings` and `settings.keys()` now work, making the settings
+  class act more like an object. Thanks to Jannis Pohlmann for giving the
+  inpiration for this change.
+
 Version 0.27, released 2012-02-17
 ---------------------------------
 
