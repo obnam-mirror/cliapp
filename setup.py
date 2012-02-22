@@ -19,6 +19,7 @@ from distutils.core import setup
 
 import cliapp
 
+
 setup(name='cliapp',
       version=cliapp.__version__,
       author='Lars Wirzenius',
@@ -44,5 +45,6 @@ up logging, iterating over lines of input files, and so on.
         'Topic :: Utilities',
       ],
       packages=['cliapp'],
+      data_files=[('share/man/man5', glob.glob('*.5'))],
      )
 
