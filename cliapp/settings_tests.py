@@ -59,7 +59,7 @@ class SettingsTests(unittest.TestCase):
                          sorted(known))
 
     def test_parses_options(self):
-        self.settings.string(['foo'], 'foo help')
+        self.settings.string(['foo'], 'foo help', group='foo')
         self.settings.boolean(['bar'], 'bar help')
         self.settings.parse_args(['--foo=foovalue', '--bar'])
         self.assertEqual(self.settings['foo'], 'foovalue')

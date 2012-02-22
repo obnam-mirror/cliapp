@@ -35,6 +35,9 @@ class ExampleApp(cliapp.Application):
                                   'search for regular expression PATTERN',
                                    metavar='REGEXP')
 
+        self.settings.boolean(['dummy'], 'this setting is ignored',
+                              group='Test Group')
+
     # We override process_inputs to be able to do something after the last
     # input line.
     def process_inputs(self, args):
