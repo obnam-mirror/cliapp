@@ -48,8 +48,18 @@ class SettingsTests(unittest.TestCase):
         self.assert_('log' in self.settings)
         self.assert_('log-level' in self.settings)
 
+    def test_iterates_over_canonical_settings_names(self):
+        known = ['output', 'log', 'log-level']
+        self.assertEqual(sorted(x for x in self.settings if x in known),
+                         sorted(known))
+
+    def test_keys_returns_canonical_names(self):
+        known = ['output', 'log', 'log-level']
+        self.assertEqual(sorted(x for x in self.settings.keys() if x in known),
+                         sorted(known))
+
     def test_parses_options(self):
-        self.settings.string(['foo'], 'foo help')
+        self.settings.string(['foo'], 'foo help', group='foo')
         self.settings.boolean(['bar'], 'bar help')
         self.settings.parse_args(['--foo=foovalue', '--bar'])
         self.assertEqual(self.settings['foo'], 'foovalue')

@@ -31,11 +31,12 @@ class Setting(object):
     nargs = 1
     choices = None
 
-    def __init__(self, names, default, help, metavar=None):
+    def __init__(self, names, default, help, metavar=None, group=None):
         self.names = names
         self.set_value(default)
         self.help = help
         self.metavar = metavar or self.default_metavar()
+        self.group = group
 
     def default_metavar(self):
         return None
@@ -358,6 +359,15 @@ class Settings(object):
 
     def __contains__(self, name):
         return name in self._settingses
+        
+    def __iter__(self):
+        '''Iterate over canonical settings names.'''
+        for name in self._canonical_names:
+            yield name
+
+    def keys(self):
+        '''Return canonical settings names.'''
+        return self._canonical_names[:]
 
     def require(self, name):
         '''Raise exception if setting has not been set.
@@ -477,20 +487,38 @@ class Settings(object):
             else:
                 assert setting.action == 'store'
                 setting.value = value
+
+        def add_option(obj, s):
+            option_names = self._option_names(s.names)
+            obj.add_option(*option_names, 
+                           action='callback',
+                           callback=maybe(set_value),
+                           callback_args=(s,),
+                           type=s.type,
+                           nargs=s.nargs,
+                           choices=s.choices,
+                           help=s.help,
+                           metavar=s.metavar)
         
         for name in self._canonical_names:
             s = self._settingses[name]
-            option_names = self._option_names(s.names)
-            p.add_option(*option_names,
-                         action='callback',
-                         callback=maybe(set_value),
-                         callback_args=(s,),
-                         type=s.type,
-                         nargs=s.nargs,
-                         choices=s.choices,
-                         help=s.help,
-                         metavar=s.metavar)
-            p.set_defaults(**{self._destname(name): s.value})
+            if s.group is None:
+                add_option(p, s)
+                p.set_defaults(**{self._destname(name): s.value})
+
+        groups = {}
+        for name in self._canonical_names:
+            s = self._settingses[name]
+            if s.group is not None:
+                groups[s.group] = groups.get(s.group, []) + [(name, s)]
+
+        groupnames = sorted(groups.keys())
+        for groupname in groupnames:
+            group = optparse.OptionGroup(p, groupname)
+            p.add_option_group(group)
+            for name, s in groups[groupname]:
+                add_option(group, s)
+                p.set_defaults(**{self._destname(name): s.value})
 
         return p
 

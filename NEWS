@@ -7,6 +7,13 @@ Version 0.28, released UNRELEASED
 
 * Log files are now created using a 0600 file mode by default. The new
   option `--log-mode` can be used to change that.
+* `for name in settings` and `settings.keys()` now work, making the settings
+  class act more like an object. Thanks to Jannis Pohlmann for giving the
+  inpiration for this change.
+* Settingses can now be grouped, using the new keyword argment `group` to
+  the various methods to add a new setting. The grouping affects `--help`
+  output only. The value to `group` is the title of the group.
+* There is now a plugin system included in cliapp.
 
 Version 0.27, released 2012-02-17
 ---------------------------------
