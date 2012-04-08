@@ -129,6 +129,20 @@ way that is very lightweight when the tracing is turned off.
 The option specifies for which source code files to turn on tracing.
 The actual logging happens via the normal Python logging facilities,
 at the debug level.
+.SS "Python profiling support"
+You can run the application under the Python profiler
+.RB ( cProfile )
+by setting an environment variable.
+The name of the variable is
+.BR FOO_PROFILE ,
+where 
+.B FOO
+is the name of the program,
+as set by the application code or determined by 
+.B cliapp
+automatically.
+The value of the environment variable is the name of the file to which the
+resulting profile is to be written.
 .SH FILES
 .B cliapp
 reads a list of configuration files at startup,
