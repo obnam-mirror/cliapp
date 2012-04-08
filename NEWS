@@ -7,6 +7,8 @@ Version 0.28, released UNRELEASED
 
 * Log files are now created using a 0600 file mode by default. The new
   option `--log-mode` can be used to change that.
+* Logging can now be disabled using `--log=none`. This is useful for
+  overriding on the command a logging setting from a configuration file.
 * `for name in settings` and `settings.keys()` now work, making the settings
   class act more like an object. Thanks to Jannis Pohlmann for giving the
   inpiration for this change.

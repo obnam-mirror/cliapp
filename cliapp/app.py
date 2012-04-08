@@ -302,7 +302,7 @@ class Application(object):
 
         if self.settings['log'] == 'syslog':
             handler = logging.handlers.SysLogHandler(address='/dev/log')
-        elif self.settings['log']:
+        elif self.settings['log'] and self.settings['log'] != 'none':
             handler = LogHandler(
                             self.settings['log'],
                             perms=int(self.settings['log-mode'], 8),
