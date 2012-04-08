@@ -275,7 +275,8 @@ class Settings(object):
 
         self.string(['log'], 
                     'write log entries to FILE (default is to not write log '
-                        'files at all); use "syslog" to log to system log',
+                        'files at all); use "syslog" to log to system log,
+                        'or "none" to disable logging',
                     metavar='FILE')
         self.choice(['log-level'], 
                     ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],

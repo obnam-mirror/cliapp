@@ -102,6 +102,19 @@ Example:
 .nf
 [config]
 pattern = foo, bar, foobar
+.SS "Logging and log files"
+Programs using 
+.B cliapp
+automatically support several options for configuring the Python
+.B logging
+module.
+See the
+.B \-\-help
+output for options starting with 
+.BR "log"
+for details.
+Logging can happen to a file or the system log.
+Log files can be rotated automatically based on size.
 .SH FILES
 .B cliapp
 reads a list of configuration files at startup,
