@@ -17,6 +17,7 @@
 
 import errno
 import fcntl
+import gc
 import inspect
 import logging
 import logging.handlers
