@@ -2,7 +2,7 @@ NEWS for cliapp
 ===============
 
 
-Version 0.28, released UNRELEASED
+Version 0.28, released 2012-05-08
 ---------------------------------
 
 * Log files are now created using a 0600 file mode by default. The new
