@@ -108,6 +108,8 @@ class Application(object):
                                         usage=self._format_usage,
                                         description=self._format_description,
                                         epilog=epilog)
+
+        self.plugin_subdir = 'plugins'
         
     def add_settings(self):
         '''Add application specific settings.'''
@@ -144,12 +146,15 @@ class Application(object):
     def _run(self, args=None, stderr=sys.stderr, log=logging.critical):
         try:
             self.add_settings()
+            self.setup_plugin_manager()
             
             # A little bit of trickery here to make --no-default-configs and
             # --config=foo work right: we first parse the command line once,
             # and pick up any config files. Then we read configs. Finally,
             # we re-parse the command line to allow any options to override
             # config file settings.
+            self.setup()
+            self.enable_plugins()
             args = sys.argv[1:] if args is None else args
             self.parse_args(args, configs_only=True)
             self.settings.load_configs()
@@ -164,9 +169,9 @@ class Application(object):
             else:
                 self.output = sys.stdout
 
-            self.setup()
             self.process_args(args)
             self.cleanup()
+            self.disable_plugins()
         except AppException, e:
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
@@ -325,6 +330,35 @@ class Application(object):
         logger = logging.getLogger()
         logger.addHandler(handler)
         logger.setLevel(level)
+
+    def app_directory(self):
+        '''Return the directory where the application class is defined.
+        
+        Plugins are searched relative to this directory, in the subdirectory
+        specified by self.plugin_subdir.
+        
+        '''
+        
+        module_name = self.__class__.__module__
+        module = sys.modules[module_name]
+        dirname = os.path.dirname(module.__file__) or '.'
+        return dirname
+
+    def setup_plugin_manager(self):
+        '''Create a plugin manager.'''
+        self.pluginmgr = cliapp.PluginManager()
+        dirname = os.path.join(self.app_directory(), self.plugin_subdir)
+        self.pluginmgr.locations = [dirname]
+
+    def enable_plugins(self): # pragma: no cover
+        '''Load plugins.'''
+        for plugin in self.pluginmgr.plugins:
+            plugin.app = self
+            plugin.setup()
+        self.pluginmgr.enable_plugins()
+
+    def disable_plugins(self):
+        self.pluginmgr.disable_plugins()
 
     def parse_args(self, args, configs_only=False):
         '''Parse the command line.

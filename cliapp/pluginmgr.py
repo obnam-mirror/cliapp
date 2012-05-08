@@ -139,7 +139,6 @@ class PluginManager(object):
                            **self.plugin_keyword_arguments)
                 if self.compatible_version(p.required_application_version):
                     plugins.append(p)
-                    p.setup()
         
         return plugins
 

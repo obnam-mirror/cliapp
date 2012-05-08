@@ -77,10 +77,6 @@ class PluginManagerTests(unittest.TestCase):
         self.assertEqual(plugin.foo, 'fooarg')
         self.assertEqual(plugin.bar, 'bararg')
 
-    def test_calls_setup_method_at_load_time(self):
-        plugin = self.pm['Hello']
-        self.assert_(plugin.setup_called)
-
     def test_raises_keyerror_for_unknown_plugin(self):
         self.assertRaises(KeyError, self.pm.__getitem__, 'Hithere')
 
