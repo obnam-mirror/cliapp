@@ -177,8 +177,6 @@ class Application(object):
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
         except SystemExit, e:
-            logging.fatal(str(e))
-            sys.stderr.write('ERROR: %s\n' % str(e))
             sys.exit(e.code if type(e.code) == int else 1)
         except KeyboardInterrupt, e:
             sys.exit(255)
