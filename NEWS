@@ -2,6 +2,13 @@ NEWS for cliapp
 ===============
 
 
+Version 0.29, released 2012-05-09
+---------------------------------
+
+* Pointless error message about exit code of an application removed.
+  It is one of the mysteries of the universe why this ever made sense
+  at all.
+
 Version 0.28, released 2012-05-08
 ---------------------------------
 
