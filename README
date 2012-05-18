@@ -15,10 +15,20 @@ Example
 See the files `example.py` and `example2.py` for examples of how to 
 use the framework.
 
+Version numbering
+-----------------
+
+cliapp version numbers are of the form `API.DATE`, where `API` starts
+at 1, and gets incremented if the application API changes in an 
+incompatible way. `DATE` is the date of the release.
+
+The `cliapp.__version__` string is set to `1.DEVEL` in version control,
+to differentiate development versions and release versions.
+
 Legalese
 --------
 
-# Copyright (C) 2011  Lars Wirzenius
+# Copyright (C) 2011, 2012  Lars Wirzenius
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

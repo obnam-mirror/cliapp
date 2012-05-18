@@ -2,9 +2,10 @@ NEWS for cliapp
 ===============
 
 
-Version 0.30, released UNRELEASED
----------------------------------
+Version 1.UNRELEASED
+--------------------
 
+* New version numbering scheme: `API.DATE`.
 * cliapp now logs the command line and all settings after the command
   line and configuration files have been parsed. This helps when
   debugging problems other people are having.
