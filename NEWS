@@ -2,6 +2,13 @@ NEWS for cliapp
 ===============
 
 
+Version 0.30, released UNRELEASED
+---------------------------------
+
+* cliapp now logs the command line and all settings after the command
+  line and configuration files have been parsed. This helps when
+  debugging problems other people are having.
+
 Version 0.29, released 2012-05-09
 ---------------------------------
 

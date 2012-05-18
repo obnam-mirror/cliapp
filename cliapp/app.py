@@ -23,6 +23,7 @@ import logging
 import logging.handlers
 import os
 import select
+import StringIO
 import subprocess
 import sys
 import traceback
@@ -161,8 +162,7 @@ class Application(object):
             args = self.parse_args(args)
 
             self.setup_logging()
-            logging.info('%s version %s starts' % 
-                         (self.settings.progname, self.settings.version))
+            self.log_config()
             
             if self.settings['output']:
                 self.output = open(self.settings['output'], 'w')
@@ -328,6 +328,15 @@ class Application(object):
         logger = logging.getLogger()
         logger.addHandler(handler)
         logger.setLevel(level)
+
+    def log_config(self):
+        logging.info('%s version %s starts' % 
+                     (self.settings.progname, self.settings.version))
+        logging.debug('sys.argv: %s' % sys.argv)
+        cp = self.settings.as_cp()
+        f = StringIO.StringIO()
+        cp.write(f)
+        logging.debug('Config:\n%s' % f.getvalue())
 
     def app_directory(self):
         '''Return the directory where the application class is defined.
