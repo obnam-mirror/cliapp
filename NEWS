@@ -9,6 +9,9 @@ Version 1.UNRELEASED
 * cliapp now logs the command line and all settings after the command
   line and configuration files have been parsed. This helps when
   debugging problems other people are having.
+* The `cliapp.runcmd` and `cliapp.runcmd_unchecked` functions are now
+  callable without having a `cliapp.Application` instance. This makes
+  it easier to use them in large programs.
 
 Version 0.29, released 2012-05-09
 ---------------------------------

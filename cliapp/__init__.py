@@ -19,6 +19,7 @@ __version__ = '1.BZR'
 
 
 from settings import Settings
+from runcmd import runcmd, runcmd_unchecked
 from app import Application, AppException
 
 # The plugin system
