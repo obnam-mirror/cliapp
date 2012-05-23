@@ -330,6 +330,9 @@ class Application(object):
         logging.info('%s version %s starts' % 
                      (self.settings.progname, self.settings.version))
         logging.debug('sys.argv: %s' % sys.argv)
+        logging.debug('environment variables:')
+        for name in os.environ:
+            logging.debug('environment: %s=%s' % (name, os.environ[name]))
         cp = self.settings.as_cp()
         f = StringIO.StringIO()
         cp.write(f)
