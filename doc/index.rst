@@ -110,8 +110,10 @@ you need to add methods with names like ``cmd_commit`` and
     class VersionControlTool(cliapp.Application):
     
         def cmd_commit(self, args):
+            '''commit command description'''
             pass
         def cmd_clone(self, args):
+            '''clone command description'''
             pass
             
 If any such methods exist, ``cliapp`` automatically supports
