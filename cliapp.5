@@ -1,4 +1,4 @@
-.\" Copyright (C) 2011  Lars Wirzenius
+.\" Copyright (C) 2011, 2012  Lars Wirzenius
 .\" 
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -102,6 +102,30 @@ Example:
 .nf
 [config]
 pattern = foo, bar, foobar
+.SS "Boolean (true/false or on/off or yes/no) settings"
+When a setting can be either on or off,
+it's called a Boolean setting.
+Such settings are turned off by default,
+and turned on if used on the command line.
+In a configuration file,
+they need to be set to a value:
+if the value is one of
+.BR yes ,
+.BR on ,
+.BR true ,
+or the number 1,
+the setting is turned on.
+Any other value means it is turned off.
+.PP
+.IP
+.nf
+[config]
+verbose = true
+attack-kittens = no
+.fi
+.PP
+This turns the verbose setting on,
+but does not launch attack kittens.
 .SS "Logging and log files"
 Programs using 
 .B cliapp
