@@ -12,6 +12,8 @@ Version 1.UNRELEASED
 * The `cliapp.runcmd` and `cliapp.runcmd_unchecked` functions are now
   callable without having a `cliapp.Application` instance. This makes
   it easier to use them in large programs.
+* All types of settings can now have a `group` keyword argument for
+  grouping them in the `--help` output.
 
 Version 0.29, released 2012-05-09
 ---------------------------------

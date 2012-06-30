@@ -75,8 +75,8 @@ class StringListSetting(Setting):
 
     action = 'append'
     
-    def __init__(self, names, default, help, metavar=None):
-        Setting.__init__(self, names, [], help, metavar=metavar)
+    def __init__(self, names, default, help, metavar=None, group=None):
+        Setting.__init__(self, names, [], help, metavar=metavar, group=group)
         self.default = default
         self.using_default_value = True
 
@@ -107,8 +107,9 @@ class ChoiceSetting(Setting):
 
     type = 'choice'
     
-    def __init__(self, names, choices, help, metavar=None):
-        Setting.__init__(self, names, choices[0], help, metavar=metavar)
+    def __init__(self, names, choices, help, metavar=None, group=None):
+        Setting.__init__(self, names, choices[0], help, metavar=metavar,
+                         group=group)
         self.choices = choices
 
     def default_metavar(self):
