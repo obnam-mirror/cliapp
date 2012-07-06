@@ -15,9 +15,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-from cliapp import Hook, FilterHook
-
-
 class HookManager(object):
 
     '''Manage the set of hooks the application defines.'''
