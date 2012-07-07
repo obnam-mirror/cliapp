@@ -175,6 +175,7 @@ class Application(object):
             sys.exit(1)
         except SystemExit, e:
             if e.code is not None and type(e.code) != int:
+                log(str(e))
                 stderr.write('ERROR: %s\n' % str(e))
             sys.exit(e.code if type(e.code) == int else 1)
         except KeyboardInterrupt, e:
