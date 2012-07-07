@@ -2,6 +2,13 @@ NEWS for cliapp
 ===============
 
 
+Version 1.UNRELEASED
+------------------
+
+* Print error messages from `SystemExit` exceptions. As a side effect,
+  this fixes the problem that an unknown subcommand would not cause an
+  error message to be printed.
+
 Version 1.20120630
 ------------------
 
