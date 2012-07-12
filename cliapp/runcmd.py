@@ -1,4 +1,5 @@
-# Copyright (C) 2011  Lars Wirzenius
+# Copyright (C) 2011, 2012  Lars Wirzenius
+# Copyright (C) 2012  Codethink Limited
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +16,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+import errno
 import fcntl
 import logging
 import os
@@ -121,6 +123,13 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
     return procs
 
 def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
+
+    logging.debug('PIPE=%d' % subprocess.PIPE)
+    logging.debug('STDOUT=%d' % subprocess.STDOUT)
+    logging.debug('pipe_stdin=%s' % repr(pipe_stdin))
+    logging.debug('pipe_stdout=%s' % repr(pipe_stdout))
+    logging.debug('pipe_stderr=%s' % repr(pipe_stderr))
+
     stdout_eof = False
     stderr_eof = False
     out = []
@@ -129,6 +138,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
     io_size = 1024
     
     def set_nonblocking(fd):
+        logging.debug('set nonblocking fd=%d' % fd)
         flags = fcntl.fcntl(fd, fcntl.F_GETFL, 0)
         flags = flags | os.O_NONBLOCK
         fcntl.fcntl(fd, fcntl.F_SETFL, flags)
@@ -163,10 +173,14 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
         if pipe_stdin == subprocess.PIPE and pos < len(feed_stdin):
             wlist.append(procs[0].stdin)
 
+        logging.debug('rlist=%s' % repr(rlist))
+        logging.debug('wlist=%s' % repr(wlist))
         if rlist or wlist:
             r, w, x = select.select(rlist, wlist, [])
         else:
-            r = w = [] # pragma: no cover
+            logging.debug('Breaking out from select loop')
+            break # Let's not busywait waiting for processes to die.
+        logging.debug('r=%s w=%s' % (repr(r), repr(w)))
 
         if procs[0].stdin in w and pos < len(feed_stdin):
             data = feed_stdin[pos : pos+io_size]
@@ -188,6 +202,12 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
                 err.append(data)
             else:
                 stderr_eof = True
+
+    while still_running():
+        for p in procs:
+            if p.returncode is None:
+                logging.debug('Waiting for child pid=%d to terminate' % p.pid)
+                p.wait()
 
     return procs[-1].returncode, ''.join(out), ''.join(err)
 
