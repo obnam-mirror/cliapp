@@ -8,6 +8,11 @@ Version 1.UNRELEASED
 * Print error messages from `SystemExit` exceptions. As a side effect,
   this fixes the problem that an unknown subcommand would not cause an
   error message to be printed.
+* Fix a busy-wait problem when `runcmd` runs a command with both
+  standard output and error redirected to files and there was nothing
+  to feed to its standard input (i.e., `runcmd` didn't need to write
+  to the command, or read any of its output). This problem was found
+  and fixed during work done for Codethink Limited.
 
 Version 1.20120630
 ------------------

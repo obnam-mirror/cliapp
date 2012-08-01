@@ -1,4 +1,5 @@
-# Copyright (C) 2011  Lars Wirzenius
+# Copyright (C) 2011, 2012  Lars Wirzenius
+# Copyright (C) 2012  Codethink Limited
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +19,7 @@
 import optparse
 import os
 import StringIO
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -111,4 +113,14 @@ class ApplicationTests(unittest.TestCase):
         self.assertNotEqual(exit, 0)
         self.assertNotEqual(data, '')
 
+    def test_runcmd_unchecked_handles_stdout_err_redirected_to_same_file(self):
+        fd, filename = tempfile.mkstemp()
+        exit, out, err = cliapp.runcmd_unchecked(['sleep', '2'], 
+                                                 stdout=fd,
+                                                 stderr=subprocess.STDOUT)
+        os.close(fd)
+        with open(filename) as f:
+            data = f.read()
+        self.assertEqual(exit, 0)
+        self.assertEqual(data, '')
 
