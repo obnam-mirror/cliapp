@@ -173,14 +173,10 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
         if pipe_stdin == subprocess.PIPE and pos < len(feed_stdin):
             wlist.append(procs[0].stdin)
 
-        logging.debug('rlist=%s' % repr(rlist))
-        logging.debug('wlist=%s' % repr(wlist))
         if rlist or wlist:
             r, w, x = select.select(rlist, wlist, [])
         else:
-            logging.debug('Breaking out from select loop')
             break # Let's not busywait waiting for processes to die.
-        logging.debug('r=%s w=%s' % (repr(r), repr(w)))
 
         if procs[0].stdin in w and pos < len(feed_stdin):
             data = feed_stdin[pos : pos+io_size]
