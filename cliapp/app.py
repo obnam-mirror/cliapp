@@ -384,7 +384,7 @@ class Application(object):
     def setup(self):
         '''Prepare for process_args.
         
-        This method is called just before process_args. By default it
+        This method is called just before enabling plugins. By default it
         does nothing, but subclasses may override it with a suitable
         implementation. This is easier than overriding process_args
         itself.
