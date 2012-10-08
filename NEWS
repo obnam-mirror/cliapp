@@ -1,6 +1,13 @@
 NEWS for cliapp
 ===============
 
+Version UNRELEASED
+------------------
+
+* `--log=syslog` message format improvement by Daniel Silverstone.
+  No longer includes a timestamp, since syslog adds it anyway. Also,
+  the process name is now set on Linux.
+
 Version 1.20120929
 ------------------
 
