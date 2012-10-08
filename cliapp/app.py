@@ -24,6 +24,7 @@ import os
 import StringIO
 import sys
 import traceback
+import platform
 
 import cliapp
 
@@ -141,8 +142,14 @@ class Application(object):
         
         return ''.join(x.upper() if x in ok else '_' for x in basename)
 
+    def _set_process_name(self):
+        if platform.system() == 'Linux':
+            with open("/proc/%d/comm" % (os.getpid()), "wb", 0) as fh:
+                fh.write(self.settings.progname[:15])
+
     def _run(self, args=None, stderr=sys.stderr, log=logging.critical):
         try:
+            self._set_process_name()
             self.add_settings()
             self.setup_plugin_manager()
             
@@ -308,6 +315,10 @@ class Application(object):
 
         if self.settings['log'] == 'syslog':
             handler = logging.handlers.SysLogHandler(address='/dev/log')
+            progname = '%%'.join(self.settings.progname.split('%'))
+            fmt = progname + ": %(levelname)s %(message)s"
+            formatter = logging.Formatter(fmt)
+            handler.setFormatter(formatter)
         elif self.settings['log'] and self.settings['log'] != 'none':
             handler = LogHandler(
                             self.settings['log'],
@@ -315,15 +326,14 @@ class Application(object):
                             maxBytes=self.settings['log-max'], 
                             backupCount=self.settings['log-keep'],
                             delay=False)
+            fmt = '%(asctime)s %(levelname)s %(message)s'
+            datefmt = '%Y-%m-%d %H:%M:%S'
+            formatter = logging.Formatter(fmt, datefmt)
+            handler.setFormatter(formatter)
         else:
             handler = logging.FileHandler('/dev/null')
             # reduce amount of pointless I/O
             level = logging.FATAL
-
-        fmt = '%(asctime)s %(levelname)s %(message)s'
-        datefmt = '%Y-%m-%d %H:%M:%S'
-        formatter = logging.Formatter(fmt, datefmt)
-        handler.setFormatter(formatter)
 
         logger = logging.getLogger()
         logger.addHandler(handler)
