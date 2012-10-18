@@ -7,6 +7,8 @@ Version UNRELEASED
 * `--log=syslog` message format improvement by Daniel Silverstone.
   No longer includes a timestamp, since syslog adds it anyway. Also,
   the process name is now set on Linux.
+* Make the default subcommand argument synopsis be an empty string, instead
+  of None. Reported by Sam Thursfield.
 
 Version 1.20120929
 ------------------
