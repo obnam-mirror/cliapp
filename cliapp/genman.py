@@ -29,10 +29,16 @@ class ManpageGenerator(object):
         self.arg_synopsis = arg_synopsis
         self.cmd_synopsis = cmd_synopsis
         
+    def sort_options(self, options):
+        return sorted(options,
+                      key=lambda o: (o._long_opts + o._short_opts)[0])
+
+    def option_list(self, container):
+        return self.sort_options(container.option_list)
+
     @property
     def options(self):
-        return sorted(self.parser.option_list,
-                      key=lambda o: (o._long_opts + o._short_opts)[0])
+        return self.option_list(self.parser)
                       
     def format_template(self):
         sections = (('SYNOPSIS', self.format_synopsis()),
@@ -48,7 +54,10 @@ class ManpageGenerator(object):
         lines += ['.nh']
         lines += ['.B %s' % self.esc_dashes(self.parser.prog)]
         
-        for option in self.options:
+        all_options = self.option_list(self.parser)
+        for group in self.parser.option_groups:
+            all_options += self.option_list(group)
+        for option in self.sort_options(all_options):
             for spec in self.format_option_for_synopsis(option):
                 lines += ['.RB [ %s ]' % spec]
 
@@ -75,8 +84,17 @@ class ManpageGenerator(object):
             yield '%s%s' % (self.esc_dashes(name), suffix)
 
     def format_options(self):
-        return ''.join(self.format_option_for_options(option)
-                       for option in self.options)
+        lines = []
+        
+        for option in self.sort_options(self.parser.option_list):
+            lines += self.format_option_for_options(option)
+
+        for group in self.parser.option_groups:
+            lines += ['.SS "%s"' % group.title]
+            for option in self.sort_options(group.option_list):
+                lines += self.format_option_for_options(option)
+
+        return ''.join('%s\n' % line for line in lines)
 
     def format_option_for_options(self, option):
         lines = []
@@ -90,7 +108,7 @@ class ManpageGenerator(object):
                      for x in option._long_opts]
         lines += ['.BR ' + ' ", " '.join(shorts + longs)]
         lines += [self.esc_dots(self.expand_default(option).strip())]
-        return ''.join('%s\n' % line for line in lines)
+        return lines
         
     def expand_default(self, option):
         default = self.parser.defaults.get(option.dest)
