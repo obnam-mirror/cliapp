@@ -1,6 +1,12 @@
 NEWS for cliapp
 ===============
 
+Version UNRELEASED
+------------------
+
+* Options in option groups are now included in manual page SYNOPSIS and
+  OPTIONS sections.
+
 Version 1.20120929
 ------------------
 
