@@ -84,8 +84,17 @@ class ManpageGenerator(object):
             yield '%s%s' % (self.esc_dashes(name), suffix)
 
     def format_options(self):
-        return ''.join(self.format_option_for_options(option)
-                       for option in self.options)
+        lines = []
+        
+        for option in self.sort_options(self.parser.option_list):
+            lines += self.format_option_for_options(option)
+
+        for group in self.parser.option_groups:
+            lines += ['.SS "%s"' % group.title]
+            for option in self.sort_options(group.option_list):
+                lines += self.format_option_for_options(option)
+
+        return ''.join('%s\n' % line for line in lines)
 
     def format_option_for_options(self, option):
         lines = []
@@ -99,7 +108,7 @@ class ManpageGenerator(object):
                      for x in option._long_opts]
         lines += ['.BR ' + ' ", " '.join(shorts + longs)]
         lines += [self.esc_dots(self.expand_default(option).strip())]
-        return ''.join('%s\n' % line for line in lines)
+        return lines
         
     def expand_default(self, option):
         default = self.parser.defaults.get(option.dest)
