@@ -11,6 +11,7 @@ Version UNRELEASED
   the process name is now set on Linux.
 * Make the default subcommand argument synopsis be an empty string, instead
   of None. Reported by Sam Thursfield.
+* Meliae memory dumping support has been fixed. Reported by Joey Hess.
 
 Version 1.20120929
 ------------------

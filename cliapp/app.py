@@ -110,6 +110,9 @@ class Application(object):
 
         self.plugin_subdir = 'plugins'
         
+        # For meliae memory dumps.
+        self.memory_dump_counter = 0
+        
     def add_settings(self):
         '''Add application specific settings.'''
 
