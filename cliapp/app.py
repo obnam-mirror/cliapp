@@ -528,7 +528,7 @@ class Application(object):
         '''
 
         kind = self.settings['dump-memory-profile']
-        interval = self.setting['memory-dump-interval']
+        interval = self.settings['memory-dump-interval']
 
         if kind == 'none':
             return
