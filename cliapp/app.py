@@ -24,6 +24,7 @@ import os
 import StringIO
 import sys
 import traceback
+import time
 import platform
 
 import cliapp
@@ -112,6 +113,7 @@ class Application(object):
         
         # For meliae memory dumps.
         self.memory_dump_counter = 0
+        self.last_memory_dump = time.time()
         
     def add_settings(self):
         '''Add application specific settings.'''
@@ -526,9 +528,15 @@ class Application(object):
         '''
 
         kind = self.settings['dump-memory-profile']
+        interval = self.setting['memory-dump-interval']
 
         if kind == 'none':
             return
+        
+        now = time.time()
+        if self.last_memory_dump + interval < now:
+            return
+        self.last_memory_dump = now
 
         logging.debug('dumping memory profiling data: %s' % msg)
         logging.debug('VmRSS: %s KiB' % self._vmrss())

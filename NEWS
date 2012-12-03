@@ -12,6 +12,9 @@ Version UNRELEASED
 * Make the default subcommand argument synopsis be an empty string, instead
   of None. Reported by Sam Thursfield.
 * Meliae memory dumping support has been fixed. Reported by Joey Hess.
+* Memory profiling reports can now be done at minimum intervals in
+  seconds, rather than every time the code asks for them. This can
+  reduce the overhead of memory profiling quite a lot.
 
 Version 1.20120929
 ------------------

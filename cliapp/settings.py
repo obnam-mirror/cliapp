@@ -301,6 +301,10 @@ class Settings(object):
                         'of: none, simple, meliae, or heapy '
                         '(default: %default)',
                     metavar='METHOD')
+        self.integer(['memory-dump-interval'],
+                     'make memory profiling dumps at least SECONDS apart',
+                     metavar='SECONDS',
+                     default=300)
 
     def _add_setting(self, setting):
         '''Add a setting to self._cp.'''
