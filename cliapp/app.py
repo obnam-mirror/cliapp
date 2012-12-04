@@ -113,7 +113,7 @@ class Application(object):
         
         # For meliae memory dumps.
         self.memory_dump_counter = 0
-        self.last_memory_dump = time.time()
+        self.last_memory_dump = 0
         
     def add_settings(self):
         '''Add application specific settings.'''
