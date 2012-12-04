@@ -534,7 +534,7 @@ class Application(object):
             return
         
         now = time.time()
-        if self.last_memory_dump + interval < now:
+        if self.last_memory_dump + interval > now:
             return
         self.last_memory_dump = now
 
