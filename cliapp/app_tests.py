@@ -274,8 +274,8 @@ class ApplicationTests(unittest.TestCase):
 
 class DummySubcommandApp(cliapp.Application):
 
-    def cmd_help(self, args):
-        self.help_called = True
+    def cmd_foo(self, args):
+        self.foo_called = True
         
         
 class SubcommandTests(unittest.TestCase):
@@ -285,10 +285,10 @@ class SubcommandTests(unittest.TestCase):
         self.trash = StringIO.StringIO()
         
     def test_lists_subcommands(self):
-        self.assertEqual(self.app._subcommand_methodnames(), ['cmd_help'])
+        self.assertEqual(self.app._subcommand_methodnames(), ['cmd_foo'])
 
     def test_normalizes_subcommand(self):
-        self.assertEqual(self.app._normalize_cmd('help'), 'cmd_help')
+        self.assertEqual(self.app._normalize_cmd('foo'), 'cmd_foo')
         self.assertEqual(self.app._normalize_cmd('foo-bar'), 'cmd_foo_bar')
         
     def test_raises_error_for_no_subcommand(self):
@@ -300,8 +300,8 @@ class SubcommandTests(unittest.TestCase):
                           stderr=self.trash, log=devnull)
 
     def test_calls_subcommand_method(self):
-        self.app.run(['help'], stderr=self.trash, log=devnull)
-        self.assert_(self.app.help_called)
+        self.app.run(['foo'], stderr=self.trash, log=devnull)
+        self.assert_(self.app.foo_called)
 
 
 class ExtensibleSubcommandTests(unittest.TestCase):
@@ -314,6 +314,6 @@ class ExtensibleSubcommandTests(unittest.TestCase):
         
     def test_adds_subcommand(self):
         help = lambda args: None
-        self.app.add_subcommand('help', help)
-        self.assertEqual(self.app.subcommands, {'help': help})
+        self.app.add_subcommand('foo', help)
+        self.assertEqual(self.app.subcommands, {'foo': help})
 
