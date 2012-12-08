@@ -243,7 +243,7 @@ class Application(object):
         if 'help' not in self.subcommands:
             self.add_subcommand('help', self.help)
 
-    def help(self, args):
+    def help(self, args): # pragma: no cover
         '''Print help.'''
         
         text = '%s\n%s\n' % (self._format_usage(), self._format_description())
