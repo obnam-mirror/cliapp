@@ -15,6 +15,8 @@ Version UNRELEASED
 * Memory profiling reports can now be done at minimum intervals in
   seconds, rather than every time the code asks for them. This can
   reduce the overhead of memory profiling quite a lot.
+* If there are any subcommands, cliapp now adds a subcommand called `help`,
+  unless one already exists.
 
 Version 1.20120929
 ------------------

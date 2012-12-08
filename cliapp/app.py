@@ -168,6 +168,8 @@ class Application(object):
             # config file settings.
             self.setup()
             self.enable_plugins()
+            if self.subcommands:
+                self.add_default_subcommands()
             args = sys.argv[1:] if args is None else args
             self.parse_args(args, configs_only=True)
             self.settings.load_configs()
@@ -236,6 +238,17 @@ class Application(object):
         if name not in self.subcommands:
             self.subcommands[name] = func
             self.cmd_synopsis[name] = arg_synopsis
+
+    def add_default_subcommands(self):
+        if 'help' not in self.subcommands:
+            self.add_subcommand('help', self.help)
+
+    def help(self, args): # pragma: no cover
+        '''Print help.'''
+        
+        text = '%s\n%s\n' % (self._format_usage(), self._format_description())
+        text = self.settings.progname.join(text.split('%prog'))
+        self.output.write(text)
     
     def _subcommand_methodnames(self):
         return [x 
