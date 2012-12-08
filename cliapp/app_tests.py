@@ -303,6 +303,10 @@ class SubcommandTests(unittest.TestCase):
         self.app.run(['foo'], stderr=self.trash, log=devnull)
         self.assert_(self.app.foo_called)
 
+    def test_adds_default_subcommand_help(self):
+        self.app.run(['foo'], stderr=self.trash, log=devnull)
+        self.assertTrue('help' in self.app.subcommands)
+
 
 class ExtensibleSubcommandTests(unittest.TestCase):
 
