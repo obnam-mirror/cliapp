@@ -17,6 +17,8 @@ Version UNRELEASED
   reduce the overhead of memory profiling quite a lot.
 * If there are any subcommands, cliapp now adds a subcommand called `help`,
   unless one already exists.
+* For every boolean setting foo, there will no be a --no-foo option to be
+  used on the command line.
 
 Version 1.20120929
 ------------------
