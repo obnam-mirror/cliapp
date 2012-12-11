@@ -494,6 +494,9 @@ class Settings(object):
                 assert setting.action == 'store'
                 setting.value = value
 
+        def set_false(option, opt_str, value, parser, setting):
+            setting.value = False
+
         def add_option(obj, s):
             option_names = self._option_names(s.names)
             obj.add_option(*option_names, 
@@ -505,11 +508,26 @@ class Settings(object):
                            choices=s.choices,
                            help=s.help,
                            metavar=s.metavar)
+
+        def add_negation_option(obj, s):
+            option_names = self._option_names(s.names)
+            long_names = [x for x in option_names if x.startswith('--')]
+            neg_names = ['--no-' + x[2:] for x in long_names]
+            unused_names = [x for x in neg_names 
+                            if x[2:] not in self._settingses]
+            obj.add_option(*unused_names,
+                           action='callback',
+                           callback=maybe(set_false),
+                           callback_args=(s,),
+                           type=s.type,
+                           help='')
         
         for name in self._canonical_names:
             s = self._settingses[name]
             if s.group is None:
                 add_option(p, s)
+                if type(s) is BooleanSetting:
+                    add_negation_option(p, s)
                 p.set_defaults(**{self._destname(name): s.value})
 
         groups = {}
@@ -524,6 +542,8 @@ class Settings(object):
             p.add_option_group(group)
             for name, s in groups[groupname]:
                 add_option(group, s)
+                if type(s) is BooleanSetting:
+                    add_negation_option(group, s)
                 p.set_defaults(**{self._destname(name): s.value})
 
         return p

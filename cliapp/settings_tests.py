@@ -65,6 +65,16 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings['foo'], 'foovalue')
         self.assertEqual(self.settings['bar'], True)
 
+    def test_parses_boolean_negation_option(self):
+        self.settings.boolean(['bar'], 'bar help')
+        self.settings.parse_args(['--bar', '--no-bar'])
+        self.assertEqual(self.settings['bar'], False)
+
+    def test_parses_boolean_negation_option_in_group(self):
+        self.settings.boolean(['bar'], 'bar help', group='bar')
+        self.settings.parse_args(['--bar', '--no-bar'])
+        self.assertEqual(self.settings['bar'], False)
+
     def test_does_not_have_foo_setting_by_default(self):
         self.assertFalse('foo' in self.settings)
 
@@ -132,7 +142,7 @@ class SettingsTests(unittest.TestCase):
     def test_adds_boolean_setting(self):
         self.settings.boolean(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
-        
+
     def test_boolean_setting_is_false_by_default(self):
         self.settings.boolean(['foo'], 'foo help')
         self.assertFalse(self.settings['foo'])
