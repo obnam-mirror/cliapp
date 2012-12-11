@@ -130,6 +130,20 @@ attack-kittens = no
 .PP
 This turns the verbose setting on,
 but does not launch attack kittens.
+.PP
+For every boolean setting,
+two command line options are added.
+If the setting is called
+.IR foo ,
+the option
+.I \-\-foo
+will turn the setting on,
+and
+.I \-\-no\-foo
+will turn it off.
+The negation is only usable on the command line:
+its purpose is to allow the command line to override a setting from the
+configuration file.
 .SS "Logging and log files"
 Programs using 
 .B cliapp
