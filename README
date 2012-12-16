@@ -22,9 +22,6 @@ cliapp version numbers are of the form `API.DATE`, where `API` starts
 at 1, and gets incremented if the application API changes in an 
 incompatible way. `DATE` is the date of the release.
 
-The `cliapp.__version__` string is set to `1.DEVEL` in version control,
-to differentiate development versions and release versions.
-
 Legalese
 --------
 
