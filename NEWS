@@ -1,6 +1,13 @@
 NEWS for cliapp
 ===============
 
+Version UNRELEASED
+------------------
+
+* Add `cliapp.Application.compute_setting_values` method. This allows
+  the application to have settings with values that are computed after
+  configuration files and the command line are parsed.
+
 Version 1.20121216
 ------------------
 

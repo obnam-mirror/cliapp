@@ -402,10 +402,24 @@ class Settings(object):
         return name
 
     def build_parser(self, configs_only=False, arg_synopsis=None,
-                     cmd_synopsis=None):
+                     cmd_synopsis=None, deferred_last=[]):
         '''Build OptionParser for parsing command line.'''
 
+        # Call a callback function unless we're in configs_only mode.
         maybe = lambda func: (lambda *args: None) if configs_only else func
+
+
+        # Maintain lists of callback function calls that are deferred. 
+        # We call them ourselves rather than have OptionParser call them
+        # directly so that we can do things like --dump-config only
+        # after the whole command line is parsed.
+
+        def defer_last(func): # pragma: no cover
+            def callback(*args):
+                deferred_last.append(lambda: func(*args))
+            return callback
+
+        # Create the command line parser.
 
         def getit(x):
             if x is None or type(x) in [str, unicode]:
@@ -419,6 +433,8 @@ class Settings(object):
                                   usage=usage,
                                   description=description,
                                   epilog=self.epilog)
+
+        # Add --dump-setting-names.
         
         def dump_setting_names(*args): # pragma: no cover
             for name in self._canonical_names:
@@ -428,8 +444,10 @@ class Settings(object):
         p.add_option('--dump-setting-names',
                      action='callback',
                      nargs=0,
-                     callback=maybe(dump_setting_names),
+                     callback=defer_last(maybe(dump_setting_names)),
                      help='write out all names of settings and quit')
+
+        # Add --dump-config.
 
         def call_dump_config(*args): # pragma: no cover
             self.dump_config(sys.stdout)
@@ -438,8 +456,10 @@ class Settings(object):
         p.add_option('--dump-config',
                      action='callback',
                      nargs=0,
-                     callback=maybe(call_dump_config),
+                     callback=defer_last(maybe(call_dump_config)),
                      help='write out the entire current configuration')
+
+        # Add --no-default-configs.
 
         def reset_configs(option, opt_str, value, parser):
             self.config_files = []
@@ -449,6 +469,8 @@ class Settings(object):
                      nargs=0,
                      callback=reset_configs,
                      help='clear list of configuration files to read')
+
+        # Add --config.
 
         def append_to_configs(option, opt_str, value, parser):
             self.config_files.append(value)
@@ -461,6 +483,8 @@ class Settings(object):
                      help='add FILE to config files',
                      metavar='FILE')
 
+        # Add --list-config-files.
+
         def list_config_files(*args): # pragma: no cover
             for filename in self.config_files:
                 print filename
@@ -469,8 +493,10 @@ class Settings(object):
         p.add_option('--list-config-files',
                      action='callback',
                      nargs=0,
-                     callback=maybe(list_config_files),
+                     callback=defer_last(maybe(list_config_files)),
                      help='list all possible config files')
+
+        # Add --generate-manpage.
 
         self._arg_synopsis = arg_synopsis
         self._cmd_synopsis = cmd_synopsis
@@ -481,6 +507,9 @@ class Settings(object):
                      callback=maybe(self._generate_manpage),
                      help='fill in manual page TEMPLATE',
                      metavar='TEMPLATE')
+
+        # Add other options, from the user-defined and built-in
+        # settingses.
 
         def set_value(option, opt_str, value, parser, setting):
             if setting.action == 'append':
@@ -550,7 +579,7 @@ class Settings(object):
 
     def parse_args(self, args, parser=None, suppress_errors=False,
                     configs_only=False, arg_synopsis=None,
-                    cmd_synopsis=None):
+                    cmd_synopsis=None, compute_setting_values=None):
         '''Parse the command line.
         
         Return list of non-option arguments. ``args`` would usually
@@ -558,14 +587,21 @@ class Settings(object):
         
         '''
 
+        deferred_last = []
+
         p = parser or self.build_parser(configs_only=configs_only,
                                         arg_synopsis=arg_synopsis,
-                                        cmd_synopsis=cmd_synopsis)
+                                        cmd_synopsis=cmd_synopsis,
+                                        deferred_last=deferred_last)
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
 
         options, args = p.parse_args(args)
+        if compute_setting_values: # pragma: no cover
+            compute_setting_values(self)
+        for callback in deferred_last: # pragma: no cover
+            callback()
         return args
 
     @property

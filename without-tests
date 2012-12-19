@@ -8,3 +8,4 @@
 ./test-plugins/hello_plugin.py
 ./test-plugins/wrongversion_plugin.py
 ./test-plugins/aaa_hello_plugin.py
+example3.py
