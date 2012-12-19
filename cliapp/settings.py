@@ -579,7 +579,7 @@ class Settings(object):
 
     def parse_args(self, args, parser=None, suppress_errors=False,
                     configs_only=False, arg_synopsis=None,
-                    cmd_synopsis=None):
+                    cmd_synopsis=None, compute_setting_values=None):
         '''Parse the command line.
         
         Return list of non-option arguments. ``args`` would usually
@@ -598,6 +598,8 @@ class Settings(object):
             p.error = lambda msg: sys.exit(1)
 
         options, args = p.parse_args(args)
+        if compute_setting_values: # pragma: no cover
+            compute_setting_values(self)
         for callback in deferred_last: # pragma: no cover
             callback()
         return args

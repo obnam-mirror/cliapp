@@ -222,6 +222,20 @@ class Application(object):
         logging.info('%s version %s ends normally' % 
                      (self.settings.progname, self.settings.version))
     
+    def compute_setting_values(self, settings):
+        '''Compute setting values after configs and options are parsed.
+        
+        You can override this method to implement a default value for
+        a setting that is dependent on another setting. For example,
+        you might have settings "url" and "protocol", where protocol
+        gets set based on the schema of the url, unless explicitly
+        set by the user. So if the user sets just the url, to
+        "http://www.example.com/", the protocol would be set to
+        "http". If the user sets both url and protocol, the protocol
+        does not get modified by compute_setting_values.
+        
+        '''
+        
     def add_subcommand(self, name, func, arg_synopsis=None):
         '''Add a subcommand.
         
@@ -408,9 +422,10 @@ class Application(object):
         
         '''
 
-        return self.settings.parse_args(args, configs_only=configs_only,
-                                         arg_synopsis=self.arg_synopsis,
-                                         cmd_synopsis=self.cmd_synopsis)
+        return self.settings.parse_args(
+            args, configs_only=configs_only, arg_synopsis=self.arg_synopsis,
+            cmd_synopsis=self.cmd_synopsis,
+            compute_setting_values=self.compute_setting_values)
 
     def setup(self):
         '''Prepare for process_args.
