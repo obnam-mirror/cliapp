@@ -8,6 +8,13 @@ Version UNRELEASED
   the application to have settings with values that are computed after
   configuration files and the command line are parsed.
 
+Bug fixes:
+
+* The process title is now set only if `/proc/self/comm` exists.
+  Previously, on the kernel in Debian squeeze (2.6.32), setting the
+  process title would fail, and the error would be logged to the
+  terminal. Reported by William Boughton.
+
 Version 1.20121216
 ------------------
 

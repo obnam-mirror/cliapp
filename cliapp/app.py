@@ -148,12 +148,10 @@ class Application(object):
         return ''.join(x.upper() if x in ok else '_' for x in basename)
 
     def _set_process_name(self): # pragma: no cover
-        if platform.system() == 'Linux':
-            try:
-                with open('/proc/self/comm', 'w', 0) as f:
-                    f.write(self.settings.progname[:15])
-            except IOError, e:
-                logging.warning(str(e))
+        comm = '/proc/self/comm'
+        if platform.system() == 'Linux' and os.path.exists(comm):
+            with open('/proc/self/comm', 'w', 0) as f:
+                f.write(self.settings.progname[:15])
 
     def _run(self, args=None, stderr=sys.stderr, log=logging.critical):
         try:
