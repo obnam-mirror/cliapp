@@ -383,6 +383,7 @@ class Application(object):
         f = StringIO.StringIO()
         cp.write(f)
         logging.debug('Config:\n%s' % f.getvalue())
+        logging.debug('Python version: %s' % sys.version)
 
     def app_directory(self):
         '''Return the directory where the application class is defined.
