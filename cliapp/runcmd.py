@@ -124,12 +124,6 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
 
 def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
 
-    logging.debug('PIPE=%d' % subprocess.PIPE)
-    logging.debug('STDOUT=%d' % subprocess.STDOUT)
-    logging.debug('pipe_stdin=%s' % repr(pipe_stdin))
-    logging.debug('pipe_stdout=%s' % repr(pipe_stdout))
-    logging.debug('pipe_stderr=%s' % repr(pipe_stderr))
-
     stdout_eof = False
     stderr_eof = False
     out = []
@@ -138,7 +132,6 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
     io_size = 1024
     
     def set_nonblocking(fd):
-        logging.debug('set nonblocking fd=%d' % fd)
         flags = fcntl.fcntl(fd, fcntl.F_GETFL, 0)
         flags = flags | os.O_NONBLOCK
         fcntl.fcntl(fd, fcntl.F_SETFL, flags)
@@ -202,7 +195,6 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
     while still_running():
         for p in procs:
             if p.returncode is None:
-                logging.debug('Waiting for child pid=%d to terminate' % p.pid)
                 p.wait()
 
     return procs[-1].returncode, ''.join(out), ''.join(err)

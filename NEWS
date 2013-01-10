@@ -8,6 +8,9 @@ Version UNRELEASED
   the application to have settings with values that are computed after
   configuration files and the command line are parsed.
 * Cliapp now logs the Python version at startup, to aid debugging.
+* `cliapp.runcmd` now logs much less during execution of a command. The
+  verbose logging was useful while developing pipeline support, but has
+  now not been useful for months.
 
 Bug fixes:
 
