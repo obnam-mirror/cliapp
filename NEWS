@@ -20,7 +20,9 @@ Version UNRELEASED
   `setup_logging_format` and `setup_logging_timestamp` to create the
   format strings for messages and timestamps. This allows applications
   to add, for example, more detailed timestamps easily.
-  
+* The process and system CPU times, and those of the child processes,
+  and the process wall clock duration, are now logged when the memory
+  profiling information is logged.  
 
 Bug fixes:
 
