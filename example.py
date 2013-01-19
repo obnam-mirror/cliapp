@@ -39,6 +39,8 @@ class ExampleApp(cliapp.Application):
                               group='Test Group')
 
         self.settings.string(['yoyo'], 'yoyo', group=cliapp.config_group_name)
+        
+        self.settings.string(['nono'], 'nono', default=None)
 
     # We override process_inputs to be able to do something after the last
     # input line.
