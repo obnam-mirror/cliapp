@@ -338,39 +338,6 @@ class Application(object):
         first, rest = doc.split('\n', 1)
         return first + '\n' + textwrap.dedent(rest)
 
-    def _format_subcommand_description(self, cmd): # pragma: no cover
-
-        def remove_empties(lines):
-            while lines and not lines[0].strip():
-                del lines[0]
-
-        def split_para(lines):
-            para = []
-            while lines and lines[0].strip():
-                para.append(lines[0].strip())
-                del lines[0]
-            return para
-
-        indent = ' ' * 4
-        method = self.subcommands[cmd]
-        doc = method.__doc__ or ''
-        lines = doc.splitlines()
-        remove_empties(lines)
-        if lines:
-            heading = '* %s -- %s' % (cmd, lines[0])
-            result = [heading]
-            del lines[0]
-            remove_empties(lines)
-            while lines:
-                result.append('')
-                para_lines = split_para(lines)
-                para_text = ' '.join(para_lines)
-                result.append(para_text)
-                remove_empties(lines)
-            return '\n'.join(result)
-        else:
-            return '* %s' % cmd
-        
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
         
