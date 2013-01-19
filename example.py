@@ -38,6 +38,8 @@ class ExampleApp(cliapp.Application):
         self.settings.boolean(['dummy'], 'this setting is ignored',
                               group='Test Group')
 
+        self.settings.string(['yoyo'], 'yoyo', group=cliapp.config_group_name)
+
     # We override process_inputs to be able to do something after the last
     # input line.
     def process_inputs(self, args):

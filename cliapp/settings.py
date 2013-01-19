@@ -24,6 +24,18 @@ import sys
 import cliapp
 from cliapp.genman import ManpageGenerator
 
+
+log_group_name = 'Logging'
+config_group_name = 'Configuration files and settings'
+perf_group_name = 'Peformance'
+
+default_group_names = [
+    log_group_name,
+    config_group_name,
+    perf_group_name,
+]
+
+
 class Setting(object):
 
     action = 'store'
@@ -278,33 +290,35 @@ class Settings(object):
                     'write log entries to FILE (default is to not write log '
                         'files at all); use "syslog" to log to system log, '
                         'or "none" to disable logging',
-                    metavar='FILE')
+                    metavar='FILE', group=log_group_name)
         self.choice(['log-level'], 
                     ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],
                     'log at LEVEL, one of debug, info, warning, '
                         'error, critical, fatal (default: %default)',
-                    metavar='LEVEL')
+                    metavar='LEVEL', group=log_group_name)
         self.bytesize(['log-max'], 
                       'rotate logs larger than SIZE, '
                         'zero for never (default: %default)',
-                      metavar='SIZE', default=0)
+                      metavar='SIZE', default=0, group=log_group_name)
         self.integer(['log-keep'], 'keep last N logs (%default)',
-                     metavar='N', default=10)
+                     metavar='N', default=10, group=log_group_name)
         self.string(['log-mode'], 
                     'set permissions of new log files to MODE (octal; '
                         'default %default)',
-                    metavar='MODE', default='0600')
+                    metavar='MODE', default='0600', group=log_group_name)
 
         self.choice(['dump-memory-profile'],
                     ['simple', 'none', 'meliae', 'heapy'],
                     'make memory profiling dumps using METHOD, which is one '
                         'of: none, simple, meliae, or heapy '
                         '(default: %default)',
-                    metavar='METHOD')
+                    metavar='METHOD',
+                    group=perf_group_name)
         self.integer(['memory-dump-interval'],
                      'make memory profiling dumps at least SECONDS apart',
                      metavar='SECONDS',
-                     default=300)
+                     default=300,
+                     group=perf_group_name)
 
     def _add_setting(self, setting):
         '''Add a setting to self._cp.'''
@@ -434,6 +448,24 @@ class Settings(object):
                                   description=description,
                                   epilog=self.epilog)
 
+        # Create all OptionGroup objects. This way, the user code can
+        # add settings to built-in option groups.
+        
+        group_names = set(default_group_names)
+        for name in self._canonical_names:
+            s = self._settingses[name]
+            if s.group is not None:
+                group_names.add(s.group)
+        group_names = sorted(group_names)
+        
+        option_groups = {}
+        for name in group_names:
+            group = optparse.OptionGroup(p, name)
+            p.add_option_group(group)
+            option_groups[name] = group
+            
+        config_group = option_groups[config_group_name]
+            
         # Add --dump-setting-names.
         
         def dump_setting_names(*args): # pragma: no cover
@@ -441,7 +473,7 @@ class Settings(object):
                 sys.stdout.write('%s\n' % name)
             sys.exit(0)
 
-        p.add_option('--dump-setting-names',
+        config_group.add_option('--dump-setting-names',
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(dump_setting_names)),
@@ -453,7 +485,7 @@ class Settings(object):
             self.dump_config(sys.stdout)
             sys.exit(0)
 
-        p.add_option('--dump-config',
+        config_group.add_option('--dump-config',
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(call_dump_config)),
@@ -464,7 +496,7 @@ class Settings(object):
         def reset_configs(option, opt_str, value, parser):
             self.config_files = []
 
-        p.add_option('--no-default-configs',
+        config_group.add_option('--no-default-configs',
                      action='callback',
                      nargs=0,
                      callback=reset_configs,
@@ -475,7 +507,7 @@ class Settings(object):
         def append_to_configs(option, opt_str, value, parser):
             self.config_files.append(value)
 
-        p.add_option('--config',
+        config_group.add_option('--config',
                      action='callback',
                      nargs=1,
                      type='string',
@@ -490,7 +522,7 @@ class Settings(object):
                 print filename
             sys.exit(0)
 
-        p.add_option('--list-config-files',
+        config_group.add_option('--list-config-files',
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(list_config_files)),
@@ -550,30 +582,20 @@ class Settings(object):
                            callback_args=(s,),
                            type=s.type,
                            help='')
+
+        # Add options for every setting.
         
         for name in self._canonical_names:
             s = self._settingses[name]
             if s.group is None:
-                add_option(p, s)
-                if type(s) is BooleanSetting:
-                    add_negation_option(p, s)
-                p.set_defaults(**{self._destname(name): s.value})
-
-        groups = {}
-        for name in self._canonical_names:
-            s = self._settingses[name]
-            if s.group is not None:
-                groups[s.group] = groups.get(s.group, []) + [(name, s)]
-
-        groupnames = sorted(groups.keys())
-        for groupname in groupnames:
-            group = optparse.OptionGroup(p, groupname)
-            p.add_option_group(group)
-            for name, s in groups[groupname]:
-                add_option(group, s)
-                if type(s) is BooleanSetting:
-                    add_negation_option(group, s)
-                p.set_defaults(**{self._destname(name): s.value})
+                obj = p
+            else:
+                obj = option_groups[s.group]
+            
+            add_option(obj, s)
+            if type(s) is BooleanSetting:
+                add_negation_option(obj, s)
+            p.set_defaults(**{self._destname(name): s.value})
 
         return p
 
