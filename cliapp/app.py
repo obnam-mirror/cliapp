@@ -115,6 +115,9 @@ class Application(object):
         self.memory_dump_counter = 0
         self.last_memory_dump = 0
         
+        # For process duration.
+        self._started = os.times()[-1]
+        
     def add_settings(self):
         '''Add application specific settings.'''
 
@@ -601,6 +604,15 @@ class Application(object):
         if self.last_memory_dump + interval > now:
             return
         self.last_memory_dump = now
+
+        # Log wall clock and CPU times for self, children.
+        utime, stime, cutime, cstime, elapsed_time = os.times()
+        duration = elapsed_time - self._started
+        logging.debug('process duration: %s s' % duration)
+        logging.debug('CPU time, in process: %s s' % utime)
+        logging.debug('CPU time, in system: %s s' % stime)
+        logging.debug('CPU time, in children: %s s' % cutime)
+        logging.debug('CPU time, in system for children: %s s' % cstime)
 
         logging.debug('dumping memory profiling data: %s' % msg)
         logging.debug('VmRSS: %s KiB' % self._vmrss())
