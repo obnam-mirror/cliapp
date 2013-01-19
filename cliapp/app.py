@@ -26,6 +26,7 @@ import sys
 import traceback
 import time
 import platform
+import textwrap
 
 import cliapp
 
@@ -267,9 +268,16 @@ class Application(object):
             width = 78
 
         fmt = cliapp.TextFormat(width=width)
-        usage = self._format_usage()
-        description = fmt.format(self._format_description())
-        text = '%s\n\n%s' % (usage, description)
+        
+        if args:
+            usage = self._format_usage_for(args[0])
+            description = fmt.format(self._format_subcommand_help(args[0]))
+            text = '%s\n\n%s' % (usage, description)
+        else:
+            usage = self._format_usage()
+            description = fmt.format(self._format_description())
+            text = '%s\n\n%s' % (usage, description)
+
         text = self.settings.progname.join(text.split('%prog'))
         self.output.write(text)
     
@@ -299,6 +307,10 @@ class Application(object):
         else:
             return None
 
+    def _format_usage_for(self, cmd):
+        args = self.cmd_synopsis.get(cmd, '') or ''
+        return 'Usage: %%prog [options] %s %s' % (cmd, args)
+
     def _format_description(self):
         '''Format OptionParser description, with subcommand support.'''
         if self.subcommands:
@@ -319,6 +331,12 @@ class Application(object):
         else:
             summary = ''
         return '* %%prog %s: %s\n' % (cmd, summary)
+
+    def _format_subcommand_help(self, cmd): # pragma: no cover
+        method = self.subcommands[cmd]
+        doc = method.__doc__ or ''
+        first, rest = doc.split('\n', 1)
+        return first + '\n' + textwrap.dedent(rest)
 
     def _format_subcommand_description(self, cmd): # pragma: no cover
 
