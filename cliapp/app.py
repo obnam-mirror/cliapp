@@ -296,10 +296,9 @@ class Application(object):
         if self.subcommands:
             summaries = []
             for cmd in sorted(self.subcommands.keys()):
-                summaries.append(
-                    '  %s\n' % self._format_subcommand_summary(cmd))
+                summaries.append(self._format_subcommand_summary(cmd))
             cmd_desc = ''.join(summaries)
-            return '%s\n\n%s' % (self._description or '', cmd_desc)
+            return '%s\n%s' % (self._description or '', cmd_desc)
         else:
             return self._description
 
@@ -311,7 +310,7 @@ class Application(object):
             summary = lines[0].strip()
         else:
             summary = ''
-        return '* %s: %s' % (cmd, summary)
+        return '* %%prog %s: %s\n' % (cmd, summary)
 
     def _format_subcommand_description(self, cmd): # pragma: no cover
 
