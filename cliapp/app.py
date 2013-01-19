@@ -347,11 +347,7 @@ class Application(object):
         level = levels.get(level_name, logging.INFO)
 
         if self.settings['log'] == 'syslog':
-            handler = logging.handlers.SysLogHandler(address='/dev/log')
-            progname = '%%'.join(self.settings.progname.split('%'))
-            fmt = progname + ": %(levelname)s %(message)s"
-            formatter = logging.Formatter(fmt)
-            handler.setFormatter(formatter)
+            handler = self.setup_logging_handler_for_syslog()
         elif self.settings['log'] and self.settings['log'] != 'none':
             handler = LogHandler(
                             self.settings['log'],
@@ -364,13 +360,54 @@ class Application(object):
             formatter = logging.Formatter(fmt, datefmt)
             handler.setFormatter(formatter)
         else:
-            handler = logging.FileHandler('/dev/null')
+            handler = self.setup_logging_handler_to_none()
             # reduce amount of pointless I/O
             level = logging.FATAL
 
         logger = logging.getLogger()
         logger.addHandler(handler)
         logger.setLevel(level)
+
+    def setup_logging_handler_for_syslog(self): # pragma: no cover
+        '''Setup a logging.Handler for logging to syslog.'''
+
+        handler = logging.handlers.SysLogHandler(address='/dev/log')
+        progname = '%%'.join(self.settings.progname.split('%'))
+        fmt = progname + ": %(levelname)s %(message)s"
+        formatter = logging.Formatter(fmt)
+        handler.setFormatter(formatter)
+
+        return handler
+
+    def setup_logging_handler_to_none(self): # pragma: no cover
+        '''Setup a logging.Handler that does not log anything anywhere.'''
+
+        handler = logging.FileHandler('/dev/null')
+        return handler
+
+    def setup_logging_handler_to_file(self): # pragma: no cover
+        '''Setup a logging.Handler for logging to a named file.'''
+
+        handler = LogHandler(
+                        self.settings['log'],
+                        perms=int(self.settings['log-mode'], 8),
+                        maxBytes=self.settings['log-max'], 
+                        backupCount=self.settings['log-keep'],
+                        delay=False)
+        fmt = self.setup_logging_format()
+        datefmt = self.setup_logging_timestamp()
+        formatter = logging.Formatter(fmt, datefmt)
+        handler.setFormatter(formatter)
+        
+        return handler
+
+    def setup_logging_format(self): # pragma: no cover
+        '''Return format string for log messages.'''
+        return '%(asctime)s %(levelname)s %(message)s'
+
+    def setup_logging_timestamp(self): # pragma: no cover
+        '''Return timestamp format string for log message.'''
+        return '%Y-%m-%d %H:%M:%S'
 
     def log_config(self):
         logging.info('%s version %s starts' % 
