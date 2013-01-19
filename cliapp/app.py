@@ -294,13 +294,24 @@ class Application(object):
     def _format_description(self):
         '''Format OptionParser description, with subcommand support.'''
         if self.subcommands:
-            paras = []
+            summaries = []
             for cmd in sorted(self.subcommands.keys()):
-                paras.append(self._format_subcommand_description(cmd))
-            cmd_desc = '\n\n'.join(paras)
+                summaries.append(
+                    '  %s\n' % self._format_subcommand_summary(cmd))
+            cmd_desc = ''.join(summaries)
             return '%s\n\n%s' % (self._description or '', cmd_desc)
         else:
             return self._description
+
+    def _format_subcommand_summary(self, cmd): # pragma: no cover
+        method = self.subcommands[cmd]
+        doc = method.__doc__ or ''
+        lines = doc.splitlines()
+        if lines:
+            summary = lines[0].strip()
+        else:
+            summary = ''
+        return '* %s: %s' % (cmd, summary)
 
     def _format_subcommand_description(self, cmd): # pragma: no cover
 

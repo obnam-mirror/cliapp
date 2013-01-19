@@ -1,4 +1,4 @@
-# Copyright (C) 2011  Lars Wirzenius
+# Copyright (C) 2013  Lars Wirzenius
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,20 +15,16 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-__version__ = '1.20121216'
+import unittest
+
+import cliapp
 
 
-from fmt import TextFormat
-from settings import (Settings, log_group_name, config_group_name, 
-                      perf_group_name)
-from runcmd import runcmd, runcmd_unchecked
-from app import Application, AppException
+class TextFormatTests(unittest.TestCase):
 
-# The plugin system
-from hook import Hook, FilterHook
-from hookmgr import HookManager
-from plugin import Plugin
-from pluginmgr import PluginManager
+    def setUp(self):
+        self.fmt = cliapp.TextFormat(width=10)
+    
+    def test_returns_empty_string_for_empty_string(self):
+        self.assertEqual(self.fmt.format(''), '')
 
-
-__all__ = locals()

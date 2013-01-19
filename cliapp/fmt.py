@@ -1,4 +1,4 @@
-# Copyright (C) 2011  Lars Wirzenius
+# Copyright (C) 2013  Lars Wirzenius
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,20 +15,22 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-__version__ = '1.20121216'
+'''Simplistic text re-formatter.
+
+This module format text, paragraph by paragraph, so it is somewhat
+nice-looking, with no line too long, and short lines joined. In
+other words, like what the textwrap library does. However, it
+extends textwrap by recognising bulleted lists.
+
+'''
 
 
-from fmt import TextFormat
-from settings import (Settings, log_group_name, config_group_name, 
-                      perf_group_name)
-from runcmd import runcmd, runcmd_unchecked
-from app import Application, AppException
+class TextFormat(object):
 
-# The plugin system
-from hook import Hook, FilterHook
-from hookmgr import HookManager
-from plugin import Plugin
-from pluginmgr import PluginManager
+    def __init__(self, width=78):
+        self._width = width
 
+    def format(self, text):
+        '''Return input string, but formatted nicely.'''
+        return text
 
-__all__ = locals()
