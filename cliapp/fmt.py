@@ -25,6 +25,9 @@ extends textwrap by recognising bulleted lists.
 '''
 
 
+import textwrap
+
+
 class TextFormat(object):
 
     def __init__(self, width=78):
@@ -32,5 +35,6 @@ class TextFormat(object):
 
     def format(self, text):
         '''Return input string, but formatted nicely.'''
-        return text
+
+        return textwrap.fill(text, width=self._width)
 
