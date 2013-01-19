@@ -36,9 +36,11 @@ class Paragraph(object):
     def append(self, line):
         self._lines.append(line)
     
+    def _oneliner(self):
+        return ' '.join(' '.join(x.split()) for x in self._lines)
+    
     def fill(self, width):
-        text = ''.join(self._lines)
-        filled = textwrap.fill(text, width=width)
+        filled = textwrap.fill(self._oneliner(), width=width)
         if not filled.endswith('\n'):
             filled += '\n'
         return filled
@@ -47,7 +49,7 @@ class Paragraph(object):
 class BulletPoint(Paragraph):
 
     def fill(self, width):
-        text = ' '.join(x.strip() for x in self._lines)
+        text = self._oneliner()
         assert text.startswith('* ')
         filled = textwrap.fill(text[2:], width=width - 2)
         lines = ['  %s' % x for x in filled.splitlines(True)]

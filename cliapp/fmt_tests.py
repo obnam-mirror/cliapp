@@ -31,6 +31,9 @@ class TextFormatTests(unittest.TestCase):
     def test_returns_short_one_line_paragraph_as_is(self):
         self.assertEqual(self.fmt.format('foo bar'), 'foo bar\n')
 
+    def test_collapse_multiple_spaces_into_one(self):
+        self.assertEqual(self.fmt.format('foo    bar'), 'foo bar\n')
+
     def test_wraps_long_line(self):
         self.assertEqual(self.fmt.format('foobar word'), 'foobar\nword\n')
 
