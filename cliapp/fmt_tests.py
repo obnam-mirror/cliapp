@@ -40,3 +40,8 @@ class TextFormatTests(unittest.TestCase):
     def test_retains_final_newline_on_long_input(self):
         self.assertEqual(self.fmt.format('foobar word\n'), 'foobar\nword\n')
 
+    def test_handles_paragraphs(self):
+        self.assertEqual(
+            self.fmt.format('foo\nbar\n\nyo\nyo\n'),
+            'foo bar\n\nyo yo\n')
+

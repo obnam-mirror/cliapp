@@ -36,9 +36,17 @@ class TextFormat(object):
     def format(self, text):
         '''Return input string, but formatted nicely.'''
 
-        ends_with_newline = text.endswith('\n')
-        filled = textwrap.fill(text, width=self._width)
-        if ends_with_newline and not filled.endswith('\n'):
+        filled_paras = []
+        for para in self._paragraphs(text):
+            filled_paras.append(self._format_paragraph(para))
+        return '\n\n'.join(filled_paras)
+
+    def _paragraphs(self, text):
+        return text.split('\n\n')
+
+    def _format_paragraph(self, paragraph):
+        filled = textwrap.fill(paragraph, width=self._width)
+        if paragraph.endswith('\n') and not filled.endswith('\n'):
             filled += '\n'
         return filled
 
