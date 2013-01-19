@@ -11,6 +11,8 @@ Version UNRELEASED
 * `cliapp.runcmd` now logs much less during execution of a command. The
   verbose logging was useful while developing pipeline support, but has
   now not been useful for months.
+* More default settings and options have an option group now, making
+  `--help` output prettier.
 
 Bug fixes:
 
