@@ -13,6 +13,9 @@ Version UNRELEASED
   now not been useful for months.
 * More default settings and options have an option group now, making
   `--help` output prettier.
+* The `--help` output and the output of the `help` subcommand now only
+  list summaries for subcommands. The full documentation for a subcommand
+  can be seen by giving the name of the subcommand to `help`.
 * Logging setup is now more overrideable. The `setup_logging` method
   calls `setup_logging_handler_for_syslog`, 
   `setup_logging_handler_for_syslog`, or
