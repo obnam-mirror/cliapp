@@ -25,7 +25,8 @@ import cliapp
 from cliapp.genman import ManpageGenerator
 
 
-log_group = 'Logging'
+log_group_name = 'Logging'
+config_group_name = 'Configuration files and settings'
 
 
 class Setting(object):
@@ -282,22 +283,22 @@ class Settings(object):
                     'write log entries to FILE (default is to not write log '
                         'files at all); use "syslog" to log to system log, '
                         'or "none" to disable logging',
-                    metavar='FILE', group=log_group)
+                    metavar='FILE', group=log_group_name)
         self.choice(['log-level'], 
                     ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],
                     'log at LEVEL, one of debug, info, warning, '
                         'error, critical, fatal (default: %default)',
-                    metavar='LEVEL', group=log_group)
+                    metavar='LEVEL', group=log_group_name)
         self.bytesize(['log-max'], 
                       'rotate logs larger than SIZE, '
                         'zero for never (default: %default)',
-                      metavar='SIZE', default=0, group=log_group)
+                      metavar='SIZE', default=0, group=log_group_name)
         self.integer(['log-keep'], 'keep last N logs (%default)',
-                     metavar='N', default=10, group=log_group)
+                     metavar='N', default=10, group=log_group_name)
         self.string(['log-mode'], 
                     'set permissions of new log files to MODE (octal; '
                         'default %default)',
-                    metavar='MODE', default='0600', group=log_group)
+                    metavar='MODE', default='0600', group=log_group_name)
 
         self.choice(['dump-memory-profile'],
                     ['simple', 'none', 'meliae', 'heapy'],
@@ -438,6 +439,12 @@ class Settings(object):
                                   description=description,
                                   epilog=self.epilog)
 
+        # Create an OptionGroup for the config file options. These can't
+        # be normal settings, since they only ever apply on the command line.
+
+        config_group = optparse.OptionGroup(p, config_group_name)
+        p.add_option_group(config_group)
+
         # Add --dump-setting-names.
         
         def dump_setting_names(*args): # pragma: no cover
@@ -445,7 +452,7 @@ class Settings(object):
                 sys.stdout.write('%s\n' % name)
             sys.exit(0)
 
-        p.add_option('--dump-setting-names',
+        config_group.add_option('--dump-setting-names',
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(dump_setting_names)),
@@ -457,7 +464,7 @@ class Settings(object):
             self.dump_config(sys.stdout)
             sys.exit(0)
 
-        p.add_option('--dump-config',
+        config_group.add_option('--dump-config',
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(call_dump_config)),
@@ -468,7 +475,7 @@ class Settings(object):
         def reset_configs(option, opt_str, value, parser):
             self.config_files = []
 
-        p.add_option('--no-default-configs',
+        config_group.add_option('--no-default-configs',
                      action='callback',
                      nargs=0,
                      callback=reset_configs,
@@ -479,7 +486,7 @@ class Settings(object):
         def append_to_configs(option, opt_str, value, parser):
             self.config_files.append(value)
 
-        p.add_option('--config',
+        config_group.add_option('--config',
                      action='callback',
                      nargs=1,
                      type='string',
@@ -494,7 +501,7 @@ class Settings(object):
                 print filename
             sys.exit(0)
 
-        p.add_option('--list-config-files',
+        config_group.add_option('--list-config-files',
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(list_config_files)),
