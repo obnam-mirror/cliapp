@@ -260,8 +260,11 @@ class Application(object):
 
     def help(self, args): # pragma: no cover
         '''Print help.'''
-        
-        text = '%s\n%s\n' % (self._format_usage(), self._format_description())
+
+        fmt = cliapp.TextFormat(width=78)        
+        usage = self._format_usage()
+        description = fmt.format(self._format_description())
+        text = '%s\n\n%s' % (usage, description)
         text = self.settings.progname.join(text.split('%prog'))
         self.output.write(text)
     
