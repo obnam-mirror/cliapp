@@ -13,6 +13,14 @@ Version UNRELEASED
   now not been useful for months.
 * More default settings and options have an option group now, making
   `--help` output prettier.
+* Logging setup is now more overrideable. The `setup_logging` method
+  calls `setup_logging_handler_for_syslog`, 
+  `setup_logging_handler_for_syslog`, or
+  `setup_logging_handler_to_file`, and the last one calls
+  `setup_logging_format` and `setup_logging_timestamp` to create the
+  format strings for messages and timestamps. This allows applications
+  to add, for example, more detailed timestamps easily.
+  
 
 Bug fixes:
 
