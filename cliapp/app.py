@@ -261,7 +261,12 @@ class Application(object):
     def help(self, args): # pragma: no cover
         '''Print help.'''
 
-        fmt = cliapp.TextFormat(width=78)        
+        try:
+            width = int(os.environ.get('COLUMNS', '78'))
+        except ValueError:
+            width = 78
+
+        fmt = cliapp.TextFormat(width=width)
         usage = self._format_usage()
         description = fmt.format(self._format_description())
         text = '%s\n\n%s' % (usage, description)
