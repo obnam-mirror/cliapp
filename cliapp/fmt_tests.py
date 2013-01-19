@@ -28,3 +28,6 @@ class TextFormatTests(unittest.TestCase):
     def test_returns_empty_string_for_empty_string(self):
         self.assertEqual(self.fmt.format(''), '')
 
+    def test_returns_short_one_line_paragraph_as_is(self):
+        self.assertEqual(self.fmt.format('foo bar'), 'foo bar')
+
