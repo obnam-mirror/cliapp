@@ -34,3 +34,6 @@ class TextFormatTests(unittest.TestCase):
     def test_wraps_long_line(self):
         self.assertEqual(self.fmt.format('foobar word'), 'foobar\nword')
 
+    def test_retains_final_newline_on_short_input(self):
+        self.assertEqual(self.fmt.format('foo bar\n'), 'foo bar\n')
+
