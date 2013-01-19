@@ -335,8 +335,12 @@ class Application(object):
     def _format_subcommand_help(self, cmd): # pragma: no cover
         method = self.subcommands[cmd]
         doc = method.__doc__ or ''
-        first, rest = doc.split('\n', 1)
-        return first + '\n' + textwrap.dedent(rest)
+        t = doc.split('\n', 1)
+        if len(t) == 1:
+            return doc
+        else:
+            first, rest = t
+            return first + '\n' + textwrap.dedent(rest)
 
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
