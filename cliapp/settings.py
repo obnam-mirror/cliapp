@@ -27,10 +27,12 @@ from cliapp.genman import ManpageGenerator
 
 log_group_name = 'Logging'
 config_group_name = 'Configuration files and settings'
+perf_group_name = 'Peformance'
 
 default_group_names = [
     log_group_name,
     config_group_name,
+    perf_group_name,
 ]
 
 
@@ -310,11 +312,13 @@ class Settings(object):
                     'make memory profiling dumps using METHOD, which is one '
                         'of: none, simple, meliae, or heapy '
                         '(default: %default)',
-                    metavar='METHOD')
+                    metavar='METHOD',
+                    group=perf_group_name)
         self.integer(['memory-dump-interval'],
                      'make memory profiling dumps at least SECONDS apart',
                      metavar='SECONDS',
-                     default=300)
+                     default=300,
+                     group=perf_group_name)
 
     def _add_setting(self, setting):
         '''Add a setting to self._cp.'''
