@@ -41,8 +41,6 @@ class Paragraph(object):
     
     def fill(self, width):
         filled = textwrap.fill(self._oneliner(), width=width)
-        if not filled.endswith('\n'):
-            filled += '\n'
         return filled
 
 
@@ -57,6 +55,12 @@ class BulletPoint(Paragraph):
         return ''.join(lines)
 
 
+class EmptyLine(Paragraph):
+
+    def fill(self, width):
+        return ''
+
+
 class TextFormat(object):
 
     def __init__(self, width=78):
@@ -68,7 +72,10 @@ class TextFormat(object):
         filled_paras = []
         for para in self._paragraphs(text):
             filled_paras.append(para.fill(self._width))
-        return '\n'.join(filled_paras)
+        filled = '\n'.join(filled_paras)
+        if text and not filled.endswith('\n'):
+            filled += '\n'
+        return filled
 
     def _paragraphs(self, text):
 
@@ -90,15 +97,23 @@ class TextFormat(object):
             elif is_bullet(line):
                 if current:
                     yield current
+                    if not in_list:
+                        yield EmptyLine()
                 current = BulletPoint()
                 current.append(line)
                 in_list = True
             elif is_empty(line):
                 if current:
                     yield current
+                    yield EmptyLine()
                 current = None
                 in_list = False
             else:
+                if in_list:
+                    yield current
+                    yield EmptyLine()
+                    current = None
+
                 if not current:
                     current = Paragraph()
                 current.append(line)
@@ -106,4 +121,5 @@ class TextFormat(object):
 
         if current:
             yield current
+
 
