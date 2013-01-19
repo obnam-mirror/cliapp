@@ -307,7 +307,7 @@ class Application(object):
         else:
             return None
 
-    def _format_usage_for(self, cmd):
+    def _format_usage_for(self, cmd): # pragma: no cover
         args = self.cmd_synopsis.get(cmd, '') or ''
         return 'Usage: %%prog [options] %s %s' % (cmd, args)
 
