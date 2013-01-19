@@ -29,19 +29,18 @@ class TextFormatTests(unittest.TestCase):
         self.assertEqual(self.fmt.format(''), '')
 
     def test_returns_short_one_line_paragraph_as_is(self):
-        self.assertEqual(self.fmt.format('foo bar'), 'foo bar')
+        self.assertEqual(self.fmt.format('foo bar'), 'foo bar\n')
 
     def test_wraps_long_line(self):
-        self.assertEqual(self.fmt.format('foobar word'), 'foobar\nword')
-
-    def test_retains_final_newline_on_short_input(self):
-        self.assertEqual(self.fmt.format('foo bar\n'), 'foo bar\n')
-
-    def test_retains_final_newline_on_long_input(self):
-        self.assertEqual(self.fmt.format('foobar word\n'), 'foobar\nword\n')
+        self.assertEqual(self.fmt.format('foobar word'), 'foobar\nword\n')
 
     def test_handles_paragraphs(self):
         self.assertEqual(
             self.fmt.format('foo\nbar\n\nyo\nyo\n'),
+            'foo bar\n\nyo yo\n')
+
+    def test_collapses_more_than_two_empty_lines(self):
+        self.assertEqual(
+            self.fmt.format('foo\nbar\n\n\n\n\n\n\n\n\n\nyo\nyo\n'),
             'foo bar\n\nyo yo\n')
 

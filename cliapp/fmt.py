@@ -39,10 +39,21 @@ class TextFormat(object):
         filled_paras = []
         for para in self._paragraphs(text):
             filled_paras.append(self._format_paragraph(para))
-        return '\n\n'.join(filled_paras)
+        return '\n'.join(filled_paras)
 
     def _paragraphs(self, text):
-        return text.split('\n\n')
+        paras = []
+        current = []
+        for line in text.splitlines():
+            if not line.strip():
+                if current:
+                    paras.append(''.join(current))
+                    current = []
+            else:
+                current.append(line + '\n')
+        if current:
+            paras.append(''.join(current))
+        return paras
 
     def _format_paragraph(self, paragraph):
         filled = textwrap.fill(paragraph, width=self._width)
