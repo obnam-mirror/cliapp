@@ -30,6 +30,7 @@ Bug fixes:
   Previously, on the kernel in Debian squeeze (2.6.32), setting the
   process title would fail, and the error would be logged to the
   terminal. Reported by William Boughton.
+* A setting may no longer have a default value of None.
 
 Version 1.20121216
 ------------------
