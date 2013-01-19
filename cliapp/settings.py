@@ -24,6 +24,10 @@ import sys
 import cliapp
 from cliapp.genman import ManpageGenerator
 
+
+log_group = 'Logging'
+
+
 class Setting(object):
 
     action = 'store'
@@ -278,22 +282,22 @@ class Settings(object):
                     'write log entries to FILE (default is to not write log '
                         'files at all); use "syslog" to log to system log, '
                         'or "none" to disable logging',
-                    metavar='FILE')
+                    metavar='FILE', group=log_group)
         self.choice(['log-level'], 
                     ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],
                     'log at LEVEL, one of debug, info, warning, '
                         'error, critical, fatal (default: %default)',
-                    metavar='LEVEL')
+                    metavar='LEVEL', group=log_group)
         self.bytesize(['log-max'], 
                       'rotate logs larger than SIZE, '
                         'zero for never (default: %default)',
-                      metavar='SIZE', default=0)
+                      metavar='SIZE', default=0, group=log_group)
         self.integer(['log-keep'], 'keep last N logs (%default)',
-                     metavar='N', default=10)
+                     metavar='N', default=10, group=log_group)
         self.string(['log-mode'], 
                     'set permissions of new log files to MODE (octal; '
                         'default %default)',
-                    metavar='MODE', default='0600')
+                    metavar='MODE', default='0600', group=log_group)
 
         self.choice(['dump-memory-profile'],
                     ['simple', 'none', 'meliae', 'heapy'],

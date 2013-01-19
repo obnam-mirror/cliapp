@@ -18,7 +18,7 @@
 __version__ = '1.20121216'
 
 
-from settings import Settings
+from settings import Settings, log_group
 from runcmd import runcmd, runcmd_unchecked
 from app import Application, AppException
 
