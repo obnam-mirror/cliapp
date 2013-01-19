@@ -44,3 +44,8 @@ class TextFormatTests(unittest.TestCase):
             self.fmt.format('foo\nbar\n\n\n\n\n\n\n\n\n\nyo\nyo\n'),
             'foo bar\n\nyo yo\n')
 
+    def test_handle_bulleted_lists(self):
+        self.assertEqual(
+            self.fmt.format('foo\nbar\n\n* yo\n* a\n  and b\n\nword'),
+            'foo bar\n\n* yo\n* a and b\nword\n')
+

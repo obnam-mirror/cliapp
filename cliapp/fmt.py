@@ -28,6 +28,33 @@ extends textwrap by recognising bulleted lists.
 import textwrap
 
 
+class Paragraph(object):
+
+    def __init__(self):
+        self._lines = []
+
+    def append(self, line):
+        self._lines.append(line)
+    
+    def fill(self, width):
+        text = ''.join(self._lines)
+        filled = textwrap.fill(text, width=width)
+        if not filled.endswith('\n'):
+            filled += '\n'
+        return filled
+
+
+class BulletPoint(Paragraph):
+
+    def fill(self, width):
+        text = ' '.join(x.strip() for x in self._lines)
+        assert text.startswith('* ')
+        filled = textwrap.fill(text[2:], width=width - 2)
+        lines = ['  %s' % x for x in filled.splitlines(True)]
+        lines[0] = '* %s' % lines[0][2:]
+        return ''.join(lines)
+
+
 class TextFormat(object):
 
     def __init__(self, width=78):
@@ -38,26 +65,43 @@ class TextFormat(object):
 
         filled_paras = []
         for para in self._paragraphs(text):
-            filled_paras.append(self._format_paragraph(para))
+            filled_paras.append(para.fill(self._width))
         return '\n'.join(filled_paras)
 
     def _paragraphs(self, text):
-        paras = []
-        current = []
-        for line in text.splitlines():
-            if not line.strip():
-                if current:
-                    paras.append(''.join(current))
-                    current = []
-            else:
-                current.append(line + '\n')
-        if current:
-            paras.append(''.join(current))
-        return paras
 
-    def _format_paragraph(self, paragraph):
-        filled = textwrap.fill(paragraph, width=self._width)
-        if paragraph.endswith('\n') and not filled.endswith('\n'):
-            filled += '\n'
-        return filled
+        def is_empty(line):
+            return line.strip() == ''
+        
+        def is_bullet(line):
+            return line.startswith('* ')
+        
+        def is_continuation(line):
+            return line.startswith(' ')
+            
+        current = None
+        in_list = False
+        for line in text.splitlines(True):
+            if in_list and is_continuation(line):
+                assert current is not None
+                current.append(line)
+            elif is_bullet(line):
+                if current:
+                    yield current
+                current = BulletPoint()
+                current.append(line)
+                in_list = True
+            elif is_empty(line):
+                if current:
+                    yield current
+                current = None
+                in_list = False
+            else:
+                if not current:
+                    current = Paragraph()
+                current.append(line)
+                in_list = False
+
+        if current:
+            yield current
 
