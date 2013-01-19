@@ -28,6 +28,11 @@ from cliapp.genman import ManpageGenerator
 log_group_name = 'Logging'
 config_group_name = 'Configuration files and settings'
 
+default_group_names = [
+    log_group_name,
+    config_group_name,
+]
+
 
 class Setting(object):
 
@@ -439,12 +444,24 @@ class Settings(object):
                                   description=description,
                                   epilog=self.epilog)
 
-        # Create an OptionGroup for the config file options. These can't
-        # be normal settings, since they only ever apply on the command line.
-
-        config_group = optparse.OptionGroup(p, config_group_name)
-        p.add_option_group(config_group)
-
+        # Create all OptionGroup objects. This way, the user code can
+        # add settings to built-in option groups.
+        
+        group_names = set(default_group_names)
+        for name in self._canonical_names:
+            s = self._settingses[name]
+            if s.group is not None:
+                group_names.add(s.group)
+        group_names = sorted(group_names)
+        
+        option_groups = {}
+        for name in group_names:
+            group = optparse.OptionGroup(p, name)
+            p.add_option_group(group)
+            option_groups[name] = group
+            
+        config_group = option_groups[config_group_name]
+            
         # Add --dump-setting-names.
         
         def dump_setting_names(*args): # pragma: no cover
@@ -561,30 +578,20 @@ class Settings(object):
                            callback_args=(s,),
                            type=s.type,
                            help='')
+
+        # Add options for every setting.
         
         for name in self._canonical_names:
             s = self._settingses[name]
             if s.group is None:
-                add_option(p, s)
-                if type(s) is BooleanSetting:
-                    add_negation_option(p, s)
-                p.set_defaults(**{self._destname(name): s.value})
-
-        groups = {}
-        for name in self._canonical_names:
-            s = self._settingses[name]
-            if s.group is not None:
-                groups[s.group] = groups.get(s.group, []) + [(name, s)]
-
-        groupnames = sorted(groups.keys())
-        for groupname in groupnames:
-            group = optparse.OptionGroup(p, groupname)
-            p.add_option_group(group)
-            for name, s in groups[groupname]:
-                add_option(group, s)
-                if type(s) is BooleanSetting:
-                    add_negation_option(group, s)
-                p.set_defaults(**{self._destname(name): s.value})
+                obj = p
+            else:
+                obj = option_groups[s.group]
+            
+            add_option(obj, s)
+            if type(s) is BooleanSetting:
+                add_negation_option(obj, s)
+            p.set_defaults(**{self._destname(name): s.value})
 
         return p
 
