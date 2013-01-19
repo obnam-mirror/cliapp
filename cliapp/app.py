@@ -26,6 +26,7 @@ import sys
 import traceback
 import time
 import platform
+import textwrap
 
 import cliapp
 
@@ -260,8 +261,23 @@ class Application(object):
 
     def help(self, args): # pragma: no cover
         '''Print help.'''
+
+        try:
+            width = int(os.environ.get('COLUMNS', '78'))
+        except ValueError:
+            width = 78
+
+        fmt = cliapp.TextFormat(width=width)
         
-        text = '%s\n%s\n' % (self._format_usage(), self._format_description())
+        if args:
+            usage = self._format_usage_for(args[0])
+            description = fmt.format(self._format_subcommand_help(args[0]))
+            text = '%s\n\n%s' % (usage, description)
+        else:
+            usage = self._format_usage()
+            description = fmt.format(self._format_description())
+            text = '%s\n\n%s' % (usage, description)
+
         text = self.settings.progname.join(text.split('%prog'))
         self.output.write(text)
     
@@ -291,50 +307,41 @@ class Application(object):
         else:
             return None
 
+    def _format_usage_for(self, cmd): # pragma: no cover
+        args = self.cmd_synopsis.get(cmd, '') or ''
+        return 'Usage: %%prog [options] %s %s' % (cmd, args)
+
     def _format_description(self):
         '''Format OptionParser description, with subcommand support.'''
         if self.subcommands:
-            paras = []
+            summaries = []
             for cmd in sorted(self.subcommands.keys()):
-                paras.append(self._format_subcommand_description(cmd))
-            cmd_desc = '\n\n'.join(paras)
-            return '%s\n\n%s' % (self._description or '', cmd_desc)
+                summaries.append(self._format_subcommand_summary(cmd))
+            cmd_desc = ''.join(summaries)
+            return '%s\n%s' % (self._description or '', cmd_desc)
         else:
             return self._description
 
-    def _format_subcommand_description(self, cmd): # pragma: no cover
-
-        def remove_empties(lines):
-            while lines and not lines[0].strip():
-                del lines[0]
-
-        def split_para(lines):
-            para = []
-            while lines and lines[0].strip():
-                para.append(lines[0].strip())
-                del lines[0]
-            return para
-
-        indent = ' ' * 4
+    def _format_subcommand_summary(self, cmd): # pragma: no cover
         method = self.subcommands[cmd]
         doc = method.__doc__ or ''
         lines = doc.splitlines()
-        remove_empties(lines)
         if lines:
-            heading = '* %s -- %s' % (cmd, lines[0])
-            result = [heading]
-            del lines[0]
-            remove_empties(lines)
-            while lines:
-                result.append('')
-                para_lines = split_para(lines)
-                para_text = ' '.join(para_lines)
-                result.append(para_text)
-                remove_empties(lines)
-            return '\n'.join(result)
+            summary = lines[0].strip()
         else:
-            return '* %s' % cmd
-        
+            summary = ''
+        return '* %%prog %s: %s\n' % (cmd, summary)
+
+    def _format_subcommand_help(self, cmd): # pragma: no cover
+        method = self.subcommands[cmd]
+        doc = method.__doc__ or ''
+        t = doc.split('\n', 1)
+        if len(t) == 1:
+            return doc
+        else:
+            first, rest = t
+            return first + '\n' + textwrap.dedent(rest)
+
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
         

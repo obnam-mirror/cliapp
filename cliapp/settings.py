@@ -208,22 +208,10 @@ class FormatHelpParagraphs(optparse.IndentedHelpFormatter):
 
     def _format_text(self, text): # pragma: no cover
         '''Like the default, except handle paragraphs.'''
-        
-        def format_para(lines):
-            para = '\n'.join(lines)
-            return optparse.IndentedHelpFormatter._format_text(self,  para)
-        
-        paras = []
-        cur = []
-        for line in text.splitlines():
-            if line.strip():
-                cur.append(line)
-            elif cur:
-                paras.append(format_para(cur))
-                cur = []
-        if cur:
-            paras.append(format_para(cur))
-        return '\n\n'.join(paras)
+
+        fmt = cliapp.TextFormat(width=self.width)
+        formatted = fmt.format(text)
+        return formatted.rstrip('\n')
 
 
 class Settings(object):

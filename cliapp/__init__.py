@@ -18,6 +18,7 @@
 __version__ = '1.20121216'
 
 
+from fmt import TextFormat
 from settings import (Settings, log_group_name, config_group_name, 
                       perf_group_name)
 from runcmd import runcmd, runcmd_unchecked
