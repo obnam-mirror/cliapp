@@ -410,7 +410,7 @@ class Settings(object):
         return name
 
     def build_parser(self, configs_only=False, arg_synopsis=None,
-                     cmd_synopsis=None, deferred_last=[]):
+                     cmd_synopsis=None, deferred_last=[], all_options=False):
         '''Build OptionParser for parsing command line.'''
 
         # Call a callback function unless we're in configs_only mode.
@@ -459,6 +459,15 @@ class Settings(object):
             option_groups[name] = group
             
         config_group = option_groups[config_group_name]
+
+        # Return help text, unless setting/option is hidden, in which
+        # case return optparse.SUPPRESS_HELP.
+
+        def help_text(text, hidden):
+            if all_options or not hidden:
+                return text
+            else:
+                return optparse.SUPPRESS_HELP
             
         # Add --dump-setting-names.
         
@@ -471,7 +480,8 @@ class Settings(object):
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(dump_setting_names)),
-                     help='write out all names of settings and quit')
+                     help=help_text(
+                        'write out all names of settings and quit', True))
 
         # Add --dump-config.
 
@@ -520,7 +530,7 @@ class Settings(object):
                      action='callback',
                      nargs=0,
                      callback=defer_last(maybe(list_config_files)),
-                     help='list all possible config files')
+                     help=help_text('list all possible config files', True))
 
         # Add --generate-manpage.
 
@@ -531,7 +541,7 @@ class Settings(object):
                      nargs=1,
                      type='string',
                      callback=maybe(self._generate_manpage),
-                     help='fill in manual page TEMPLATE',
+                     help=help_text('fill in manual page TEMPLATE', True),
                      metavar='TEMPLATE')
 
         # Add other options, from the user-defined and built-in
@@ -554,10 +564,6 @@ class Settings(object):
 
         def add_option(obj, s):
             option_names = self._option_names(s.names)
-            if s.hidden:
-                help = optparse.SUPPRESS_HELP
-            else:
-                help = s.help
             obj.add_option(*option_names, 
                            action='callback',
                            callback=maybe(set_value),
@@ -565,7 +571,7 @@ class Settings(object):
                            type=s.type,
                            nargs=s.nargs,
                            choices=s.choices,
-                           help=help,
+                           help=help_text(s.help, s.hidden),
                            metavar=s.metavar)
 
         def add_negation_option(obj, s):
@@ -579,7 +585,7 @@ class Settings(object):
                            callback=maybe(set_false),
                            callback_args=(s,),
                            type=s.type,
-                           help=optparse.SUPPRESS_HELP if s.hidden else '')
+                           help=help_text('', s.hidden))
 
         # Add options for every setting.
         
@@ -599,7 +605,8 @@ class Settings(object):
 
     def parse_args(self, args, parser=None, suppress_errors=False,
                     configs_only=False, arg_synopsis=None,
-                    cmd_synopsis=None, compute_setting_values=None):
+                    cmd_synopsis=None, compute_setting_values=None,
+                    all_options=False):
         '''Parse the command line.
         
         Return list of non-option arguments. ``args`` would usually
@@ -612,7 +619,8 @@ class Settings(object):
         p = parser or self.build_parser(configs_only=configs_only,
                                         arg_synopsis=arg_synopsis,
                                         cmd_synopsis=cmd_synopsis,
-                                        deferred_last=deferred_last)
+                                        deferred_last=deferred_last,
+                                        all_options=all_options)
 
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
