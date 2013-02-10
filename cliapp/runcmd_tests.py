@@ -31,7 +31,7 @@ def devnull(msg):
     pass
 
 
-class ApplicationTests(unittest.TestCase):
+class RuncmdTests(unittest.TestCase):
 
     def test_runcmd_executes_true(self):
         self.assertEqual(cliapp.runcmd(['true']), '')
