@@ -221,3 +221,27 @@ def shell_quote(s):
 
     return ''.join(quoted)
 
+
+def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
+    '''Run command in argv on remote host target.
+    
+    This is similar to runcmd, but the command is run on the remote
+    machine. The command is given as an argv array; elements in the
+    array are automatically quoted so they get passed to the other
+    side correctly.
+    
+    The target is given as-is to ssh, and may use any syntax ssh
+    accepts.
+    
+    Environment variables may or may not be passed to the remote
+    machine: this is dependent on the ssh and sshd configurations.
+    Invoke env(1) explicitly to pass in the variables you need to
+    exist on the other end.
+    
+    Pipelines are not supported.
+
+    '''
+
+    local_argv = ['ssh', target, '--'] + map(shell_quote, argv)
+    return runcmd(local_argv, **kwargs)
+
