@@ -32,6 +32,8 @@ Version UNRELEASED
 * Settings and subcommands may now be hidden from `--help` and `help`
   output. New option `--help-all` and new subcommand `help-all` show
   everything.
+* cliapp(5) now explains how `--generate-manpage` is used. Thanks to
+  Enrico Zini for the suggestion.
 
 Bug fixes:
 

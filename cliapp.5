@@ -185,6 +185,49 @@ as set by the application code or determined by
 automatically.
 The value of the environment variable is the name of the file to which the
 resulting profile is to be written.
+.SS "Manual page generation"
+.B cliapp
+can generate parts of a manual page:
+the 
+.I SYNOPSIS
+and
+.I OPTIONS
+sections.
+It fills these in automatically based on the subcommand and settings
+that a program supports.
+Use the
+.BR \-\-generate\-manpage =\fIFILE
+option,
+which is added automatically by
+.BR cliapp .
+The
+.I FILE
+is a manual page marked up using
+the
+.B -man
+macros for
+.BR troff (1).
+It should have empty
+.I SYNOPSIS
+and
+.I OPTIONS
+sections,
+and
+.B cliapp
+will fill them in.
+The output it to the standard output.
+.PP
+For example:
+.PP
+.RS
+foo --generate-manpage=foo.1.in > foo.1
+.RE
+.PP
+You would keep the source code for the manual page in
+.I foo.1.in
+and have your Makefile produce
+.I foo.1
+as shown above.
 .SH FILES
 .B cliapp
 reads a list of configuration files at startup,
