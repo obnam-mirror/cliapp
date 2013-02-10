@@ -43,12 +43,14 @@ class Setting(object):
     nargs = 1
     choices = None
 
-    def __init__(self, names, default, help, metavar=None, group=None):
+    def __init__(
+        self, names, default, help, metavar=None, group=None, hidden=False):
         self.names = names
         self.set_value(default)
         self.help = help
         self.metavar = metavar or self.default_metavar()
         self.group = group
+        self.hidden = hidden
 
     def default_metavar(self):
         return None
@@ -87,8 +89,10 @@ class StringListSetting(Setting):
 
     action = 'append'
     
-    def __init__(self, names, default, help, metavar=None, group=None):
-        Setting.__init__(self, names, [], help, metavar=metavar, group=group)
+    def __init__(
+        self, names, default, help, metavar=None, group=None, hidden=False):
+        Setting.__init__(
+            self, names, [], help, metavar=metavar, group=group, hidden=hidden)
         self.default = default
         self.using_default_value = True
 
@@ -119,9 +123,11 @@ class ChoiceSetting(Setting):
 
     type = 'choice'
     
-    def __init__(self, names, choices, help, metavar=None, group=None):
-        Setting.__init__(self, names, choices[0], help, metavar=metavar,
-                         group=group)
+    def __init__(
+        self, names, choices, help, metavar=None, group=None, hidden=False):
+        Setting.__init__(
+            self, names, choices[0], help, metavar=metavar, group=group,
+            hidden=hidden)
         self.choices = choices
 
     def default_metavar(self):
