@@ -136,3 +136,6 @@ class ShellQuoteTests(unittest.TestCase):
     def test_quotes_space(self):
         self.assertEqual(cliapp.shell_quote(' '), "' '")
 
+    def test_quotes_double_quote(self):
+        self.assertEqual(cliapp.shell_quote('"'), "'\"'")
+
