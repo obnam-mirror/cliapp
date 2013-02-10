@@ -26,6 +26,7 @@ class ExampleApp(cliapp.Application):
         
     def add_settings(self):
         self.settings.string(['yoyo'], 'yoyo help', hidden=True)
+        self.settings.boolean(['blip'], 'blip help', hidden=True)
     
     def cmd_greet(self, args):
         '''Greet the user.

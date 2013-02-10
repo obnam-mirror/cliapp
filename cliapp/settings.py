@@ -554,6 +554,10 @@ class Settings(object):
 
         def add_option(obj, s):
             option_names = self._option_names(s.names)
+            if s.hidden:
+                help = optparse.SUPPRESS_HELP
+            else:
+                help = s.help
             obj.add_option(*option_names, 
                            action='callback',
                            callback=maybe(set_value),
@@ -561,7 +565,7 @@ class Settings(object):
                            type=s.type,
                            nargs=s.nargs,
                            choices=s.choices,
-                           help=s.help,
+                           help=help,
                            metavar=s.metavar)
 
         def add_negation_option(obj, s):
@@ -575,7 +579,7 @@ class Settings(object):
                            callback=maybe(set_false),
                            callback_args=(s,),
                            type=s.type,
-                           help='')
+                           help=optparse.SUPPRESS_HELP if s.hidden else '')
 
         # Add options for every setting.
         
