@@ -102,6 +102,7 @@ class Application(object):
 
         self.subcommands = {}
         self.subcommand_aliases = {}
+        self.hidden_subcommands = set()
         for method_name in self._subcommand_methodnames():
             cmd = self._unnormalize_cmd(method_name)
             self.subcommands[cmd] = getattr(self, method_name)
@@ -239,7 +240,8 @@ class Application(object):
         
         '''
         
-    def add_subcommand(self, name, func, arg_synopsis=None, aliases=None):
+    def add_subcommand(
+        self, name, func, arg_synopsis=None, aliases=None, hidden=False):
         '''Add a subcommand.
         
         Normally, subcommands are defined by add ``cmd_foo`` methods
@@ -256,6 +258,8 @@ class Application(object):
             self.subcommands[name] = func
             self.cmd_synopsis[name] = arg_synopsis
             self.subcommand_aliases[name] = aliases or []
+            if hidden: # pragma: no cover
+                self.hidden_subcommands.add(name)
 
     def add_default_subcommands(self):
         if 'help' not in self.subcommands:
@@ -296,15 +300,17 @@ class Application(object):
         assert method.startswith('cmd_')
         return method[len('cmd_'):].replace('_', '-')
 
-    def _format_usage(self):
+    def _format_usage(self, all=False):
         '''Format usage, possibly also subcommands, if any.'''
         if self.subcommands:
             lines = []
             prefix = 'Usage:'
             for cmd in sorted(self.subcommands.keys()):
-                args = self.cmd_synopsis.get(cmd, '') or ''
-                lines.append('%s %%prog [options] %s %s' % (prefix, cmd, args))
-                prefix = ' ' * len(prefix)
+                if all or cmd not in self.hidden_subcommands:
+                    args = self.cmd_synopsis.get(cmd, '') or ''
+                    lines.append(
+                        '%s %%prog [options] %s %s' % (prefix, cmd, args))
+                    prefix = ' ' * len(prefix)
             return '\n'.join(lines)
         else:
             return None
@@ -313,12 +319,13 @@ class Application(object):
         args = self.cmd_synopsis.get(cmd, '') or ''
         return 'Usage: %%prog [options] %s %s' % (cmd, args)
 
-    def _format_description(self):
+    def _format_description(self, all=False):
         '''Format OptionParser description, with subcommand support.'''
         if self.subcommands:
             summaries = []
             for cmd in sorted(self.subcommands.keys()):
-                summaries.append(self._format_subcommand_summary(cmd))
+                if all or cmd not in self.hidden_subcommands:
+                    summaries.append(self._format_subcommand_summary(cmd))
             cmd_desc = ''.join(summaries)
             return '%s\n%s' % (self._description or '', cmd_desc)
         else:

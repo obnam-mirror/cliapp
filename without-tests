@@ -9,3 +9,4 @@
 ./test-plugins/wrongversion_plugin.py
 ./test-plugins/aaa_hello_plugin.py
 example3.py
+example4.py
