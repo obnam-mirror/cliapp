@@ -210,6 +210,8 @@ def shell_quote(s):
     for c in s:
         if c in safe:
             quoted.append(c)
+        elif c == "'":
+            quoted.append('"\'"')
         else:
             quoted.append("'%c'" % c)
 
