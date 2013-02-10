@@ -101,6 +101,7 @@ class Application(object):
             self.cmd_synopsis = {}
 
         self.subcommands = {}
+        self.subcommand_aliases = {}
         for method_name in self._subcommand_methodnames():
             cmd = self._unnormalize_cmd(method_name)
             self.subcommands[cmd] = getattr(self, method_name)
@@ -238,7 +239,7 @@ class Application(object):
         
         '''
         
-    def add_subcommand(self, name, func, arg_synopsis=None):
+    def add_subcommand(self, name, func, arg_synopsis=None, aliases=None):
         '''Add a subcommand.
         
         Normally, subcommands are defined by add ``cmd_foo`` methods
@@ -254,6 +255,7 @@ class Application(object):
         if name not in self.subcommands:
             self.subcommands[name] = func
             self.cmd_synopsis[name] = arg_synopsis
+            self.subcommand_aliases[name] = aliases or []
 
     def add_default_subcommands(self):
         if 'help' not in self.subcommands:
@@ -506,11 +508,18 @@ class Application(object):
         if self.subcommands:
             if not args:
                 raise SystemExit('must give subcommand')
-            if args[0] in self.subcommands:
-                method = self.subcommands[args[0]]
-                method(args[1:])
-            else:
-                raise SystemExit('unknown subcommand %s' % args[0])
+
+            cmd = args[0]
+            if cmd not in self.subcommands:
+                for name in self.subcommand_aliases:
+                    if cmd in self.subcommand_aliases[name]:
+                        cmd = name
+                        break
+                else:
+                    raise SystemExit('unknown subcommand %s' % args[0])
+                    
+            method = self.subcommands[cmd]
+            method(args[1:])
         else:
             self.process_inputs(args)
 
