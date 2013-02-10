@@ -267,9 +267,7 @@ class Application(object):
         if 'help-all' not in self.subcommands:
             self.add_subcommand('help-all', self.help_all)
 
-    def help(self, args): # pragma: no cover
-        '''Print help.'''
-
+    def _help_helper(self, args, show_all): # pragma: no cover
         try:
             width = int(os.environ.get('COLUMNS', '78'))
         except ValueError:
@@ -282,34 +280,20 @@ class Application(object):
             description = fmt.format(self._format_subcommand_help(args[0]))
             text = '%s\n\n%s' % (usage, description)
         else:
-            usage = self._format_usage()
-            description = fmt.format(self._format_description())
+            usage = self._format_usage(all=show_all)
+            description = fmt.format(self._format_description(all=show_all))
             text = '%s\n\n%s' % (usage, description)
 
         text = self.settings.progname.join(text.split('%prog'))
         self.output.write(text)
+
+    def help(self, args): # pragma: no cover
+        '''Print help.'''
+        self._help_helper(args, False)
 
     def help_all(self, args): # pragma: no cover
         '''Print help, including hidden subcommands.'''
-
-        try:
-            width = int(os.environ.get('COLUMNS', '78'))
-        except ValueError:
-            width = 78
-
-        fmt = cliapp.TextFormat(width=width)
-        
-        if args:
-            usage = self._format_usage_for(args[0])
-            description = fmt.format(self._format_subcommand_help(args[0]))
-            text = '%s\n\n%s' % (usage, description)
-        else:
-            usage = self._format_usage(all=True)
-            description = fmt.format(self._format_description(all=True))
-            text = '%s\n\n%s' % (usage, description)
-
-        text = self.settings.progname.join(text.split('%prog'))
-        self.output.write(text)
+        self._help_helper(args, True)
     
     def _subcommand_methodnames(self):
         return [x 
