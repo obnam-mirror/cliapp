@@ -204,7 +204,11 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
 def shell_quote(s):
     '''Return a shell-quoted version of s.'''
 
-    safe = 'abc123'
+    lower_ascii = 'abcdefghijklmnopqrstuvwxyz'
+    upper_ascii = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    digits = '0123456789'
+    punctuation = '-_/=.,:'
+    safe = set(lower_ascii + upper_ascii + digits + punctuation)
     
     quoted = []
     for c in s:
