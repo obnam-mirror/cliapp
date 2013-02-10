@@ -23,6 +23,9 @@ class ExampleApp(cliapp.Application):
 
     def setup(self):
         self.add_subcommand('insult', self.insult, hidden=True)
+        
+    def add_settings(self):
+        self.settings.string(['yoyo'], 'yoyo help', hidden=True)
     
     def cmd_greet(self, args):
         '''Greet the user.
