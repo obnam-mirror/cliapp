@@ -199,3 +199,49 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
 
     return procs[-1].returncode, ''.join(out), ''.join(err)
 
+
+
+def shell_quote(s):
+    '''Return a shell-quoted version of s.'''
+
+    lower_ascii = 'abcdefghijklmnopqrstuvwxyz'
+    upper_ascii = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    digits = '0123456789'
+    punctuation = '-_/=.,:'
+    safe = set(lower_ascii + upper_ascii + digits + punctuation)
+    
+    quoted = []
+    for c in s:
+        if c in safe:
+            quoted.append(c)
+        elif c == "'":
+            quoted.append('"\'"')
+        else:
+            quoted.append("'%c'" % c)
+
+    return ''.join(quoted)
+
+
+def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
+    '''Run command in argv on remote host target.
+    
+    This is similar to runcmd, but the command is run on the remote
+    machine. The command is given as an argv array; elements in the
+    array are automatically quoted so they get passed to the other
+    side correctly.
+    
+    The target is given as-is to ssh, and may use any syntax ssh
+    accepts.
+    
+    Environment variables may or may not be passed to the remote
+    machine: this is dependent on the ssh and sshd configurations.
+    Invoke env(1) explicitly to pass in the variables you need to
+    exist on the other end.
+    
+    Pipelines are not supported.
+
+    '''
+
+    local_argv = ['ssh', target, '--'] + map(shell_quote, argv)
+    return runcmd(local_argv, **kwargs)
+

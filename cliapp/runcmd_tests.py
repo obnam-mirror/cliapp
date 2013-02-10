@@ -31,7 +31,7 @@ def devnull(msg):
     pass
 
 
-class ApplicationTests(unittest.TestCase):
+class RuncmdTests(unittest.TestCase):
 
     def test_runcmd_executes_true(self):
         self.assertEqual(cliapp.runcmd(['true']), '')
@@ -123,4 +123,22 @@ class ApplicationTests(unittest.TestCase):
             data = f.read()
         self.assertEqual(exit, 0)
         self.assertEqual(data, '')
+
+
+class ShellQuoteTests(unittest.TestCase):
+
+    def test_returns_empty_string_for_empty_string(self):
+        self.assertEqual(cliapp.shell_quote(''), '')
+
+    def test_returns_same_string_when_safe(self):
+        self.assertEqual(cliapp.shell_quote('abc123'), 'abc123')
+
+    def test_quotes_space(self):
+        self.assertEqual(cliapp.shell_quote(' '), "' '")
+
+    def test_quotes_double_quote(self):
+        self.assertEqual(cliapp.shell_quote('"'), "'\"'")
+
+    def test_quotes_single_quote(self):
+        self.assertEqual(cliapp.shell_quote("'"), '"\'"')
 

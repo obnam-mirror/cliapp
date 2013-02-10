@@ -34,6 +34,12 @@ Version UNRELEASED
   everything.
 * cliapp(5) now explains how `--generate-manpage` is used. Thanks to
   Enrico Zini for the suggestion.
+* New function `cliapp.ssh_runcmd` for executing a command remotely
+  over ssh. The function automatically shell-quotes the argv array
+  given to it so that arguments with spaces and other shell meta-characters
+  work over ssh.
+* New function `cliapp.shell_quote` quotes strings for passing as shell
+  arguments.
 
 Bug fixes:
 
