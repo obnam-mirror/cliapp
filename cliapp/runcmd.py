@@ -199,3 +199,9 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
 
     return procs[-1].returncode, ''.join(out), ''.join(err)
 
+
+
+def shell_quote(s):
+    '''Return a shell-quoted version of s.'''
+    return s
+

@@ -124,3 +124,9 @@ class RuncmdTests(unittest.TestCase):
         self.assertEqual(exit, 0)
         self.assertEqual(data, '')
 
+
+class ShellQuoteTests(unittest.TestCase):
+
+    def test_returns_empty_string_for_empty_string(self):
+        self.assertEqual(cliapp.shell_quote(''), '')
+
