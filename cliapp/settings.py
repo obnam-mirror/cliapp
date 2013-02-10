@@ -544,6 +544,23 @@ class Settings(object):
                      help=help_text('fill in manual page TEMPLATE', True),
                      metavar='TEMPLATE')
 
+        # Add --help-all.
+        
+        def help_all(*args): # pragma: no cover
+            pp = self.build_parser(
+                configs_only=configs_only,
+                arg_synopsis=arg_synopsis,
+                cmd_synopsis=cmd_synopsis,
+                all_options=True)
+            sys.stdout.write(pp.format_help())
+            sys.exit(0)
+        
+        config_group.add_option(
+            '--help-all',
+            action='callback',
+            help='show all options',
+            callback=defer_last(maybe(help_all)))
+
         # Add other options, from the user-defined and built-in
         # settingses.
 
