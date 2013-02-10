@@ -29,6 +29,9 @@ Version UNRELEASED
 * Subcommands added with `add_subcommand` may now have aliases.
   Subcommands defined using `Application` class methods named `cmd_*`
   cannot have aliases.
+* Settings and subcommands may now be hidden from `--help` and `help`
+  output. New option `--help-all` and new subcommand `help-all` show
+  everything.
 
 Bug fixes:
 

@@ -102,6 +102,7 @@ class Application(object):
 
         self.subcommands = {}
         self.subcommand_aliases = {}
+        self.hidden_subcommands = set()
         for method_name in self._subcommand_methodnames():
             cmd = self._unnormalize_cmd(method_name)
             self.subcommands[cmd] = getattr(self, method_name)
@@ -239,7 +240,8 @@ class Application(object):
         
         '''
         
-    def add_subcommand(self, name, func, arg_synopsis=None, aliases=None):
+    def add_subcommand(
+        self, name, func, arg_synopsis=None, aliases=None, hidden=False):
         '''Add a subcommand.
         
         Normally, subcommands are defined by add ``cmd_foo`` methods
@@ -256,14 +258,16 @@ class Application(object):
             self.subcommands[name] = func
             self.cmd_synopsis[name] = arg_synopsis
             self.subcommand_aliases[name] = aliases or []
+            if hidden: # pragma: no cover
+                self.hidden_subcommands.add(name)
 
     def add_default_subcommands(self):
         if 'help' not in self.subcommands:
             self.add_subcommand('help', self.help)
+        if 'help-all' not in self.subcommands:
+            self.add_subcommand('help-all', self.help_all)
 
-    def help(self, args): # pragma: no cover
-        '''Print help.'''
-
+    def _help_helper(self, args, show_all): # pragma: no cover
         try:
             width = int(os.environ.get('COLUMNS', '78'))
         except ValueError:
@@ -276,12 +280,20 @@ class Application(object):
             description = fmt.format(self._format_subcommand_help(args[0]))
             text = '%s\n\n%s' % (usage, description)
         else:
-            usage = self._format_usage()
-            description = fmt.format(self._format_description())
+            usage = self._format_usage(all=show_all)
+            description = fmt.format(self._format_description(all=show_all))
             text = '%s\n\n%s' % (usage, description)
 
         text = self.settings.progname.join(text.split('%prog'))
         self.output.write(text)
+
+    def help(self, args): # pragma: no cover
+        '''Print help.'''
+        self._help_helper(args, False)
+
+    def help_all(self, args): # pragma: no cover
+        '''Print help, including hidden subcommands.'''
+        self._help_helper(args, True)
     
     def _subcommand_methodnames(self):
         return [x 
@@ -296,15 +308,17 @@ class Application(object):
         assert method.startswith('cmd_')
         return method[len('cmd_'):].replace('_', '-')
 
-    def _format_usage(self):
+    def _format_usage(self, all=False):
         '''Format usage, possibly also subcommands, if any.'''
         if self.subcommands:
             lines = []
             prefix = 'Usage:'
             for cmd in sorted(self.subcommands.keys()):
-                args = self.cmd_synopsis.get(cmd, '') or ''
-                lines.append('%s %%prog [options] %s %s' % (prefix, cmd, args))
-                prefix = ' ' * len(prefix)
+                if all or cmd not in self.hidden_subcommands:
+                    args = self.cmd_synopsis.get(cmd, '') or ''
+                    lines.append(
+                        '%s %%prog [options] %s %s' % (prefix, cmd, args))
+                    prefix = ' ' * len(prefix)
             return '\n'.join(lines)
         else:
             return None
@@ -313,12 +327,13 @@ class Application(object):
         args = self.cmd_synopsis.get(cmd, '') or ''
         return 'Usage: %%prog [options] %s %s' % (cmd, args)
 
-    def _format_description(self):
+    def _format_description(self, all=False):
         '''Format OptionParser description, with subcommand support.'''
         if self.subcommands:
             summaries = []
             for cmd in sorted(self.subcommands.keys()):
-                summaries.append(self._format_subcommand_summary(cmd))
+                if all or cmd not in self.hidden_subcommands:
+                    summaries.append(self._format_subcommand_summary(cmd))
             cmd_desc = ''.join(summaries)
             return '%s\n%s' % (self._description or '', cmd_desc)
         else:
