@@ -203,5 +203,15 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
 
 def shell_quote(s):
     '''Return a shell-quoted version of s.'''
-    return s
+
+    safe = 'abc123'
+    
+    quoted = []
+    for c in s:
+        if c in safe:
+            quoted.append(c)
+        else:
+            quoted.append("'%c'" % c)
+
+    return ''.join(quoted)
 

@@ -133,3 +133,6 @@ class ShellQuoteTests(unittest.TestCase):
     def test_returns_same_string_when_safe(self):
         self.assertEqual(cliapp.shell_quote('abc123'), 'abc123')
 
+    def test_quotes_space(self):
+        self.assertEqual(cliapp.shell_quote(' '), "' '")
+
