@@ -25,7 +25,10 @@ Version UNRELEASED
   to add, for example, more detailed timestamps easily.
 * The process and system CPU times, and those of the child processes,
   and the process wall clock duration, are now logged when the memory
-  profiling information is logged.  
+  profiling information is logged.
+* Subcommands added with `add_subcommand` may now have aliases.
+  Subcommands defined using `Application` class methods named `cmd_*`
+  cannot have aliases.
 
 Bug fixes:
 
