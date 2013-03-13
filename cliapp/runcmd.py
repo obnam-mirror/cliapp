@@ -40,19 +40,26 @@ def runcmd(argv, *args, **kwargs):
     
     '''
 
-    if 'ignore_fail' in kwargs:
-        ignore_fail = kwargs['ignore_fail']
-        del kwargs['ignore_fail']
-    else:
-        ignore_fail = False
+    our_options = (
+        ('ignore_fail', False),
+        ('log_error', True),
+    )
+    opts = {}
+    for name, default in our_options:
+        opts[name] = default
+        if name in kwargs:
+            opts[name] = kwargs[name]
+            del kwargs[name]
 
     exit, out, err = runcmd_unchecked(argv, *args, **kwargs)
     if exit != 0:
         msg = 'Command failed: %s\n%s' % (' '.join(argv), err)
-        if ignore_fail:
-            logging.info(msg)
+        if opts['ignore_fail']:
+            if opts['log_error']:
+                logging.info(msg)
         else:
-            logging.error(msg)
+            if opts['log_error']:
+                logging.error(msg)
             raise cliapp.AppException(msg)
     return out
     

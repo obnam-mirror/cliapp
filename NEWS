@@ -40,6 +40,8 @@ Version 1.20130313
   work over ssh.
 * New function `cliapp.shell_quote` quotes strings for passing as shell
   arguments.
+* `cliapp.runcmd` now has a new keyword argument: `log_error`. If set to
+  false, errors are not logged. Defaults to true.
 
 Bug fixes:
 
