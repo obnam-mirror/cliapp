@@ -1,3 +1,9 @@
+python-cliapp (1.20130313-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Lars Wirzenius <liw@liw.fi>  Wed, 13 Mar 2013 21:21:40 +0000
+
 python-cliapp (1.20121216-1) unstable; urgency=low
 
   * New upstream release.
