@@ -13,7 +13,7 @@ which typically have the following characteristics:
 * certain options are common to all: ``--help``, ``--version``
 
 Programs like the above are often used as filters in a pipeline.
-The scaffoling to set up a command line parser, open each input
+The scaffolding to set up a command line parser, open each input
 file, read each line of input, etc, is the same in each program.
 Only the logic of what to do with each line differs.
 
