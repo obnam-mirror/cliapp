@@ -1,6 +1,13 @@
 NEWS for cliapp
 ===============
 
+Version UNRELEASED
+------------------
+
+Bug fixes:
+
+* `cliapp.runcmd` no longer dies from the `SIGWINCH` signal.
+
 Version 1.20130313
 ------------------
 

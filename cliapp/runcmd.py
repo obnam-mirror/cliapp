@@ -174,7 +174,13 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
             wlist.append(procs[0].stdin)
 
         if rlist or wlist:
-            r, w, x = select.select(rlist, wlist, [])
+            try:
+                r, w, x = select.select(rlist, wlist, [])
+            except select.error, e:
+                err, msg = e.args
+                if err == errno.EINTR:
+                    break
+                raise
         else:
             break # Let's not busywait waiting for processes to die.
 
