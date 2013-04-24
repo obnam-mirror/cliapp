@@ -176,7 +176,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
         if rlist or wlist:
             try:
                 r, w, x = select.select(rlist, wlist, [])
-            except select.error, e:
+            except select.error, e: # pragma: no cover
                 err, msg = e.args
                 if err == errno.EINTR:
                     break
