@@ -1,8 +1,10 @@
 NEWS for cliapp
 ===============
 
-Version UNRELEASED
+Version 1.20130424
 ------------------
+
+* The API documentation has been split into more than one page.
 
 Bug fixes:
 
@@ -24,7 +26,7 @@ Version 1.20130313
   list summaries for subcommands. The full documentation for a subcommand
   can be seen by giving the name of the subcommand to `help`.
 * Logging setup is now more overrideable. The `setup_logging` method
-  calls `setup_logging_handler_for_syslog`, 
+  calls `setup_logging_handler_for_syslog`,
   `setup_logging_handler_for_syslog`, or
   `setup_logging_handler_to_file`, and the last one calls
   `setup_logging_format` and `setup_logging_timestamp` to create the
@@ -94,7 +96,7 @@ Version 1.20120630
 
 * New version numbering scheme: `API.DATE`.
 * cliapp now logs the command line and all settings, and the environment
-  variables when the application starts. This helps when debugging problems 
+  variables when the application starts. This helps when debugging problems
   other people are having.
 * The `cliapp.runcmd` and `cliapp.runcmd_unchecked` functions are now
   callable without having a `cliapp.Application` instance. This makes
@@ -135,9 +137,9 @@ Version 0.27, released 2012-02-17
 Version 0.26, released 2012-02-11
 ---------------------------------
 
-* `cliapp.Settings` now allows access to all sections in configuration 
-  files. The new `as_cp` method returns a `ConfigParser` instance, which  
-  is set to the current value of every registered setting, in the `config` 
+* `cliapp.Settings` now allows access to all sections in configuration
+  files. The new `as_cp` method returns a `ConfigParser` instance, which
+  is set to the current value of every registered setting, in the `config`
   section, plus any additional sections in the configuration files that
   have been read.
 
@@ -218,7 +220,7 @@ Version 0.17, released 2011-08-22
   the standard output and error redirections.
 * Memory profiling statistics can now be logged by the application,
   by calling the `cliapp.Application.dump_memory_profile` method.
-  The `--dump-memory-profile` setting is provided by the user to 
+  The `--dump-memory-profile` setting is provided by the user to
   specify how the profiling is done: simple RSS memory size, and
   meliae and heapy Python memory profilers are supported.
 
@@ -226,7 +228,7 @@ Version 0.16, released 2011-08-19
 ---------------------------------
 
 * An EPIPE error when writing to stdout is suppressed. This avoids a Python
-  stack trace or other error when user pipes output to, say, less, and 
+  stack trace or other error when user pipes output to, say, less, and
   quits less before the application finishes writing everything to stdout.
 * Improve description of --log. (Thanks, Tapani Tarvainen.)
 
@@ -258,7 +260,7 @@ Version 0.15, released 2011-08-02
     from being used; any `--config` options used after this one will still
     be read
 * Parsing of string list values in config files has been fixed. INI files
-  have no standard syntax for presenting files (maybe JSON would be a 
+  have no standard syntax for presenting files (maybe JSON would be a
   better option), but I invented something. How very clever of me.
   At the same time, `--dump-config` now formats string list values
   properly.
@@ -276,7 +278,7 @@ Version 0.14, released 2011-07-20
 * A `Settings.require` method is added, so that it's easy to fail if the
   user has failed the give an option that is required in a given situation.
   (Mandatory options are a bit weird, but sometimes they happen.)
-* Subcommands may now be added explicitly, using the 
+* Subcommands may now be added explicitly, using the
   `Application.add_subcommand` method. This is helpful for applications that
   support plugins, for example.
 
@@ -361,7 +363,7 @@ Version 0.7, released 2011-03-12
   user, nobody minds.
 * The callback setting type is now gone.
 * Application name can now be set via the Application class's initializer
-  (optional `progname` argument), or by assigning to 
+  (optional `progname` argument), or by assigning to
   `cliapp.Settings.progname`. If not set explicitly, it is set from
   `sys.argv[0]`.
 
