@@ -741,7 +741,13 @@ class Settings(object):
         sys.exit(0)
 
     def as_cp(self):
-        '''Return a ConfigParser instance with current values of settings.'''
+        '''Return a ConfigParser instance with current values of settings.
+
+        Any sections outside of ``[config]`` are preserved as is. This
+        lets the application use those as it wishes, and assign any
+        meanings it desires to the section names.
+
+        '''
         cp = ConfigParser.ConfigParser()
         cp.add_section('config')
         for name in self._canonical_names:
