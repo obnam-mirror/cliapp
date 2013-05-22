@@ -1,6 +1,12 @@
 NEWS for cliapp
 ===============
 
+Version 1.UNRELEASED
+--------------------
+
+* cliapp(5) now mentions subcommands and the automatic subcommand
+  "help".
+
 Version 1.20130424
 ------------------
 

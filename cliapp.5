@@ -1,4 +1,4 @@
-.\" Copyright (C) 2011, 2012  Lars Wirzenius
+	.\" Copyright (C) 2011, 2012  Lars Wirzenius
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -228,6 +228,33 @@ You would keep the source code for the manual page in
 and have your Makefile produce
 .I foo.1
 as shown above.
+.SS "Subcommands"
+.BR cliapp
+provides a way for the application to have
+.IR subcommands ,
+in the style of
+.BR git (1),
+for example.
+If the application is called
+.IR foo ,
+then it can have subcommands such as
+.IR "foo search" ,
+and
+.IR "foo print" .
+The application gets to define the name and meaning of each subcommand.
+However,
+all settings (options and configuration files) are global,
+and can be used with all subcommands.
+It is up to each subcommand what settings it obeys.
+.PP
+If there are any subcommands,
+.B cliapp
+automatically adds the
+.B help
+subcommand.
+It allows you to get the help text for a specific subommand:
+.IR "foo help print" ,
+for example.
 .SH FILES
 .B cliapp
 reads a list of configuration files at startup,
