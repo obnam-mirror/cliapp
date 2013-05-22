@@ -1,15 +1,15 @@
 .\" Copyright (C) 2011, 2012  Lars Wirzenius
-.\" 
+.\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
-.\" 
+.\"
 .\" This program is distributed in the hope that it will be useful,
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
-.\" 
+.\"
 .\" You should have received a copy of the GNU General Public License along
 .\" with this program; if not, write to the Free Software Foundation, Inc.,
 .\" 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -22,11 +22,11 @@ cliapp \- config file and option conventions for Python command line framework
 is a Python programming framework for writing command line applications
 for Unix-like operating systems.
 This manual page describes the conventions for configuration files and
-command line parsing provided by 
+command line parsing provided by
 .BR cliapp .
 .PP
-.I "Configuration file variables" 
-and 
+.I "Configuration file variables"
+and
 .I "command line options"
 are handled by
 .B cliapp
@@ -145,14 +145,14 @@ The negation is only usable on the command line:
 its purpose is to allow the command line to override a setting from the
 configuration file.
 .SS "Logging and log files"
-Programs using 
+Programs using
 .B cliapp
 automatically support several options for configuring the Python
 .B logging
 module.
 See the
 .B \-\-help
-output for options starting with 
+output for options starting with
 .BR "log"
 for details.
 Logging can happen to a file or the system log.
@@ -177,10 +177,10 @@ You can run the application under the Python profiler
 by setting an environment variable.
 The name of the variable is
 .BR FOO_PROFILE ,
-where 
+where
 .B FOO
 is the name of the program,
-as set by the application code or determined by 
+as set by the application code or determined by
 .B cliapp
 automatically.
 The value of the environment variable is the name of the file to which the
@@ -188,7 +188,7 @@ resulting profile is to be written.
 .SS "Manual page generation"
 .B cliapp
 can generate parts of a manual page:
-the 
+the
 .I SYNOPSIS
 and
 .I OPTIONS
@@ -234,7 +234,7 @@ reads a list of configuration files at startup,
 on behalf of the application.
 The name of the application is included in the name.
 In the filenames below,
-the application name is 
+the application name is
 .IR progname .
 .TP
 .BR /etc/progname.conf
