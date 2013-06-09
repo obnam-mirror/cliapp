@@ -6,6 +6,8 @@ Version 1.UNRELEASED
 
 * cliapp(5) now mentions subcommands and the automatic subcommand
   "help".
+* `ssh_runcmd` now has the `tty` keyword argument to enable ssh
+  allocation of pseudo-TTYs. Patch from Jannis Pohlmann.
 
 Version 1.20130424
 ------------------

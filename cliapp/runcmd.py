@@ -242,6 +242,19 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
     machine. The command is given as an argv array; elements in the
     array are automatically quoted so they get passed to the other
     side correctly.
+
+    An optional ``tty=`` parameter can be passed to ``ssh_runcmd`` in
+    order to force or disable pseudo-tty allocation. This is often
+    required to run ``sudo`` on another machine and might be useful
+    in other situations as well. Supported values are ``tty=True`` for
+    forcing tty allocation, ``tty=False`` for disabling it and
+    ``tty=None`` for not passing anything tty related to ssh.
+
+    With the ``tty`` option,
+    ``cliapp.runcmd(['ssh', '-tt', 'user@host', '--', 'sudo', 'ls'])``
+    can be written as
+    ``cliapp.ssh_runcmd('user@host', ['sudo', 'ls'], tty=True)``
+    which is more intuitive.
     
     The target is given as-is to ssh, and may use any syntax ssh
     accepts.
@@ -255,6 +268,16 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
 
     '''
 
-    local_argv = ['ssh', target, '--'] + map(shell_quote, argv)
+    tty = kwargs.get('tty', None)
+    if tty:
+        ssh_cmd = ['ssh', '-tt', target, '--']
+    elif tty is False:          
+        ssh_cmd = ['ssh', '-T', target, '--']
+    else:
+        ssh_cmd = ['ssh', target, '--']
+    if 'tty' in kwargs:
+        del kwargs['tty']
+
+    local_argv = ssh_cmd + map(shell_quote, argv)
     return runcmd(local_argv, **kwargs)
 
