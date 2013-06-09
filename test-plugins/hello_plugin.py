@@ -9,7 +9,7 @@ class Hello(cliapp.Plugin):
     @property
     def version(self):
         return '0.0.1'
-        
+
     def setup(self):
         self.setup_called = True
 

@@ -1,15 +1,15 @@
 # Copyright (C) 2009-2012  Lars Wirzenius
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -57,13 +57,13 @@ class Setting(object):
 
     def get_value(self):
         return self._string_value
-        
+
     def set_value(self, value):
         self._string_value = value
-        
+
     def call_get_value(self):
         return self.get_value()
-        
+
     def call_set_value(self, value):
         self.set_value(value)
 
@@ -88,7 +88,7 @@ class StringSetting(Setting):
 class StringListSetting(Setting):
 
     action = 'append'
-    
+
     def __init__(
         self, names, default, help, metavar=None, group=None, hidden=False):
         Setting.__init__(
@@ -104,17 +104,17 @@ class StringListSetting(Setting):
             return [s.strip() for s in self._string_value.split(',')]
         else:
             return self.default
-        
+
     def set_value(self, strings):
         self._string_value = ','.join(strings)
         self.using_default_value = False
 
     def has_value(self):
         return self.value != []
-        
+
     def parse_value(self, string):
         self.value = [s.strip() for s in string.split(',')]
-        
+
     def format(self): # pragma: no cover
         return ', '.join(self.value)
 
@@ -122,7 +122,7 @@ class StringListSetting(Setting):
 class ChoiceSetting(Setting):
 
     type = 'choice'
-    
+
     def __init__(
         self, names, choices, help, metavar=None, group=None, hidden=False):
         Setting.__init__(
@@ -133,7 +133,7 @@ class ChoiceSetting(Setting):
     def default_metavar(self):
         return self.names[0].upper()
 
-    
+
 class BooleanSetting(Setting):
 
     action = 'store_true'
@@ -145,7 +145,7 @@ class BooleanSetting(Setting):
 
     def get_value(self):
         return self._string_value.lower() in self._trues
-        
+
     def set_value(self, value):
         def is_true():
             if value is True or value is False:
@@ -163,8 +163,8 @@ class ByteSizeSetting(Setting):
 
     def parse_human_size(self, size):
         '''Parse a size using suffix into plain bytes.'''
-        
-        m = re.match(r'''(?P<number>\d+(\.\d+)?) \s* 
+
+        m = re.match(r'''(?P<number>\d+(\.\d+)?) \s*
                          (?P<unit>k|ki|m|mi|g|gi|t|ti)? b? \s*$''',
                      size.lower(), flags=re.X)
         if not m:
@@ -189,7 +189,7 @@ class ByteSizeSetting(Setting):
 
     def get_value(self):
         return long(self._string_value)
-        
+
     def set_value(self, value):
         if type(value) == str:
             value = self.parse_human_size(value)
@@ -205,7 +205,7 @@ class IntegerSetting(Setting):
 
     def get_value(self):
         return long(self._string_value)
-        
+
     def set_value(self, value):
         self._string_value = str(value)
 
@@ -226,40 +226,40 @@ class Settings(object):
 
     You probably don't need to create a settings object yourself,
     since ``cliapp.Application`` does it for you.
-    
+
     Settings are read from configuration files, and parsed from the
     command line. Every setting has a type, name, and help text,
     and may have a default value as well.
-    
+
     For example::
-    
+
         settings.boolean(['verbose', 'v'], 'show what is going on')
-        
+
     This would create a new setting, ``verbose``, with a shorter alias
     ``v``. On the command line, the options ``--verbose`` and
-    ``-v`` would work equally well. There can be any number of aliases. 
+    ``-v`` would work equally well. There can be any number of aliases.
 
     The help text is shown if the user uses ``--help`` or
     ``--generate-manpage``.
     You can use the ``metavar`` keyword argument to set the name shown
     in the generated option lists; the default name is whatever
     ``optparse`` decides (i.e., name of option).
-    
+
     Use ``load_configs`` to read configuration files, and
     ``parse_args`` to parse command line arguments.
-    
+
     The current value of a setting can be accessed by indexing
     the settings class::
-    
+
         settings['verbose']
 
     The list of configuration files for the appliation is stored
     in ``config_files``. Add or remove from the list if you wish.
     The files need to exist: those that don't are silently ignored.
-    
+
     '''
 
-    def __init__(self, progname, version, usage=None, description=None, 
+    def __init__(self, progname, version, usage=None, description=None,
                  epilog=None):
         self._settingses = dict()
         self._canonical_names = list()
@@ -269,34 +269,34 @@ class Settings(object):
         self.usage = usage
         self.description = description
         self.epilog = epilog
-        
+
         self._add_default_settings()
-        
+
         self._config_files = None
         self._cp = ConfigParser.ConfigParser()
 
     def _add_default_settings(self):
-        self.string(['output'], 
+        self.string(['output'],
                     'write output to FILE, instead of standard output',
                     metavar='FILE')
 
-        self.string(['log'], 
+        self.string(['log'],
                     'write log entries to FILE (default is to not write log '
                         'files at all); use "syslog" to log to system log, '
                         'or "none" to disable logging',
                     metavar='FILE', group=log_group_name)
-        self.choice(['log-level'], 
+        self.choice(['log-level'],
                     ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],
                     'log at LEVEL, one of debug, info, warning, '
                         'error, critical, fatal (default: %default)',
                     metavar='LEVEL', group=log_group_name)
-        self.bytesize(['log-max'], 
+        self.bytesize(['log-max'],
                       'rotate logs larger than SIZE, '
                         'zero for never (default: %default)',
                       metavar='SIZE', default=0, group=log_group_name)
         self.integer(['log-keep'], 'keep last N logs (%default)',
                      metavar='N', default=10, group=log_group_name)
-        self.string(['log-mode'], 
+        self.string(['log-mode'],
                     'set permissions of new log files to MODE (octal; '
                         'default %default)',
                     metavar='MODE', default='0600', group=log_group_name)
@@ -327,10 +327,10 @@ class Settings(object):
 
     def string_list(self, names, help, default=None, **kwargs):
         '''Add a setting which have multiple string values.
-        
+
         An example would be an option that can be given multiple times
         on the command line, e.g., "--exclude=foo --exclude=bar".
-        
+
         '''
 
         self._add_setting(StringListSetting(names, default or [], help,
@@ -338,12 +338,12 @@ class Settings(object):
 
     def choice(self, names, possibilities, help, **kwargs):
         '''Add a setting which chooses from list of acceptable values.
-        
+
         An example would be an option to set debugging level to be
         one of a set of accepted names: debug, info, warning, etc.
-        
+
         The default value is the first possibility.
-        
+
         '''
 
         self._add_setting(ChoiceSetting(names, possibilities, help, **kwargs))
@@ -354,11 +354,11 @@ class Settings(object):
 
     def bytesize(self, names, help, default=0, **kwargs):
         '''Add a setting with a size in bytes.
-        
+
         The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
-        
+
         '''
-        
+
         self._add_setting(ByteSizeSetting(names, default, help, **kwargs))
 
     def integer(self, names, help, default=0, **kwargs):
@@ -373,7 +373,7 @@ class Settings(object):
 
     def __contains__(self, name):
         return name in self._settingses
-        
+
     def __iter__(self):
         '''Iterate over canonical settings names.'''
         for name in self._canonical_names:
@@ -385,21 +385,21 @@ class Settings(object):
 
     def require(self, name):
         '''Raise exception if setting has not been set.
-        
+
         Option must have a value, and a default value is OK.
-        
+
         '''
-        
+
         if not self._settingses[name].has_value():
             raise cliapp.AppException('Setting %s has no value, '
                                         'but one is required' % name)
-        
+
     def _option_names(self, names):
         '''Turn setting names into option names.
-        
+
         Names with a single letter are short options, and get prefixed
         with one dash. The rest get prefixed with two dashes.
-        
+
         '''
 
         return ['--%s' % name if len(name) > 1 else '-%s' % name
@@ -417,7 +417,7 @@ class Settings(object):
         maybe = lambda func: (lambda *args: None) if configs_only else func
 
 
-        # Maintain lists of callback function calls that are deferred. 
+        # Maintain lists of callback function calls that are deferred.
         # We call them ourselves rather than have OptionParser call them
         # directly so that we can do things like --dump-config only
         # after the whole command line is parsed.
@@ -444,20 +444,20 @@ class Settings(object):
 
         # Create all OptionGroup objects. This way, the user code can
         # add settings to built-in option groups.
-        
+
         group_names = set(default_group_names)
         for name in self._canonical_names:
             s = self._settingses[name]
             if s.group is not None:
                 group_names.add(s.group)
         group_names = sorted(group_names)
-        
+
         option_groups = {}
         for name in group_names:
             group = optparse.OptionGroup(p, name)
             p.add_option_group(group)
             option_groups[name] = group
-            
+
         config_group = option_groups[config_group_name]
 
         # Return help text, unless setting/option is hidden, in which
@@ -468,9 +468,9 @@ class Settings(object):
                 return text
             else:
                 return optparse.SUPPRESS_HELP
-            
+
         # Add --dump-setting-names.
-        
+
         def dump_setting_names(*args): # pragma: no cover
             for name in self._canonical_names:
                 sys.stdout.write('%s\n' % name)
@@ -545,7 +545,7 @@ class Settings(object):
                      metavar='TEMPLATE')
 
         # Add --help-all.
-        
+
         def help_all(*args): # pragma: no cover
             pp = self.build_parser(
                 configs_only=configs_only,
@@ -554,7 +554,7 @@ class Settings(object):
                 all_options=True)
             sys.stdout.write(pp.format_help())
             sys.exit(0)
-        
+
         config_group.add_option(
             '--help-all',
             action='callback',
@@ -581,7 +581,7 @@ class Settings(object):
 
         def add_option(obj, s):
             option_names = self._option_names(s.names)
-            obj.add_option(*option_names, 
+            obj.add_option(*option_names,
                            action='callback',
                            callback=maybe(set_value),
                            callback_args=(s,),
@@ -595,7 +595,7 @@ class Settings(object):
             option_names = self._option_names(s.names)
             long_names = [x for x in option_names if x.startswith('--')]
             neg_names = ['--no-' + x[2:] for x in long_names]
-            unused_names = [x for x in neg_names 
+            unused_names = [x for x in neg_names
                             if x[2:] not in self._settingses]
             obj.add_option(*unused_names,
                            action='callback',
@@ -605,14 +605,14 @@ class Settings(object):
                            help=help_text('', s.hidden))
 
         # Add options for every setting.
-        
+
         for name in self._canonical_names:
             s = self._settingses[name]
             if s.group is None:
                 obj = p
             else:
                 obj = option_groups[s.group]
-            
+
             add_option(obj, s)
             if type(s) is BooleanSetting:
                 add_negation_option(obj, s)
@@ -625,10 +625,10 @@ class Settings(object):
                     cmd_synopsis=None, compute_setting_values=None,
                     all_options=False):
         '''Parse the command line.
-        
+
         Return list of non-option arguments. ``args`` would usually
         be ``sys.argv[1:]``.
-        
+
         '''
 
         deferred_last = []
@@ -652,34 +652,34 @@ class Settings(object):
     @property
     def _default_config_files(self):
         '''Return list of default config files to read.
-        
+
         The names of the files are dependent on the name of the program,
         as set in the progname attribute.
-        
+
         The files may or may not exist.
-        
+
         '''
-        
+
         configs = []
-        
+
         configs.append('/etc/%s.conf' % self.progname)
         configs += self._listconfs('/etc/%s' % self.progname)
         configs.append(os.path.expanduser('~/.%s.conf' % self.progname))
         configs += self._listconfs(
                         os.path.expanduser('~/.config/%s' % self.progname))
-        
+
         return configs
 
     def _listconfs(self, dirname, listdir=os.listdir):
         '''Return list of pathnames to config files in dirname.
-        
+
         Config files are expectd to have names ending in '.conf'.
-        
-        If dirname does not exist or is not a directory, 
+
+        If dirname does not exist or is not a directory,
         return empty list.
-        
+
         '''
-        
+
         if not os.path.isdir(dirname):
             return []
 
@@ -696,7 +696,7 @@ class Settings(object):
 
     def _set_config_files(self, config_files):
         self._config_files = config_files
-        
+
     config_files = property(_get_config_files, _set_config_files)
 
     def set_from_raw_string(self, name, raw_string):
@@ -707,9 +707,9 @@ class Settings(object):
 
     def load_configs(self, open=open):
         '''Load all config files in self.config_files.
-        
+
         Silently ignore files that do not exist.
-        
+
         '''
 
         cp = ConfigParser.ConfigParser()

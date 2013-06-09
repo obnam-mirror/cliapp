@@ -8,14 +8,14 @@ you need to add methods with names like ``cmd_commit`` and
 ``cmd_clone``::
 
     class VersionControlTool(cliapp.Application):
-    
+
         def cmd_commit(self, args):
             '''commit command description'''
             pass
         def cmd_clone(self, args):
             '''clone command description'''
             pass
-            
+
 If any such methods exist, ``cliapp`` automatically supports
 subcommands. The name of the method, without the ``cmd_`` prefix,
 forms the name of the subcommand. Any underscores in the method

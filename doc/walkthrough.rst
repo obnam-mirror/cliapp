@@ -13,7 +13,7 @@ summary is here:
   arguments and input files are processed
 * override ``process_args`` to decide how each argument is processed;
   by default, this called ``process_inputs`` or handles subcommands
-* ``process_inputs`` calls ``process_input`` (note singular) for each 
+* ``process_inputs`` calls ``process_input`` (note singular) for each
   argument, or on ``-`` to process standard input if no files are named
   on the command line
 * ``process_input`` calls ``open_input`` to open each file, then calls

@@ -1,15 +1,15 @@
 # Copyright (C) 2013  Lars Wirzenius
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -35,10 +35,10 @@ class Paragraph(object):
 
     def append(self, line):
         self._lines.append(line)
-    
+
     def _oneliner(self):
         return ' '.join(' '.join(x.split()) for x in self._lines)
-    
+
     def fill(self, width):
         filled = textwrap.fill(self._oneliner(), width=width)
         return filled
@@ -81,13 +81,13 @@ class TextFormat(object):
 
         def is_empty(line):
             return line.strip() == ''
-        
+
         def is_bullet(line):
             return line.startswith('* ')
-        
+
         def is_continuation(line):
             return line.startswith(' ')
-            
+
         current = None
         in_list = False
         for line in text.splitlines(True):

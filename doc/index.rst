@@ -5,7 +5,7 @@ Welcome to cliapp
 which typically have the following characteristics:
 
 * non-interactive
-* the programs read input files named on the command line, 
+* the programs read input files named on the command line,
   or the standard input
 * each line of input is processed individually
 * output is to the standard output
@@ -33,7 +33,7 @@ framework.
 
 .. toctree::
    :numbered:
-    
+
    example
    walkthrough
    logging

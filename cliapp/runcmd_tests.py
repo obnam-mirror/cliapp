@@ -1,16 +1,16 @@
 # Copyright (C) 2011, 2012  Lars Wirzenius
 # Copyright (C) 2012  Codethink Limited
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -35,14 +35,14 @@ class RuncmdTests(unittest.TestCase):
 
     def test_runcmd_executes_true(self):
         self.assertEqual(cliapp.runcmd(['true']), '')
-    
+
     def test_runcmd_raises_error_on_failure(self):
         self.assertRaises(cliapp.AppException, cliapp.runcmd, ['false'])
-    
+
     def test_runcmd_returns_stdout_of_command(self):
         self.assertEqual(cliapp.runcmd(['echo', 'hello', 'world']),
                          'hello world\n')
-    
+
     def test_runcmd_returns_stderr_of_command(self):
         exit, out, err = cliapp.runcmd_unchecked(['ls', 'notexist'])
         self.assertNotEqual(exit, 0)
@@ -69,11 +69,11 @@ class RuncmdTests(unittest.TestCase):
         self.assertEqual(cliapp.runcmd(['pwd'], cwd='/'), '/\n')
 
     def test_runcmd_unchecked_returns_values_on_success(self):
-        self.assertEqual(cliapp.runcmd_unchecked(['echo', 'foo']), 
+        self.assertEqual(cliapp.runcmd_unchecked(['echo', 'foo']),
                          (0, 'foo\n', ''))
 
     def test_runcmd_unchecked_returns_values_on_failure(self):
-        self.assertEqual(cliapp.runcmd_unchecked(['false']), 
+        self.assertEqual(cliapp.runcmd_unchecked(['false']),
                          (1, '', ''))
 
     def test_runcmd_unchecked_runs_simple_pipeline(self):
@@ -82,7 +82,7 @@ class RuncmdTests(unittest.TestCase):
                          (0, '4\n', ''))
 
     def test_runcmd_unchecked_runs_longer_pipeline(self):
-        self.assertEqual(cliapp.runcmd_unchecked(['echo', 'foo'], 
+        self.assertEqual(cliapp.runcmd_unchecked(['echo', 'foo'],
                                                  ['cat'],
                                                  ['wc', '-c']),
                          (0, '4\n', ''))
@@ -94,7 +94,7 @@ class RuncmdTests(unittest.TestCase):
         self.assertEqual(cliapp.runcmd_unchecked(['cat'], stdin=fd),
                          (0, 'foobar', ''))
         os.close(fd)
-                            
+
     def test_runcmd_redirects_stdout_to_file(self):
         fd, filename = tempfile.mkstemp()
         exit, out, err = cliapp.runcmd_unchecked(['echo', 'foo'], stdout=fd)
@@ -103,7 +103,7 @@ class RuncmdTests(unittest.TestCase):
             data = f.read()
         self.assertEqual(exit, 0)
         self.assertEqual(data, 'foo\n')
-                            
+
     def test_runcmd_redirects_stderr_to_file(self):
         fd, filename = tempfile.mkstemp()
         exit, out, err = cliapp.runcmd_unchecked(['ls', 'notexist'], stderr=fd)
@@ -115,7 +115,7 @@ class RuncmdTests(unittest.TestCase):
 
     def test_runcmd_unchecked_handles_stdout_err_redirected_to_same_file(self):
         fd, filename = tempfile.mkstemp()
-        exit, out, err = cliapp.runcmd_unchecked(['sleep', '2'], 
+        exit, out, err = cliapp.runcmd_unchecked(['sleep', '2'],
                                                  stdout=fd,
                                                  stderr=subprocess.STDOUT)
         os.close(fd)

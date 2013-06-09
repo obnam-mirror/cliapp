@@ -1,15 +1,15 @@
 # Copyright (C) 2011  Lars Wirzenius
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -34,27 +34,27 @@ import cliapp
 class AppException(Exception):
 
     '''Base class for application specific exceptions.
-    
+
     Any exceptions that are subclasses of this one get printed as
     nice errors to the user. Any other exceptions cause a Python
     stack trace to be written to stderr.
-    
+
     '''
-    
+
     def __init__(self, msg):
         self.msg = msg
-        
+
     def __str__(self):
         return self.msg
-    
-    
+
+
 class LogHandler(logging.handlers.RotatingFileHandler): # pragma: no cover
 
     '''Like RotatingFileHandler, but set permissions of new files.'''
-    
+
     def __init__(self, filename, perms=0600, *args, **kwargs):
         self._perms = perms
-        logging.handlers.RotatingFileHandler.__init__(self, filename, 
+        logging.handlers.RotatingFileHandler.__init__(self, filename,
                                                       *args, **kwargs)
 
     def _open(self):
@@ -68,25 +68,25 @@ class LogHandler(logging.handlers.RotatingFileHandler): # pragma: no cover
 class Application(object):
 
     '''A framework for Unix-like command line programs.
-    
+
     The user should subclass this base class for each application.
     The subclass does not need code for the mundane, boilerplate
-    parts that are the same in every utility, and can concentrate on the 
+    parts that are the same in every utility, and can concentrate on the
     interesting part that is unique to it.
 
     To start the application, call the `run` method.
-    
+
     The ``progname`` argument sets tne name of the program, which is
     used for various purposes, such as determining the name of the
     configuration file.
-    
+
     Similarly, ``version`` sets the version number of the program.
-    
+
     ``description`` and ``epilog`` are included in the output of
     ``--help``. They are formatted to fit the screen. Unlike the
     default behavior of ``optparse``, empty lines separate
     paragraphs.
-    
+
     '''
 
     def __init__(self, progname=None, version='0.0.0', description=None,
@@ -106,28 +106,28 @@ class Application(object):
         for method_name in self._subcommand_methodnames():
             cmd = self._unnormalize_cmd(method_name)
             self.subcommands[cmd] = getattr(self, method_name)
-        
-        self.settings = cliapp.Settings(progname, version, 
+
+        self.settings = cliapp.Settings(progname, version,
                                         usage=self._format_usage,
                                         description=self._format_description,
                                         epilog=epilog)
 
         self.plugin_subdir = 'plugins'
-        
+
         # For meliae memory dumps.
         self.memory_dump_counter = 0
         self.last_memory_dump = 0
-        
+
         # For process duration.
         self._started = os.times()[-1]
-        
+
     def add_settings(self):
         '''Add application specific settings.'''
 
-    def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv, 
+    def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv,
             log=logging.critical):
         '''Run the application.'''
-        
+
         def run_it():
             self._run(args=args, stderr=stderr, log=log)
 
@@ -143,14 +143,14 @@ class Application(object):
 
     def _envname(self, progname):
         '''Create an environment variable name of the name of a program.'''
-        
+
         basename = os.path.basename(progname)
         if '.' in basename:
             basename = basename.split('.')[0]
-        
+
         ok = 'abcdefghijklmnopqrstuvwxyz0123456789'
         ok += ok.upper()
-        
+
         return ''.join(x.upper() if x in ok else '_' for x in basename)
 
     def _set_process_name(self): # pragma: no cover
@@ -164,7 +164,7 @@ class Application(object):
             self._set_process_name()
             self.add_settings()
             self.setup_plugin_manager()
-            
+
             # A little bit of trickery here to make --no-default-configs and
             # --config=foo work right: we first parse the command line once,
             # and pick up any config files. Then we read configs. Finally,
@@ -181,7 +181,7 @@ class Application(object):
 
             self.setup_logging()
             self.log_config()
-            
+
             if self.settings['output']:
                 self.output = open(self.settings['output'], 'w')
             else:
@@ -223,12 +223,12 @@ class Application(object):
             stderr.write(traceback.format_exc())
             sys.exit(1)
 
-        logging.info('%s version %s ends normally' % 
+        logging.info('%s version %s ends normally' %
                      (self.settings.progname, self.settings.version))
-    
+
     def compute_setting_values(self, settings):
         '''Compute setting values after configs and options are parsed.
-        
+
         You can override this method to implement a default value for
         a setting that is dependent on another setting. For example,
         you might have settings "url" and "protocol", where protocol
@@ -237,23 +237,23 @@ class Application(object):
         "http://www.example.com/", the protocol would be set to
         "http". If the user sets both url and protocol, the protocol
         does not get modified by compute_setting_values.
-        
+
         '''
-        
+
     def add_subcommand(
         self, name, func, arg_synopsis=None, aliases=None, hidden=False):
         '''Add a subcommand.
-        
+
         Normally, subcommands are defined by add ``cmd_foo`` methods
         to the application class. However, sometimes it is more convenient
         to have them elsewhere (e.g., in plugins). This method allows
         doing that.
-        
+
         The callback function must accept a list of command line
         non-option arguments.
-        
+
         '''
-        
+
         if name not in self.subcommands:
             self.subcommands[name] = func
             self.cmd_synopsis[name] = arg_synopsis
@@ -274,7 +274,7 @@ class Application(object):
             width = 78
 
         fmt = cliapp.TextFormat(width=width)
-        
+
         if args:
             usage = self._format_usage_for(args[0])
             description = fmt.format(self._format_subcommand_help(args[0]))
@@ -294,11 +294,11 @@ class Application(object):
     def help_all(self, args): # pragma: no cover
         '''Print help, including hidden subcommands.'''
         self._help_helper(args, True)
-    
+
     def _subcommand_methodnames(self):
-        return [x 
-                 for x in dir(self) 
-                 if x.startswith('cmd_') and 
+        return [x
+                 for x in dir(self)
+                 if x.startswith('cmd_') and
                     inspect.ismethod(getattr(self, x))]
 
     def _normalize_cmd(self, cmd):
@@ -361,7 +361,7 @@ class Application(object):
 
     def setup_logging(self): # pragma: no cover
         '''Set up logging.'''
-        
+
         level_name = self.settings['log-level']
         levels = {
             'debug': logging.DEBUG,
@@ -379,7 +379,7 @@ class Application(object):
             handler = LogHandler(
                             self.settings['log'],
                             perms=int(self.settings['log-mode'], 8),
-                            maxBytes=self.settings['log-max'], 
+                            maxBytes=self.settings['log-max'],
                             backupCount=self.settings['log-keep'],
                             delay=False)
             fmt = '%(asctime)s %(levelname)s %(message)s'
@@ -418,14 +418,14 @@ class Application(object):
         handler = LogHandler(
                         self.settings['log'],
                         perms=int(self.settings['log-mode'], 8),
-                        maxBytes=self.settings['log-max'], 
+                        maxBytes=self.settings['log-max'],
                         backupCount=self.settings['log-keep'],
                         delay=False)
         fmt = self.setup_logging_format()
         datefmt = self.setup_logging_timestamp()
         formatter = logging.Formatter(fmt, datefmt)
         handler.setFormatter(formatter)
-        
+
         return handler
 
     def setup_logging_format(self): # pragma: no cover
@@ -437,7 +437,7 @@ class Application(object):
         return '%Y-%m-%d %H:%M:%S'
 
     def log_config(self):
-        logging.info('%s version %s starts' % 
+        logging.info('%s version %s starts' %
                      (self.settings.progname, self.settings.version))
         logging.debug('sys.argv: %s' % sys.argv)
         logging.debug('environment variables:')
@@ -451,12 +451,12 @@ class Application(object):
 
     def app_directory(self):
         '''Return the directory where the application class is defined.
-        
+
         Plugins are searched relative to this directory, in the subdirectory
         specified by self.plugin_subdir.
-        
+
         '''
-        
+
         module_name = self.__class__.__module__
         module = sys.modules[module_name]
         dirname = os.path.dirname(module.__file__) or '.'
@@ -480,9 +480,9 @@ class Application(object):
 
     def parse_args(self, args, configs_only=False):
         '''Parse the command line.
-        
+
         Return list of non-option arguments.
-        
+
         '''
 
         return self.settings.parse_args(
@@ -492,34 +492,34 @@ class Application(object):
 
     def setup(self):
         '''Prepare for process_args.
-        
+
         This method is called just before enabling plugins. By default it
         does nothing, but subclasses may override it with a suitable
         implementation. This is easier than overriding process_args
         itself.
-        
+
         '''
 
     def cleanup(self):
         '''Clean up after process_args.
-        
+
         This method is called just after process_args. By default it
         does nothing, but subclasses may override it with a suitable
         implementation. This is easier than overriding process_args
         itself.
-        
+
         '''
 
     def process_args(self, args):
         '''Process command line non-option arguments.
-        
+
         The default is to call process_inputs with the argument list,
         or to invoke the requested subcommand, if subcommands have
         been defined.
-        
+
         '''
-        
-            
+
+
         if self.subcommands:
             if not args:
                 raise SystemExit('must give subcommand')
@@ -532,7 +532,7 @@ class Application(object):
                         break
                 else:
                     raise SystemExit('unknown subcommand %s' % args[0])
-                    
+
             method = self.subcommands[cmd]
             method(args[1:])
         else:
@@ -540,17 +540,17 @@ class Application(object):
 
     def process_inputs(self, args):
         '''Process all arguments as input filenames.
-        
+
         The default implementation calls process_input for each
-        input filename. If no filenames were given, then 
+        input filename. If no filenames were given, then
         process_input is called with ``-`` as the argument name.
         This implements the usual Unix command line practice of
         reading from stdin if no inputs are named.
-        
+
         The attributes ``fileno``, ``global_lineno``, and ``lineno`` are set,
         and count files and lines. The global line number is the
         line number as if all input files were one.
-        
+
         '''
 
         for arg in args or ['-']:
@@ -558,17 +558,17 @@ class Application(object):
 
     def open_input(self, name, mode='r'):
         '''Open an input file for reading.
-        
+
         The default behaviour is to open a file named on the local
         filesystem. A subclass might override this behavior for URLs,
         for example.
-        
+
         The optional mode argument speficies the mode in which the file
         gets opened. It should allow reading. Some files should perhaps
         be opened in binary mode ('rb') instead of the default text mode.
-        
+
         '''
-        
+
         if name == '-':
             return sys.stdin
         else:
@@ -576,9 +576,9 @@ class Application(object):
 
     def process_input(self, name, stdin=sys.stdin):
         '''Process a particular input file.
-        
+
         The ``stdin`` argument is meant for unit test only.
-        
+
         '''
 
         self.fileno += 1
@@ -593,15 +593,15 @@ class Application(object):
 
     def process_input_line(self, filename, line):
         '''Process one line of the input file.
-        
+
         Applications that are line-oriented can redefine only this method in
         a subclass, and should not need to care about the other methods.
-        
+
         '''
-        
+
     def runcmd(self, *args, **kwargs): # pragma: no cover
         return cliapp.runcmd(*args, **kwargs)
-        
+
     def runcmd_unchecked(self, *args, **kwargs): # pragma: no cover
         return cliapp.runcmd_unchecked(*args, **kwargs)
 
@@ -617,12 +617,12 @@ class Application(object):
 
     def dump_memory_profile(self, msg): # pragma: no cover
         '''Log memory profiling information.
-        
+
         Get the memory profiling method from the dump-memory-profile
         setting, and log the results at DEBUG level. ``msg`` is a
         message the caller provides to identify at what point the profiling
         happens.
-        
+
         '''
 
         kind = self.settings['dump-memory-profile']
@@ -630,7 +630,7 @@ class Application(object):
 
         if kind == 'none':
             return
-        
+
         now = time.time()
         if self.last_memory_dump + interval > now:
             return
@@ -647,7 +647,7 @@ class Application(object):
 
         logging.debug('dumping memory profiling data: %s' % msg)
         logging.debug('VmRSS: %s KiB' % self._vmrss())
-        
+
         if kind == 'simple':
             return
 

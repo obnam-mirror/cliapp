@@ -1,15 +1,15 @@
 # Copyright (C) 2009-2012  Lars Wirzenius
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -27,14 +27,14 @@ class SettingsTests(unittest.TestCase):
 
     def setUp(self):
         self.settings = cliapp.Settings('appname', '1.0')
-        
+
     def test_has_progname(self):
         self.assertEqual(self.settings.progname, 'appname')
-        
+
     def test_sets_progname(self):
         self.settings.progname = 'foo'
         self.assertEqual(self.settings.progname, 'foo')
-        
+
     def test_has_version(self):
         self.assertEqual(self.settings.version, '1.0')
 
@@ -146,14 +146,14 @@ class SettingsTests(unittest.TestCase):
     def test_boolean_setting_is_false_by_default(self):
         self.settings.boolean(['foo'], 'foo help')
         self.assertFalse(self.settings['foo'])
-        
+
     def test_sets_boolean_setting_to_true_for_many_true_values(self):
         self.settings.boolean(['foo'], 'foo help')
         self.settings['foo'] = True
         self.assert_(self.settings['foo'])
         self.settings['foo'] = 1
         self.assert_(self.settings['foo'])
-        
+
     def test_sets_boolean_setting_to_false_for_many_false_values(self):
         self.settings.boolean(['foo'], 'foo help')
         self.settings['foo'] = False
@@ -173,14 +173,14 @@ class SettingsTests(unittest.TestCase):
         self.settings.boolean(['foo'], 'foo help')
         self.settings.load_configs(open=fake_open)
         self.assertEqual(self.settings['foo'], True)
-        
+
     def test_sets_boolean_to_false_from_config_file(self):
         def fake_open(filename):
             return StringIO.StringIO('[config]\nfoo = False\n')
         self.settings.boolean(['foo'], 'foo help')
         self.settings.load_configs(open=fake_open)
         self.assertEqual(self.settings['foo'], False)
-        
+
     def test_adds_bytesize_setting(self):
         self.settings.bytesize(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
@@ -217,7 +217,7 @@ class SettingsTests(unittest.TestCase):
 
         self.settings.parse_args(args=['--foo=123tib'])
         self.assertEqual(self.settings['foo'], 123 * 1024**4)
-        
+
     def test_adds_integer_setting(self):
         self.settings.integer(['foo'], 'foo help')
         self.assert_('foo' in self.settings)
@@ -261,27 +261,27 @@ class SettingsTests(unittest.TestCase):
                          self.settings._default_config_files + ['./foo'])
 
     def test_loads_config_files(self):
-    
+
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
 [config]
 foo = yeehaa
 ''')
-    
+
         self.settings.string(['foo'], 'foo help')
         self.settings.config_files = ['whatever.conf']
         self.settings.load_configs(open=mock_open)
         self.assertEqual(self.settings['foo'], 'yeehaa')
 
     def test_loads_string_list_from_config_files(self):
-    
+
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
 [config]
 foo = yeehaa
 bar = ping, pong
 ''')
-    
+
         self.settings.string_list(['foo'], 'foo help')
         self.settings.string_list(['bar'], 'bar help')
         self.settings.config_files = ['whatever.conf']
@@ -290,12 +290,12 @@ bar = ping, pong
         self.assertEqual(self.settings['bar'], ['ping', 'pong'])
 
     def test_handles_defaults_with_config_files(self):
-    
+
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
 [config]
 ''')
-    
+
         self.settings.string(['foo'], 'foo help', default='foo')
         self.settings.string_list(['bar'], 'bar help', default=['bar'])
         self.settings.config_files = ['whatever.conf']
@@ -304,14 +304,14 @@ bar = ping, pong
         self.assertEqual(self.settings['bar'], ['bar'])
 
     def test_handles_overridden_defaults_with_config_files(self):
-    
+
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
 [config]
 foo = yeehaa
 bar = ping, pong
 ''')
-    
+
         self.settings.string(['foo'], 'foo help', default='foo')
         self.settings.string_list(['bar'], 'bar help', default=['bar'])
         self.settings.config_files = ['whatever.conf']
@@ -320,14 +320,14 @@ bar = ping, pong
         self.assertEqual(self.settings['bar'], ['ping', 'pong'])
 
     def test_handles_values_from_config_files_overridden_on_command_line(self):
-    
+
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
 [config]
 foo = yeehaa
 bar = ping, pong
 ''')
-    
+
         self.settings.string(['foo'], 'foo help', default='foo')
         self.settings.string_list(['bar'], 'bar help', default=['bar'])
         self.settings.config_files = ['whatever.conf']
@@ -337,10 +337,10 @@ bar = ping, pong
         self.assertEqual(self.settings['bar'], ['blue', 'white'])
 
     def test_load_configs_ignore_errors_opening_a_file(self):
-        
+
         def mock_open(filename, mode=None):
             raise IOError()
-            
+
         self.assertEqual(self.settings.load_configs(open=mock_open), None)
 
     def test_adds_config_file_with_dash_dash_config(self):
@@ -358,7 +358,7 @@ bar = ping, pong
 
     def test_require_raises_error_if_string_unset(self):
         self.settings.string(['foo'], 'foo help', default=None)
-        self.assertRaises(cliapp.AppException, self.settings.require, 
+        self.assertRaises(cliapp.AppException, self.settings.require,
                           'foo')
 
     def test_require_is_ok_with_set_string(self):
@@ -407,7 +407,7 @@ bar = ping, pong
         self.assertEqual(cp.get('config', 'bar'), 'yo')
 
     def test_exports_all_config_sections_via_as_cp(self):
-    
+
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
 [config]
@@ -416,7 +416,7 @@ foo = yeehaa
 [other]
 bar = dodo
 ''')
-    
+
         self.settings.string(['foo'], 'foo help', default='foo')
         self.settings.config_files = ['whatever.conf']
         self.settings.load_configs(open=mock_open)

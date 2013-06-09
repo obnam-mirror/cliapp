@@ -1,15 +1,15 @@
 # Copyright (C) 2011  Lars Wirzenius
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -33,7 +33,7 @@ class AppExceptionTests(unittest.TestCase):
 
     def setUp(self):
         self.e = cliapp.AppException('foo')
-        
+
     def test_error_message_contains_foo(self):
         self.assert_('foo' in str(self.e))
 
@@ -45,9 +45,9 @@ class ApplicationTests(unittest.TestCase):
 
     def test_creates_settings(self):
         self.assert_(isinstance(self.app.settings, cliapp.Settings))
-        
+
     def test_calls_add_settings_only_in_run(self):
-    
+
         class Foo(cliapp.Application):
             def process_args(self, args):
                 pass
@@ -59,7 +59,7 @@ class ApplicationTests(unittest.TestCase):
         self.assert_('foo' in foo.settings)
 
     def test_run_uses_string_list_options_only_once(self):
-        
+
         class Foo(cliapp.Application):
             def add_settings(self):
                 self.settings.string_list(['foo'], '')
@@ -77,34 +77,34 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = lambda args: None
         self.app.run([])
         self.assert_(self.called)
-    
+
     def test_run_sets_progname_from_sysargv0(self):
         self.app.process_args = lambda args: None
         self.app.run(args=[], sysargv=['foo'])
         self.assertEqual(self.app.settings.progname, 'foo')
-    
+
     def test_run_calls_process_args(self):
         self.called = None
         self.app.process_args = lambda args: setattr(self, 'called', args)
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.called, ['foo', 'bar'])
-    
+
     def test_run_processes_input_files(self):
         self.inputs = []
         self.app.process_input = lambda name: self.inputs.append(name)
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.inputs, ['foo', 'bar'])
-        
+
     def test_run_sets_output_attribute(self):
         self.app.process_args = lambda args: None
         self.app.run(args=[])
         self.assertEqual(self.app.output, sys.stdout)
-        
+
     def test_run_sets_output_to_file_if_output_option_is_set(self):
         self.app.process_args = lambda args: None
         self.app.run(args=['--output=/dev/null'])
         self.assertEqual(self.app.output.name, '/dev/null')
-    
+
     def test_run_calls_parse_args(self):
         class DummyOptions(object):
             def __init__(self):
@@ -180,7 +180,7 @@ class ApplicationTests(unittest.TestCase):
         f = self.app.open_input('/dev/null')
         self.assert_(isinstance(f, file))
         self.assertEqual(f.mode, 'r')
-        
+
     def test_open_input_opens_file_in_binary_mode_when_requested(self):
         f = self.app.open_input('/dev/null', mode='rb')
         self.assertEqual(f.mode, 'rb')
@@ -196,7 +196,7 @@ class ApplicationTests(unittest.TestCase):
         self.app.open_input = open_input
         self.app.process_input('foo')
         self.assertEqual(self.called, 'foo')
-        
+
     def test_process_input_does_not_close_stdin(self):
         self.closed = False
         def close():
@@ -235,10 +235,10 @@ class ApplicationTests(unittest.TestCase):
 
         foo = Foo()
         foo.run(args=['foo', 'bar'])
-        self.assertEqual(counters, 
-                         [(1, 1, 1), 
-                          (1, 2, 2), 
-                          (2, 3, 1), 
+        self.assertEqual(counters,
+                         [(1, 1, 1),
+                          (1, 2, 2),
+                          (2, 3, 1),
                           (2, 4, 2)])
 
     def test_run_prints_out_error_for_appexception(self):
@@ -270,33 +270,33 @@ class ApplicationTests(unittest.TestCase):
         self.app.process_args = raise_error
         f = StringIO.StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
-    
+
 
 class DummySubcommandApp(cliapp.Application):
 
     def cmd_foo(self, args):
         self.foo_called = True
-        
-        
+
+
 class SubcommandTests(unittest.TestCase):
 
     def setUp(self):
         self.app = DummySubcommandApp()
         self.trash = StringIO.StringIO()
-        
+
     def test_lists_subcommands(self):
         self.assertEqual(self.app._subcommand_methodnames(), ['cmd_foo'])
 
     def test_normalizes_subcommand(self):
         self.assertEqual(self.app._normalize_cmd('foo'), 'cmd_foo')
         self.assertEqual(self.app._normalize_cmd('foo-bar'), 'cmd_foo_bar')
-        
+
     def test_raises_error_for_no_subcommand(self):
-        self.assertRaises(SystemExit, self.app.run, [], 
+        self.assertRaises(SystemExit, self.app.run, [],
                           stderr=self.trash, log=devnull)
-        
+
     def test_raises_error_for_unknown_subcommand(self):
-        self.assertRaises(SystemExit, self.app.run, ['what?'], 
+        self.assertRaises(SystemExit, self.app.run, ['what?'],
                           stderr=self.trash, log=devnull)
 
     def test_calls_subcommand_method(self):
@@ -320,10 +320,10 @@ class ExtensibleSubcommandTests(unittest.TestCase):
 
     def setUp(self):
         self.app = cliapp.Application()
-    
+
     def test_lists_no_subcommands(self):
         self.assertEqual(self.app.subcommands, {})
-        
+
     def test_adds_subcommand(self):
         help = lambda args: None
         self.app.add_subcommand('foo', help)

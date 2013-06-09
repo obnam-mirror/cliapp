@@ -1,16 +1,16 @@
 # Copyright (C) 2011, 2012  Lars Wirzenius
 # Copyright (C) 2012  Codethink Limited
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,15 +29,15 @@ import cliapp
 def runcmd(argv, *args, **kwargs):
     '''Run external command or pipeline.
 
-    Example: ``runcmd(['grep', 'foo'], ['wc', '-l'], 
+    Example: ``runcmd(['grep', 'foo'], ['wc', '-l'],
                       feed_stdin='foo\nbar\n')``
 
     Return the standard output of the command.
-    
+
     Raise ``cliapp.AppException`` if external command returns
     non-zero exit code. ``*args`` and ``**kwargs`` are passed
     onto ``subprocess.Popen``.
-    
+
     '''
 
     our_options = (
@@ -62,15 +62,15 @@ def runcmd(argv, *args, **kwargs):
                 logging.error(msg)
             raise cliapp.AppException(msg)
     return out
-    
+
 def runcmd_unchecked(argv, *argvs, **kwargs):
     '''Run external command or pipeline.
 
     Return the exit code, and contents of standard output and error
     of the command.
-    
+
     See also ``runcmd``.
-    
+
     '''
 
     argvs = [argv] + list(argvs)
@@ -123,7 +123,7 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
             stdin = procs[-1].stdout
             stdout = subprocess.PIPE
             stderr = pipe_stderr
-        p = subprocess.Popen(argv, stdin=stdin, stdout=stdout, 
+        p = subprocess.Popen(argv, stdin=stdin, stdout=stdout,
                              stderr=stderr, close_fds=True, **kwargs)
         procs.append(p)
 
@@ -137,7 +137,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
     err = []
     pos = 0
     io_size = 1024
-    
+
     def set_nonblocking(fd):
         flags = fcntl.fcntl(fd, fcntl.F_GETFL, 0)
         flags = flags | os.O_NONBLOCK
@@ -149,7 +149,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
         set_nonblocking(procs[-1].stdout.fileno())
     if pipe_stderr == subprocess.PIPE:
         set_nonblocking(procs[-1].stderr.fileno())
-    
+
     def still_running():
         for p in procs:
             p.poll()
@@ -168,7 +168,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
             rlist.append(procs[-1].stdout)
         if not stderr_eof and pipe_stderr == subprocess.PIPE:
             rlist.append(procs[-1].stderr)
-        
+
         wlist = []
         if pipe_stdin == subprocess.PIPE and pos < len(feed_stdin):
             wlist.append(procs[0].stdin)
@@ -222,7 +222,7 @@ def shell_quote(s):
     digits = '0123456789'
     punctuation = '-_/=.,:'
     safe = set(lower_ascii + upper_ascii + digits + punctuation)
-    
+
     quoted = []
     for c in s:
         if c in safe:
@@ -237,7 +237,7 @@ def shell_quote(s):
 
 def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
     '''Run command in argv on remote host target.
-    
+
     This is similar to runcmd, but the command is run on the remote
     machine. The command is given as an argv array; elements in the
     array are automatically quoted so they get passed to the other
@@ -255,15 +255,15 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
     can be written as
     ``cliapp.ssh_runcmd('user@host', ['sudo', 'ls'], tty=True)``
     which is more intuitive.
-    
+
     The target is given as-is to ssh, and may use any syntax ssh
     accepts.
-    
+
     Environment variables may or may not be passed to the remote
     machine: this is dependent on the ssh and sshd configurations.
     Invoke env(1) explicitly to pass in the variables you need to
     exist on the other end.
-    
+
     Pipelines are not supported.
 
     '''
@@ -271,7 +271,7 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
     tty = kwargs.get('tty', None)
     if tty:
         ssh_cmd = ['ssh', '-tt', target, '--']
-    elif tty is False:          
+    elif tty is False:
         ssh_cmd = ['ssh', '-T', target, '--']
     else:
         ssh_cmd = ['ssh', target, '--']
