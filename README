@@ -2,7 +2,7 @@ README for cliapp
 =================
 
 cliapp is a Python framework for Unix-like command line programs.
-The scaffoling to set up a command line parser, open each input
+The scaffolding to set up a command line parser, open each input
 file, read each line of input, etc, is the same in each program.
 Only the logic of what to do with each line differs.
 
