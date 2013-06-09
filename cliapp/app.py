@@ -350,6 +350,8 @@ class Application(object):
         return '* %%prog %s: %s\n' % (cmd, summary)
 
     def _format_subcommand_help(self, cmd): # pragma: no cover
+        if cmd not in self.subcommands:
+            raise cliapp.AppException('Unknown subcommand %s' % cmd)
         method = self.subcommands[cmd]
         doc = method.__doc__ or ''
         t = doc.split('\n', 1)

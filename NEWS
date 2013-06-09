@@ -8,6 +8,8 @@ Version 1.UNRELEASED
   "help".
 * `ssh_runcmd` now has the `tty` keyword argument to enable ssh
   allocation of pseudo-TTYs. Patch from Jannis Pohlmann.
+* The `help` subcommand now writes a useful error message, instead of
+  a stack trace, if given an unknown subcommand. Reported by Rob Taylor.
 
 Version 1.20130424
 ------------------
