@@ -15,7 +15,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-__version__ = '1.20130424'
+__version__ = '1.20130613'
 
 
 from fmt import TextFormat
