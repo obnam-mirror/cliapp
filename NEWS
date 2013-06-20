@@ -1,6 +1,12 @@
 NEWS for cliapp
 ===============
 
+Version UNRELEASED
+------------------
+
+* Fix a problem in the pipeline code in runcmd. Reported and fix provided
+  by Richard Maw.
+
 Version 1.20130613
 ------------------
 
