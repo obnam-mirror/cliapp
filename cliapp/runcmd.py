@@ -210,7 +210,8 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
             if p.returncode is None:
                 p.wait()
 
-    return procs[-1].returncode, ''.join(out), ''.join(err)
+    errorcodes = [p.returncode for p in procs if p.returncode != 0] or [0]
+    return errorcodes[-1], ''.join(out), ''.join(err)
 
 
 

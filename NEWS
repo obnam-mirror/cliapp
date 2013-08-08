@@ -1,6 +1,13 @@
 NEWS for cliapp
 ===============
 
+Version 1.UNRELEASED
+------------------
+
+* Bug fix to cliapp.runcmd pipeline handling: the pipeline now returns
+  failure if any of the processes fails, rather than only the last one.
+  Found and reported by Richard Maw.
+
 Version 1.20130613
 ------------------
 
