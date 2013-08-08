@@ -115,7 +115,7 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
             stdin = pipe_stdin
             stdout = subprocess.PIPE
             stderr = pipe_stderr
-        elif i == len(argv) - 1:
+        elif i == len(argvs) - 1:
             stdin = procs[-1].stdout
             stdout = pipe_stdout
             stderr = pipe_stderr
