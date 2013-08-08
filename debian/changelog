@@ -1,3 +1,10 @@
+python-cliapp (1.20130808-1) unstable; urgency=low
+
+  * New upstream release. Fixes the following problems in Debian:
+    - Missing import of errno in runcmd.py (Close: #688195)
+
+ -- Lars Wirzenius <liw@liw.fi>  Thu, 08 Aug 2013 21:00:23 +0100
+
 python-cliapp (1.20130613-1) unstable; urgency=low
 
   * New upstream version.

@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.UNRELEASED
+Version 1.20130808
 ------------------
 
 * Bug fix to cliapp.runcmd pipeline handling: the pipeline now returns
