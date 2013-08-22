@@ -609,6 +609,8 @@ class Application(object):
 
     def _vmrss(self): # pragma: no cover
         '''Return current resident memory use, in KiB.'''
+        if platform.system() != 'Linux':
+            return 0
         f = open('/proc/self/status')
         rss = 0
         for line in f:

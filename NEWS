@@ -1,6 +1,13 @@
 NEWS for cliapp
 ===============
 
+Version 1.UNRELEASED
+------------------
+
+* Portability patch to disable VmRSS reporting on non-Linux platforms.
+  The code assumed that /proc/self/status exists, but that's only true
+  on Linux. Patch from Itamar Turner-Trauring.
+
 Version 1.20130808
 ------------------
 
