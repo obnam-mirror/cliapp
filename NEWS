@@ -8,6 +8,9 @@ Version 1.UNRELEASED
   The code assumed that /proc/self/status exists, but that's only true
   on Linux. Patch from Itamar Turner-Trauring.
 
+* `cliapp` now logs the current working directory, uid, effective uid,
+  gid, and effective gid at startup.
+
 Version 1.20130808
 ------------------
 

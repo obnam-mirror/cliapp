@@ -442,6 +442,13 @@ class Application(object):
         logging.info('%s version %s starts' %
                      (self.settings.progname, self.settings.version))
         logging.debug('sys.argv: %s' % sys.argv)
+
+        logging.debug('current working directory: %s' % os.getcwd())
+        logging.debug('uid: %d' % os.getuid())
+        logging.debug('effective uid: %d' % os.geteuid())
+        logging.debug('gid: %d' % os.getgid())
+        logging.debug('effective gid: %d' % os.getegid())
+
         logging.debug('environment variables:')
         for name in os.environ:
             logging.debug('environment: %s=%s' % (name, os.environ[name]))
