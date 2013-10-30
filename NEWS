@@ -15,6 +15,11 @@ Version 1.UNRELEASED
   variable in a configuration file with a nice error message, rather
   than a stack trace.
 
+* A new method, `cliapp.Application.get_subcommand_help_formatter`
+  allows overriding how the full help text for a subcommand is to be
+  formatted. This can be useful for allowing help texts be marked up
+  in, say, Markdown.
+
 Version 1.20130808
 ------------------
 
