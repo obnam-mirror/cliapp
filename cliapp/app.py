@@ -270,13 +270,27 @@ class Application(object):
         if 'help-all' not in self.subcommands:
             self.add_subcommand('help-all', self.help_all)
 
+    def get_help_text_formatter(self, *args, **kwargs): # pragma: no cover
+        '''Return a help text formatting class.
+
+        The class must have a compatible interface with
+        cliapp.TextFormat.
+
+        This method exists for those applications who want to change
+        how help texts are formatted, e.g., to allow Markdown or
+        reStructuredText.
+
+        '''
+
+        return cliapp.TextFormat(*args, **kwargs)
+
     def _help_helper(self, args, show_all): # pragma: no cover
         try:
             width = int(os.environ.get('COLUMNS', '78'))
         except ValueError:
             width = 78
 
-        fmt = cliapp.TextFormat(width=width)
+        fmt = self.get_help_text_formatter(width=width)
 
         if args:
             usage = self._format_usage_for(args[0])
