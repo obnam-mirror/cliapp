@@ -11,6 +11,10 @@ Version 1.UNRELEASED
 * `cliapp` now logs the current working directory, uid, effective uid,
   gid, and effective gid at startup.
 
+* `cliapp` (`Settings.load_configs`) now reports an unknown
+  variable in a configuration file with a nice error message, rather
+  than a stack trace.
+
 Version 1.20130808
 ------------------
 
