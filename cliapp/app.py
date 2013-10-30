@@ -190,6 +190,9 @@ class Application(object):
             self.process_args(args)
             self.cleanup()
             self.disable_plugins()
+        except cliapp.UnknownConfigVariable, e: # pragma: no cover
+            stderr.write('ERROR: %s\n' % str(e))
+            sys.exit(1)
         except AppException, e:
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
