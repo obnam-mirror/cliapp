@@ -36,6 +36,16 @@ default_group_names = [
 ]
 
 
+class UnknownConfigVariable(cliapp.AppException):
+
+    def __init__(self, filename, name):
+        self.msg = (
+            '%s: Unknown configuration variable %s' % (filename, name))
+
+    def __str__(self): # pragma: no cover
+        return self.msg
+
+
 class Setting(object):
 
     action = 'store'
@@ -699,8 +709,10 @@ class Settings(object):
 
     config_files = property(_get_config_files, _set_config_files)
 
-    def set_from_raw_string(self, name, raw_string):
+    def set_from_raw_string(self, pathname, name, raw_string):
         '''Set value of a setting from a raw, unparsed string value.'''
+        if name not in self._settingses:
+           raise UnknownConfigVariable(pathname, name)
         s = self._settingses[name]
         s.parse_value(raw_string)
         return s
@@ -724,11 +736,11 @@ class Settings(object):
                 cp.readfp(f)
                 f.close()
 
-        for name in cp.options('config'):
-            value = cp.get('config', name)
-            s = self.set_from_raw_string(name, value)
-            if hasattr(s, 'using_default_value'):
-                s.using_default_value = True
+                for name in cp.options('config'):
+                    value = cp.get('config', name)
+                    s = self.set_from_raw_string(pathname, name, value)
+                    if hasattr(s, 'using_default_value'):
+                        s.using_default_value = True
 
         # Remember the ConfigParser for use in as_cp later on.
         self._cp = cp

@@ -19,10 +19,10 @@ __version__ = '1.20130808'
 
 
 from fmt import TextFormat
-from settings import (Settings, log_group_name, config_group_name,
-                      perf_group_name)
-from runcmd import runcmd, runcmd_unchecked, shell_quote, ssh_runcmd
 from app import Application, AppException
+from settings import (Settings, log_group_name, config_group_name,
+                      perf_group_name, UnknownConfigVariable)
+from runcmd import runcmd, runcmd_unchecked, shell_quote, ssh_runcmd
 
 # The plugin system
 from hook import Hook, FilterHook

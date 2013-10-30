@@ -336,6 +336,19 @@ bar = ping, pong
         self.assertEqual(self.settings['foo'], 'red')
         self.assertEqual(self.settings['bar'], ['blue', 'white'])
 
+    def test_load_configs_raises_error_for_unknown_variable(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+[config]
+unknown = variable
+''')
+
+        self.assertRaises(
+            cliapp.UnknownConfigVariable,
+            self.settings.load_configs,
+            open=mock_open)
+
     def test_load_configs_ignore_errors_opening_a_file(self):
 
         def mock_open(filename, mode=None):
