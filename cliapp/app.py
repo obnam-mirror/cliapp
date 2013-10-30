@@ -270,8 +270,11 @@ class Application(object):
         if 'help-all' not in self.subcommands:
             self.add_subcommand('help-all', self.help_all)
 
-    def get_help_text_formatter(self, *args, **kwargs): # pragma: no cover
-        '''Return a help text formatting class.
+    def get_subcommand_help_formatter(self, *a, **kw): # pragma: no cover
+        '''Return class to format subcommand documentation.
+
+        The class will be used to format the full docstring of a
+        subcommand description, but not other help texts.
 
         The class must have a compatible interface with
         cliapp.TextFormat.
@@ -282,7 +285,7 @@ class Application(object):
 
         '''
 
-        return cliapp.TextFormat(*args, **kwargs)
+        return cliapp.TextFormat(*a, **kw)
 
     def _help_helper(self, args, show_all): # pragma: no cover
         try:
@@ -290,17 +293,18 @@ class Application(object):
         except ValueError:
             width = 78
 
-        fmt = self.get_help_text_formatter(width=width)
 
         if args:
             cmd = args[0]
             if cmd not in self.subcommands:
                 raise cliapp.AppException('Unknown subcommand %s' % cmd)
             usage = self._format_usage_for(cmd)
+            fmt = self.get_help_text_formatter(width=width)
             description = fmt.format(self._format_subcommand_help(cmd))
             text = '%s\n\n%s' % (usage, description)
         else:
             usage = self._format_usage(all=show_all)
+            fmt = cliapp.TextFormat(width=width)
             description = fmt.format(self._format_description(all=show_all))
             text = '%s\n\n%s' % (usage, description)
 
