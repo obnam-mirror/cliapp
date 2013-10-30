@@ -270,20 +270,41 @@ class Application(object):
         if 'help-all' not in self.subcommands:
             self.add_subcommand('help-all', self.help_all)
 
+    def get_subcommand_help_formatter(self, *a, **kw): # pragma: no cover
+        '''Return class to format subcommand documentation.
+
+        The class will be used to format the full docstring of a
+        subcommand description, but not other help texts.
+
+        The class must have a compatible interface with
+        cliapp.TextFormat.
+
+        This method exists for those applications who want to change
+        how help texts are formatted, e.g., to allow Markdown or
+        reStructuredText.
+
+        '''
+
+        return cliapp.TextFormat(*a, **kw)
+
     def _help_helper(self, args, show_all): # pragma: no cover
         try:
             width = int(os.environ.get('COLUMNS', '78'))
         except ValueError:
             width = 78
 
-        fmt = cliapp.TextFormat(width=width)
 
         if args:
-            usage = self._format_usage_for(args[0])
-            description = fmt.format(self._format_subcommand_help(args[0]))
+            cmd = args[0]
+            if cmd not in self.subcommands:
+                raise cliapp.AppException('Unknown subcommand %s' % cmd)
+            usage = self._format_usage_for(cmd)
+            fmt = self.get_help_text_formatter(width=width)
+            description = fmt.format(self._format_subcommand_help(cmd))
             text = '%s\n\n%s' % (usage, description)
         else:
             usage = self._format_usage(all=show_all)
+            fmt = cliapp.TextFormat(width=width)
             description = fmt.format(self._format_description(all=show_all))
             text = '%s\n\n%s' % (usage, description)
 
@@ -353,8 +374,6 @@ class Application(object):
         return '* %%prog %s: %s\n' % (cmd, summary)
 
     def _format_subcommand_help(self, cmd): # pragma: no cover
-        if cmd not in self.subcommands:
-            raise cliapp.AppException('Unknown subcommand %s' % cmd)
         method = self.subcommands[cmd]
         doc = method.__doc__ or ''
         t = doc.split('\n', 1)
