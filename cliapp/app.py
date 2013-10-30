@@ -293,8 +293,11 @@ class Application(object):
         fmt = self.get_help_text_formatter(width=width)
 
         if args:
-            usage = self._format_usage_for(args[0])
-            description = fmt.format(self._format_subcommand_help(args[0]))
+            cmd = args[0]
+            if cmd not in self.subcommands:
+                raise cliapp.AppException('Unknown subcommand %s' % cmd)
+            usage = self._format_usage_for(cmd)
+            description = fmt.format(self._format_subcommand_help(cmd))
             text = '%s\n\n%s' % (usage, description)
         else:
             usage = self._format_usage(all=show_all)
@@ -367,8 +370,6 @@ class Application(object):
         return '* %%prog %s: %s\n' % (cmd, summary)
 
     def _format_subcommand_help(self, cmd): # pragma: no cover
-        if cmd not in self.subcommands:
-            raise cliapp.AppException('Unknown subcommand %s' % cmd)
         method = self.subcommands[cmd]
         doc = method.__doc__ or ''
         t = doc.split('\n', 1)
