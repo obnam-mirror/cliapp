@@ -640,7 +640,10 @@ class Application(object):
         '''Return current resident memory use, in KiB.'''
         if platform.system() != 'Linux':
             return 0
-        f = open('/proc/self/status')
+        try:
+            f = open('/proc/self/status')
+        except IOError:
+            return 0
         rss = 0
         for line in f:
             if line.startswith('VmRSS'):
