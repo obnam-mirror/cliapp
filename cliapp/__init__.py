@@ -15,6 +15,18 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+'''Framework for Unix command line programs
+
+cliapp makes it easier to write typical Unix command line programs, by
+taking care of the common tasks they need to do, such as parsing the
+command line, reading configuration files, setting up logging,
+iterating over lines of input files, and so on.
+
+Homepage: http://liw.fi/cliapp/
+
+'''
+
+
 __version__ = '1.20130808'
 
 
