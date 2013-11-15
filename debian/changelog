@@ -1,3 +1,10 @@
+python-cliapp (9999.9999) UNRELEASED; urgency=low
+
+  * New upstream version.
+    - install examples (Closes: 693717)
+
+ -- Lars Wirzenius <liw@liw.fi>  Fri, 15 Nov 2013 16:09:49 +0000
+
 python-cliapp (1.20130808-1) unstable; urgency=low
 
   * New upstream release. Fixes the following problems in Debian:
