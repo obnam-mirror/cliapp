@@ -20,6 +20,9 @@ Version 1.UNRELEASED
   formatted. This can be useful for allowing help texts be marked up
   in, say, Markdown.
 
+* The `cliapp.Settings.require` method now accepts many setting names,
+  and check for all of them. Patch by Stephen Judd.
+
 Version 1.20130808
 ------------------
 
