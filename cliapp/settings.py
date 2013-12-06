@@ -393,16 +393,20 @@ class Settings(object):
         '''Return canonical settings names.'''
         return self._canonical_names[:]
 
-    def require(self, name):
-        '''Raise exception if setting has not been set.
+    def require(self, *setting_names):
+        '''Raise exception if a setting has not been set.
 
         Option must have a value, and a default value is OK.
 
         '''
+        messages = []
 
-        if not self._settingses[name].has_value():
-            raise cliapp.AppException('Setting %s has no value, '
-                                        'but one is required' % name)
+        for name in setting_names:
+            if not self._settingses[name].has_value():
+                messages.append('Setting %s has no value, '
+                                            'but one is required' % name)
+        if len(messages) > 0:
+            raise cliapp.AppException('\n'.join(messages))
 
     def _option_names(self, names):
         '''Turn setting names into option names.

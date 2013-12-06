@@ -412,6 +412,18 @@ unknown = variable
         self.settings.integer(['foo'], 'foo help')
         self.assertEqual(self.settings.require('foo'), None)
 
+    def test_require_raises_error_when_one_value_of_several_is_unset(self):
+        self.settings.string(['foo'], 'foo help')
+        self.settings.string(['bar'], 'bar help', default=None )
+        args = ['foo', 'bar']
+        self.assertRaises(cliapp.AppException, self.settings.require, *args)
+
+    def test_require_is_ok_with_multiple_values(self):
+        self.settings.string(['foo'], 'foo help')
+        self.settings.string(['bar'], 'bar help')
+        args = ['foo', 'bar']
+        self.assertEqual(self.settings.require(*args), None)
+
     def test_exports_configparser_with_settings(self):
         self.settings.integer(['foo'], 'foo help', default=1)
         self.settings.string(['bar'], 'bar help', default='yo')
