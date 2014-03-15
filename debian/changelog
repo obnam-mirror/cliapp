@@ -1,10 +1,11 @@
-python-cliapp (9999.9999) UNRELEASED; urgency=low
+python-cliapp (1.20140315-1) unstable; urgency=low
 
   * New upstream version.
     - install examples (Closes: #693717)
     - add a module docstring (Closes: #693715)
+  * Standards-Version bumped to 3.9.5. No changes required.
 
- -- Lars Wirzenius <liw@liw.fi>  Fri, 15 Nov 2013 16:09:49 +0000
+ -- Lars Wirzenius <liw@liw.fi>  Sat, 15 Mar 2014 09:07:44 +0000
 
 python-cliapp (1.20130808-1) unstable; urgency=low
 

@@ -48,4 +48,3 @@ up logging, iterating over lines of input files, and so on.
       packages=['cliapp'],
       data_files=[('share/man/man5', glob.glob('*.5'))],
      )
-

@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.UNRELEASED
+Version 1.20140315
 ------------------
 
 * Portability patch to disable VmRSS reporting on non-Linux platforms.
