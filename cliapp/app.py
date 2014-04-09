@@ -299,7 +299,7 @@ class Application(object):
             if cmd not in self.subcommands:
                 raise cliapp.AppException('Unknown subcommand %s' % cmd)
             usage = self._format_usage_for(cmd)
-            fmt = self.get_help_text_formatter(width=width)
+            fmt = self.get_subcommand_help_formatter(width=width)
             description = fmt.format(self._format_subcommand_help(cmd))
             text = '%s\n\n%s' % (usage, description)
         else:

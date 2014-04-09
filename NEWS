@@ -1,6 +1,14 @@
 NEWS for cliapp
 ===============
 
+Version UNRELEASED
+------------------
+
+Bug fixes:
+
+* When getting help for a subcommand, cliapp would crash saying
+  `get_help_text_formatter` couldn't be found. This has been fixed.
+
 Version 1.20140315
 ------------------
 
