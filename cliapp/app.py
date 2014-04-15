@@ -451,22 +451,6 @@ class Application(object):
         handler = logging.FileHandler('/dev/null')
         return handler
 
-    def setup_logging_handler_to_file(self): # pragma: no cover
-        '''Setup a logging.Handler for logging to a named file.'''
-
-        handler = LogHandler(
-                        self.settings['log'],
-                        perms=int(self.settings['log-mode'], 8),
-                        maxBytes=self.settings['log-max'],
-                        backupCount=self.settings['log-keep'],
-                        delay=False)
-        fmt = self.setup_logging_format()
-        datefmt = self.setup_logging_timestamp()
-        formatter = logging.Formatter(fmt, datefmt)
-        handler.setFormatter(formatter)
-
-        return handler
-
     def setup_logging_format(self): # pragma: no cover
         '''Return format string for log messages.'''
         return '%(asctime)s %(levelname)s %(message)s'
