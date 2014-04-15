@@ -4,8 +4,10 @@ NEWS for cliapp
 Version UNRELEASED
 ------------------
 
-* The way logging is set up has been split into smaller methods,
-  to allow overriding better. See `setup_logging_handler_for_file`.
+* The way logging is set up has been split into smaller methods, to
+  allow overriding better. See `setup_logging_handler_for_file`,
+  `setup_logging_formatter_for_file`, and
+  `setup_logging_formatter_for_syslog`.
 
 Bug fixes:
 

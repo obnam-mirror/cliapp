@@ -414,12 +414,16 @@ class Application(object):
         '''Setup a logging.Handler for logging to syslog.'''
 
         handler = logging.handlers.SysLogHandler(address='/dev/log')
-        progname = '%%'.join(self.settings.progname.split('%'))
-        fmt = progname + ": %(levelname)s %(message)s"
-        formatter = logging.Formatter(fmt)
+        formatter = self.setup_logging_formatter_for_syslog()
         handler.setFormatter(formatter)
 
         return handler
+
+    def setup_logging_formatter_for_syslog(self): # pragma: no cover
+        '''Setup a logging.Formatter for syslog.'''
+        progname = '%%'.join(self.settings.progname.split('%'))
+        fmt = progname + ": %(levelname)s %(message)s"
+        return logging.Formatter(fmt)
 
     def setup_logging_handler_for_file(self): # pragma: no cover
         '''Setup a logging handler for logging to a named file.'''
@@ -430,11 +434,16 @@ class Application(object):
             maxBytes=self.settings['log-max'],
             backupCount=self.settings['log-keep'],
             delay=False)
+        formatter = self.setup_logging_formatter_for_file()
+        handler.setFormatter(formatter)
+        return handler
+
+    def setup_logging_formatter_for_file(self): # pragma: no cover
+        '''Setup a logging.Formatter for logging to a file.'''
         fmt = '%(asctime)s %(levelname)s %(message)s'
         datefmt = '%Y-%m-%d %H:%M:%S'
         formatter = logging.Formatter(fmt, datefmt)
-        handler.setFormatter(formatter)
-        return handler
+        return formatter
 
     def setup_logging_handler_to_none(self): # pragma: no cover
         '''Setup a logging.Handler that does not log anything anywhere.'''
