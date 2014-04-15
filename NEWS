@@ -4,6 +4,9 @@ NEWS for cliapp
 Version UNRELEASED
 ------------------
 
+* The way logging is set up has been split into smaller methods,
+  to allow overriding better. See `setup_logging_handler_for_file`.
+
 Bug fixes:
 
 * When getting help for a subcommand, cliapp would crash saying

@@ -400,16 +400,7 @@ class Application(object):
         if self.settings['log'] == 'syslog':
             handler = self.setup_logging_handler_for_syslog()
         elif self.settings['log'] and self.settings['log'] != 'none':
-            handler = LogHandler(
-                            self.settings['log'],
-                            perms=int(self.settings['log-mode'], 8),
-                            maxBytes=self.settings['log-max'],
-                            backupCount=self.settings['log-keep'],
-                            delay=False)
-            fmt = '%(asctime)s %(levelname)s %(message)s'
-            datefmt = '%Y-%m-%d %H:%M:%S'
-            formatter = logging.Formatter(fmt, datefmt)
-            handler.setFormatter(formatter)
+            handler = self.setup_logging_handler_for_file()
         else:
             handler = self.setup_logging_handler_to_none()
             # reduce amount of pointless I/O
@@ -428,6 +419,21 @@ class Application(object):
         formatter = logging.Formatter(fmt)
         handler.setFormatter(formatter)
 
+        return handler
+
+    def setup_logging_handler_for_file(self): # pragma: no cover
+        '''Setup a logging handler for logging to a named file.'''
+
+        handler = LogHandler(
+            self.settings['log'],
+            perms=int(self.settings['log-mode'], 8),
+            maxBytes=self.settings['log-max'],
+            backupCount=self.settings['log-keep'],
+            delay=False)
+        fmt = '%(asctime)s %(levelname)s %(message)s'
+        datefmt = '%Y-%m-%d %H:%M:%S'
+        formatter = logging.Formatter(fmt, datefmt)
+        handler.setFormatter(formatter)
         return handler
 
     def setup_logging_handler_to_none(self): # pragma: no cover
