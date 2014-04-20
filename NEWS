@@ -9,6 +9,10 @@ Version UNRELEASED
   `setup_logging_formatter_for_file`, and
   `setup_logging_formatter_for_syslog`.
 
+* Plugins no longer need to define a `disable` method: the default
+  implementation is now a no-op, instead of raising
+  `NotImplementedError`.
+
 Bug fixes:
 
 * When getting help for a subcommand, cliapp would crash saying
