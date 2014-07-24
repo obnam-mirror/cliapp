@@ -124,6 +124,33 @@ class RuncmdTests(unittest.TestCase):
         self.assertEqual(exit, 0)
         self.assertEqual(data, '')
 
+    def test_runcmd_calls_stdout_callback_when_msg_on_stdout(self):
+        msgs = []
+
+        def logger(s):
+            msgs.append(s)
+
+        test_input = 'hello fox'
+        exit, out, err = cliapp.runcmd_unchecked(['echo', '-n', test_input],
+                                                 stdout_callback=logger)
+
+        self.assertEqual(test_input, out)
+        self.assertEqual(len(msgs), 1)
+        self.assertEqual(out, msgs[0])
+
+    def test_runcmd_calls_stderr_callback_when_msg_on_stderr(self):
+        msgs = []
+
+        def logger(s):
+            msgs.append(s)
+
+        exit, out, err = cliapp.runcmd_unchecked(['ls', 'nosuchthing'],
+                                                 stderr_callback=logger)
+
+        self.assertEqual(len(msgs), 1)
+        self.assertNotEqual(err, '')
+        self.assertEqual(err, msgs[0])
+
 
 class ShellQuoteTests(unittest.TestCase):
 
