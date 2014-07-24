@@ -84,10 +84,15 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
         else:
             return default
 
+    def noop(_):
+        pass
+
     feed_stdin = pop_kwarg('feed_stdin', '')
     pipe_stdin = pop_kwarg('stdin', subprocess.PIPE)
     pipe_stdout = pop_kwarg('stdout', subprocess.PIPE)
     pipe_stderr = pop_kwarg('stderr', subprocess.PIPE)
+    stdout_callback = pop_kwarg('stdout_callback', noop)
+    stderr_callback = pop_kwarg('stderr_callback', noop)
 
     try:
         pipeline = _build_pipeline(argvs,
@@ -96,7 +101,8 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
                                    pipe_stderr,
                                    kwargs)
         return _run_pipeline(pipeline, feed_stdin, pipe_stdin,
-                              pipe_stdout, pipe_stderr)
+                             pipe_stdout, pipe_stderr,
+                             stdout_callback, stderr_callback)
     except OSError, e: # pragma: no cover
         if e.errno == errno.ENOENT and e.filename is None:
             e.filename = argv[0]
@@ -129,7 +135,8 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
 
     return procs
 
-def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
+def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
+                  stdout_callback, stderr_callback):
 
     stdout_eof = False
     stderr_eof = False
@@ -194,6 +201,8 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
         if procs[-1].stdout in r:
             data = procs[-1].stdout.read(io_size)
             if data:
+                logging.debug('calling stdout callback: %r', stdout_callback)
+                stdout_callback(data)
                 out.append(data)
             else:
                 stdout_eof = True
@@ -201,6 +210,8 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr):
         if procs[-1].stderr in r:
             data = procs[-1].stderr.read(io_size)
             if data:
+                logging.debug('calling stderr callback: %r', stderr_callback)
+                stderr_callback(data)
                 err.append(data)
             else:
                 stderr_eof = True
