@@ -202,8 +202,10 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
             data = procs[-1].stdout.read(io_size)
             if data:
                 logging.debug('calling stdout callback: %r', stdout_callback)
-                stdout_callback(data)
-                out.append(data)
+                data_new = stdout_callback(data)
+                if data_new is None:
+                    data_new = data
+                out.append(data_new)
             else:
                 stdout_eof = True
 
@@ -211,8 +213,10 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
             data = procs[-1].stderr.read(io_size)
             if data:
                 logging.debug('calling stderr callback: %r', stderr_callback)
-                stderr_callback(data)
-                err.append(data)
+                data_new = stderr_callback(data)
+                if data_new is None:
+                    data_new = data
+                err.append(data_new)
             else:
                 stderr_eof = True
 
