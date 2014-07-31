@@ -1,6 +1,13 @@
 NEWS for cliapp
 ===============
 
+Version UNRELEASED
+------------------
+
+* Richard Ipsum added callbacks to `cliapp.runcmd` for handling
+  captured stdout/stderr output from the pipeline. This allows, for
+  example, progress reporting during a long-running command.
+
 Version 1.20140719
 ------------------
 
