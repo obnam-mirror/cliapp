@@ -124,6 +124,40 @@ class RuncmdTests(unittest.TestCase):
         self.assertEqual(exit, 0)
         self.assertEqual(data, '')
 
+    def test_runcmd_calls_stdout_callback_when_msg_on_stdout(self):
+        msgs = []
+
+        def logger(s):
+            msgs.append(s)
+
+            # We return a string to allow the callback to mangle
+            # the data being returned.
+            return 'foo'
+
+        test_input = 'hello fox'
+        exit, out, err = cliapp.runcmd_unchecked(['echo', '-n', test_input],
+                                                 stdout_callback=logger)
+
+        self.assertEqual(out, 'foo')
+        self.assertEqual(msgs, [test_input])
+
+    def test_runcmd_calls_stderr_callback_when_msg_on_stderr(self):
+        msgs = []
+
+        def logger(s):
+            msgs.append(s)
+
+            # We return None to signal that the data should not be
+            # mangled.
+            return None
+
+        exit, out, err = cliapp.runcmd_unchecked(['ls', 'nosuchthing'],
+                                                 stderr_callback=logger)
+
+        self.assertEqual(len(msgs), 1)
+        self.assertNotEqual(err, '')
+        self.assertEqual(err, msgs[0])
+
 
 class ShellQuoteTests(unittest.TestCase):
 
@@ -141,4 +175,3 @@ class ShellQuoteTests(unittest.TestCase):
 
     def test_quotes_single_quote(self):
         self.assertEqual(cliapp.shell_quote("'"), '"\'"')
-
