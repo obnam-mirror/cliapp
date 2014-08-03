@@ -154,9 +154,14 @@ class RuncmdTests(unittest.TestCase):
         exit, out, err = cliapp.runcmd_unchecked(['ls', 'nosuchthing'],
                                                  stderr_callback=logger)
 
-        self.assertEqual(len(msgs), 1)
+        # The callback may be called several times, and we have no
+        # control over that: output from the subprocess may arrive in
+        # drips due to process scheduling and other reasons beyond our
+        # control. Thus, we compare the joined string fragments,
+        # instead of the list of fragments.
+
         self.assertNotEqual(err, '')
-        self.assertEqual(err, msgs[0])
+        self.assertEqual(''.join(msgs), err)
 
 
 class ShellQuoteTests(unittest.TestCase):
