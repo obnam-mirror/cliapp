@@ -131,6 +131,15 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
             stderr = pipe_stderr
         p = subprocess.Popen(argv, stdin=stdin, stdout=stdout,
                              stderr=stderr, close_fds=True, **kwargs)
+
+        if i != 0:
+            # Popen leaves this fd open in the parent,
+            # if we don't close it then the process at the
+            # write end won't receive a SIGPIPE and so won't terminate,
+            # this can lead to non-termination in pipelines
+            # that should terminate immediately, e.g. cat /dev/zero | false
+            stdin.close()
+
         procs.append(p)
 
     return procs
