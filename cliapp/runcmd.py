@@ -112,23 +112,27 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
 
 def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
     procs = []
+
+    if pipe_stderr == subprocess.PIPE:
+        # Make pipe for all subprocesses to share
+        rpipe, wpipe = os.pipe()
+        stderr = wpipe
+    else:
+        stderr = pipe_stderr
+
     for i, argv in enumerate(argvs):
         if i == 0 and i == len(argvs) - 1:
             stdin = pipe_stdin
             stdout = pipe_stdout
-            stderr = pipe_stderr
         elif i == 0:
             stdin = pipe_stdin
             stdout = subprocess.PIPE
-            stderr = pipe_stderr
         elif i == len(argvs) - 1:
             stdin = procs[-1].stdout
             stdout = pipe_stdout
-            stderr = pipe_stderr
         else:
             stdin = procs[-1].stdout
             stdout = subprocess.PIPE
-            stderr = pipe_stderr
         p = subprocess.Popen(argv, stdin=stdin, stdout=stdout,
                              stderr=stderr, close_fds=True, **kwargs)
 
@@ -141,6 +145,14 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
             stdin.close()
 
         procs.append(p)
+
+    if pipe_stderr == subprocess.PIPE:
+        # Ensure only subprocesses hold the write end of the pipe, so we get
+        # EOF when they all terminate
+        os.close(wpipe)
+        # Allow reading of the stderr of every process as the stderr of
+        # the last element
+        procs[-1].stderr = os.fdopen(rpipe)
 
     return procs
 
