@@ -8,6 +8,13 @@ Version UNRELEASED
   captured stdout/stderr output from the pipeline. This allows, for
   example, progress reporting during a long-running command.
 
+* Richard Maw and Richard Ipsum fixed `cliapp.runcmd` to close file
+  descriptors correctly, to make `cliapp.runcmd(['cat', '/dev/zero'],
+  ['false'])` work correctly. Previously, the pipeline would never
+  finish, but now it does, because closing an unnecessary file
+  descriptor in the parent results in `SIGPIPE` being sent to the
+  `cat` process once `false` terminates.
+
 Version 1.20140719
 ------------------
 
