@@ -15,6 +15,10 @@ Version UNRELEASED
   descriptor in the parent results in `SIGPIPE` being sent to the
   `cat` process once `false` terminates.
 
+* Richard Maw changed `cliapp.runcmd` so that the stderr of all
+  commands in the pipeline are collected, when stderr is set to
+  `subprocess.PIPE`.
+
 Version 1.20140719
 ------------------
 
