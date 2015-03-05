@@ -27,7 +27,7 @@ Homepage: http://liw.fi/cliapp/
 '''
 
 
-__version__ = '1.20140719'
+__version__ = '1.20150305'
 
 
 from fmt import TextFormat
