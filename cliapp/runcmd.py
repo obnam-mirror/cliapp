@@ -298,6 +298,10 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
     ``cliapp.ssh_runcmd(
     'user@host', ['sudo', 'ls'], ssh_options=['-oStrictHostChecking=no'])``
 
+    The remote command is run in the user's home directory, by
+    default. The directory can be changed with the keyword argument
+    ``remote_cwd``.
+
     The target is given as-is to ssh, and may use any syntax ssh
     accepts.
 
@@ -323,6 +327,13 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
 
     ssh_argv.append(target)
     ssh_argv.append('--')
+
+    remote_cwd = kwargs.pop('remote_cwd', None)
+    if remote_cwd:
+        ssh_argv.extend(map(shell_quote, [
+            'sh', '-c', 'cd "$1" && shift && exec "$@"',
+            '-',
+            remote_cwd]))
 
     local_argv = ssh_argv + map(shell_quote, argv)
     return runcmd(local_argv, **kwargs)

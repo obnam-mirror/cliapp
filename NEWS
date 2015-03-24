@@ -5,7 +5,13 @@ Version 1.UNRELEASED
 ------------------
 
 * Lars Wirzenius added the `ssh_options` keyword argument to
-  `cliapp.ssh_runcmd`.
+  `cliapp.ssh_runcmd` to allow adding command line options to the ssh
+  program.
+
+* Lars Wirzenius added the `remote_cwd` keyword argument to
+  `cliapp.ssh_runcmd` to allow the caller to easily change to a
+  directory on the server.
+
 
 Version 1.20150305
 ------------------
