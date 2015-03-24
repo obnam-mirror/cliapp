@@ -293,6 +293,11 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
     ``cliapp.ssh_runcmd('user@host', ['sudo', 'ls'], tty=True)``
     which is more intuitive.
 
+    Arbitrary command line options to the ssh command can be given
+    with the ``ssh_options`` argument. For example:
+    ``cliapp.ssh_runcmd(
+    'user@host', ['sudo', 'ls'], ssh_options=['-oStrictHostChecking=no'])``
+
     The target is given as-is to ssh, and may use any syntax ssh
     accepts.
 
@@ -305,16 +310,19 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
 
     '''
 
-    tty = kwargs.get('tty', None)
+    ssh_argv = ['ssh']
+
+    tty = kwargs.pop('tty', None)
     if tty:
-        ssh_cmd = ['ssh', '-tt', target, '--']
+        ssh_argv.append('-tt')
     elif tty is False:
-        ssh_cmd = ['ssh', '-T', target, '--']
-    else:
-        ssh_cmd = ['ssh', target, '--']
-    if 'tty' in kwargs:
-        del kwargs['tty']
+        ssh_argv.append('-T')
 
-    local_argv = ssh_cmd + map(shell_quote, argv)
+    more_options = kwargs.pop('ssh_options', [])
+    ssh_argv.extend(more_options)
+
+    ssh_argv.append(target)
+    ssh_argv.append('--')
+
+    local_argv = ssh_argv + map(shell_quote, argv)
     return runcmd(local_argv, **kwargs)
-
