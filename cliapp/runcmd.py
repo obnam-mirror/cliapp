@@ -319,7 +319,7 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
         ssh_argv.append('-T')
 
     more_options = kwargs.pop('ssh_options', [])
-    ssh_argv.extend(more_options)
+    ssh_argv.extend(map(shell_quote, more_options))
 
     ssh_argv.append(target)
     ssh_argv.append('--')
