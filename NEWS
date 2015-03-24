@@ -1,6 +1,12 @@
 NEWS for cliapp
 ===============
 
+Version 1.UNRELEASED
+------------------
+
+* Lars Wirzenius added the `ssh_options` keyword argument to
+  `cliapp.ssh_runcmd`.
+
 Version 1.20150305
 ------------------
 
