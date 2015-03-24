@@ -305,16 +305,17 @@ def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
 
     '''
 
-    tty = kwargs.get('tty', None)
-    if tty:
-        ssh_cmd = ['ssh', '-tt', target, '--']
-    elif tty is False:
-        ssh_cmd = ['ssh', '-T', target, '--']
-    else:
-        ssh_cmd = ['ssh', target, '--']
-    if 'tty' in kwargs:
-        del kwargs['tty']
+    ssh_argv = ['ssh']
 
-    local_argv = ssh_cmd + map(shell_quote, argv)
+    tty = kwargs.pop('tty', None)
+    if tty:
+        ssh_argv.append('-tt')
+    elif tty is False:
+        ssh_argv.append('-T')
+
+    ssh_argv.append(target)
+    ssh_argv.append('--')
+
+    local_argv = ssh_argv + map(shell_quote, argv)
     return runcmd(local_argv, **kwargs)
 
