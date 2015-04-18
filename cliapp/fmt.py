@@ -121,5 +121,3 @@ class TextFormat(object):
 
         if current:
             yield current
-
-

@@ -48,7 +48,7 @@ class AppException(Exception):
         return self.msg
 
 
-class LogHandler(logging.handlers.RotatingFileHandler): # pragma: no cover
+class LogHandler(logging.handlers.RotatingFileHandler):  # pragma: no cover
 
     '''Like RotatingFileHandler, but set permissions of new files.'''
 
@@ -135,7 +135,7 @@ class Application(object):
             self.settings.progname = os.path.basename(sysargv[0])
         envname = '%s_PROFILE' % self._envname(self.settings.progname)
         profname = os.environ.get(envname, '')
-        if profname: # pragma: no cover
+        if profname:  # pragma: no cover
             import cProfile
             cProfile.runctx('run_it()', globals(), locals(), profname)
         else:
@@ -153,7 +153,7 @@ class Application(object):
 
         return ''.join(x.upper() if x in ok else '_' for x in basename)
 
-    def _set_process_name(self): # pragma: no cover
+    def _set_process_name(self):  # pragma: no cover
         comm = '/proc/self/comm'
         if platform.system() == 'Linux' and os.path.exists(comm):
             with open('/proc/self/comm', 'w', 0) as f:
@@ -190,7 +190,7 @@ class Application(object):
             self.process_args(args)
             self.cleanup()
             self.disable_plugins()
-        except cliapp.UnknownConfigVariable, e: # pragma: no cover
+        except cliapp.UnknownConfigVariable, e:  # pragma: no cover
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
         except AppException, e:
@@ -204,7 +204,7 @@ class Application(object):
             sys.exit(e.code if type(e.code) == int else 1)
         except KeyboardInterrupt, e:
             sys.exit(255)
-        except IOError, e: # pragma: no cover
+        except IOError, e:  # pragma: no cover
             if e.errno == errno.EPIPE and e.filename is None:
                 # We're writing to stdout, and it broke. This almost always
                 # happens when we're being piped to less, and the user quits
@@ -214,14 +214,14 @@ class Application(object):
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
-        except OSError, e: # pragma: no cover
+        except OSError, e:  # pragma: no cover
             log(traceback.format_exc())
             if hasattr(e, 'filename') and e.filename:
                 stderr.write('ERROR: %s: %s\n' % (e.filename, e.strerror))
             else:
                 stderr.write('ERROR: %s\n' % e.strerror)
             sys.exit(1)
-        except BaseException, e: # pragma: no cover
+        except BaseException, e:  # pragma: no cover
             log(traceback.format_exc())
             stderr.write(traceback.format_exc())
             sys.exit(1)
@@ -244,7 +244,7 @@ class Application(object):
         '''
 
     def add_subcommand(
-        self, name, func, arg_synopsis=None, aliases=None, hidden=False):
+            self, name, func, arg_synopsis=None, aliases=None, hidden=False):
         '''Add a subcommand.
 
         Normally, subcommands are defined by add ``cmd_foo`` methods
@@ -261,7 +261,7 @@ class Application(object):
             self.subcommands[name] = func
             self.cmd_synopsis[name] = arg_synopsis
             self.subcommand_aliases[name] = aliases or []
-            if hidden: # pragma: no cover
+            if hidden:  # pragma: no cover
                 self.hidden_subcommands.add(name)
 
     def add_default_subcommands(self):
@@ -270,7 +270,7 @@ class Application(object):
         if 'help-all' not in self.subcommands:
             self.add_subcommand('help-all', self.help_all)
 
-    def get_subcommand_help_formatter(self, *a, **kw): # pragma: no cover
+    def get_subcommand_help_formatter(self, *a, **kw):  # pragma: no cover
         '''Return class to format subcommand documentation.
 
         The class will be used to format the full docstring of a
@@ -287,12 +287,11 @@ class Application(object):
 
         return cliapp.TextFormat(*a, **kw)
 
-    def _help_helper(self, args, show_all): # pragma: no cover
+    def _help_helper(self, args, show_all):  # pragma: no cover
         try:
             width = int(os.environ.get('COLUMNS', '78'))
         except ValueError:
             width = 78
-
 
         if args:
             cmd = args[0]
@@ -311,19 +310,18 @@ class Application(object):
         text = self.settings.progname.join(text.split('%prog'))
         self.output.write(text)
 
-    def help(self, args): # pragma: no cover
+    def help(self, args):  # pragma: no cover
         '''Print help.'''
         self._help_helper(args, False)
 
-    def help_all(self, args): # pragma: no cover
+    def help_all(self, args):  # pragma: no cover
         '''Print help, including hidden subcommands.'''
         self._help_helper(args, True)
 
     def _subcommand_methodnames(self):
         return [x
-                 for x in dir(self)
-                 if x.startswith('cmd_') and
-                    inspect.ismethod(getattr(self, x))]
+                for x in dir(self)
+                if x.startswith('cmd_') and inspect.ismethod(getattr(self, x))]
 
     def _normalize_cmd(self, cmd):
         return 'cmd_%s' % cmd.replace('-', '_')
@@ -347,7 +345,7 @@ class Application(object):
         else:
             return None
 
-    def _format_usage_for(self, cmd): # pragma: no cover
+    def _format_usage_for(self, cmd):  # pragma: no cover
         args = self.cmd_synopsis.get(cmd, '') or ''
         return 'Usage: %%prog [options] %s %s' % (cmd, args)
 
@@ -363,7 +361,7 @@ class Application(object):
         else:
             return self._description
 
-    def _format_subcommand_summary(self, cmd): # pragma: no cover
+    def _format_subcommand_summary(self, cmd):  # pragma: no cover
         method = self.subcommands[cmd]
         doc = method.__doc__ or ''
         lines = doc.splitlines()
@@ -373,7 +371,7 @@ class Application(object):
             summary = ''
         return '* %%prog %s: %s\n' % (cmd, summary)
 
-    def _format_subcommand_help(self, cmd): # pragma: no cover
+    def _format_subcommand_help(self, cmd):  # pragma: no cover
         method = self.subcommands[cmd]
         doc = method.__doc__ or ''
         t = doc.split('\n', 1)
@@ -383,7 +381,7 @@ class Application(object):
             first, rest = t
             return first + '\n' + textwrap.dedent(rest)
 
-    def setup_logging(self): # pragma: no cover
+    def setup_logging(self):  # pragma: no cover
         '''Set up logging.'''
 
         level_name = self.settings['log-level']
@@ -410,7 +408,7 @@ class Application(object):
         logger.addHandler(handler)
         logger.setLevel(level)
 
-    def setup_logging_handler_for_syslog(self): # pragma: no cover
+    def setup_logging_handler_for_syslog(self):  # pragma: no cover
         '''Setup a logging.Handler for logging to syslog.'''
 
         handler = logging.handlers.SysLogHandler(address='/dev/log')
@@ -419,13 +417,13 @@ class Application(object):
 
         return handler
 
-    def setup_logging_formatter_for_syslog(self): # pragma: no cover
+    def setup_logging_formatter_for_syslog(self):  # pragma: no cover
         '''Setup a logging.Formatter for syslog.'''
         progname = '%%'.join(self.settings.progname.split('%'))
         fmt = progname + ": %(levelname)s %(message)s"
         return logging.Formatter(fmt)
 
-    def setup_logging_handler_for_file(self): # pragma: no cover
+    def setup_logging_handler_for_file(self):  # pragma: no cover
         '''Setup a logging handler for logging to a named file.'''
 
         handler = LogHandler(
@@ -438,24 +436,24 @@ class Application(object):
         handler.setFormatter(formatter)
         return handler
 
-    def setup_logging_formatter_for_file(self): # pragma: no cover
+    def setup_logging_formatter_for_file(self):  # pragma: no cover
         '''Setup a logging.Formatter for logging to a file.'''
         fmt = '%(asctime)s %(levelname)s %(message)s'
         datefmt = '%Y-%m-%d %H:%M:%S'
         formatter = logging.Formatter(fmt, datefmt)
         return formatter
 
-    def setup_logging_handler_to_none(self): # pragma: no cover
+    def setup_logging_handler_to_none(self):  # pragma: no cover
         '''Setup a logging.Handler that does not log anything anywhere.'''
 
         handler = logging.FileHandler('/dev/null')
         return handler
 
-    def setup_logging_format(self): # pragma: no cover
+    def setup_logging_format(self):  # pragma: no cover
         '''Return format string for log messages.'''
         return '%(asctime)s %(levelname)s %(message)s'
 
-    def setup_logging_timestamp(self): # pragma: no cover
+    def setup_logging_timestamp(self):  # pragma: no cover
         '''Return timestamp format string for log message.'''
         return '%Y-%m-%d %H:%M:%S'
 
@@ -498,7 +496,7 @@ class Application(object):
         dirname = os.path.join(self.app_directory(), self.plugin_subdir)
         self.pluginmgr.locations = [dirname]
 
-    def enable_plugins(self): # pragma: no cover
+    def enable_plugins(self):  # pragma: no cover
         '''Load plugins.'''
         for plugin in self.pluginmgr.plugins:
             plugin.app = self
@@ -548,7 +546,6 @@ class Application(object):
         been defined.
 
         '''
-
 
         if self.subcommands:
             if not args:
@@ -629,13 +626,13 @@ class Application(object):
 
         '''
 
-    def runcmd(self, *args, **kwargs): # pragma: no cover
+    def runcmd(self, *args, **kwargs):  # pragma: no cover
         return cliapp.runcmd(*args, **kwargs)
 
-    def runcmd_unchecked(self, *args, **kwargs): # pragma: no cover
+    def runcmd_unchecked(self, *args, **kwargs):  # pragma: no cover
         return cliapp.runcmd_unchecked(*args, **kwargs)
 
-    def _vmrss(self): # pragma: no cover
+    def _vmrss(self):  # pragma: no cover
         '''Return current resident memory use, in KiB.'''
         if platform.system() != 'Linux':
             return 0
@@ -650,7 +647,7 @@ class Application(object):
         f.close()
         return rss
 
-    def dump_memory_profile(self, msg): # pragma: no cover
+    def dump_memory_profile(self, msg):  # pragma: no cover
         '''Log memory profiling information.
 
         Get the memory profiling method from the dump-memory-profile
@@ -701,4 +698,3 @@ class Application(object):
             from meliae import scanner
             scanner.dump_all_objects(filename)
             self.memory_dump_counter += 1
-

@@ -73,4 +73,3 @@ class FilterHook(Hook):
         for callback in self.callbacks:
             data = callback(data, *args, **kwargs)
         return data
-

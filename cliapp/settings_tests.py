@@ -414,7 +414,7 @@ unknown = variable
 
     def test_require_raises_error_when_one_value_of_several_is_unset(self):
         self.settings.string(['foo'], 'foo help')
-        self.settings.string(['bar'], 'bar help', default=None )
+        self.settings.string(['bar'], 'bar help', default=None)
         args = ['foo', 'bar']
         self.assertRaises(cliapp.AppException, self.settings.require, *args)
 
@@ -451,4 +451,3 @@ bar = dodo
         self.assertEqual(cp.get('config', 'foo'), 'yeehaa')
         self.assertEqual(cp.options('other'), ['bar'])
         self.assertEqual(cp.get('other', 'bar'), 'dodo')
-

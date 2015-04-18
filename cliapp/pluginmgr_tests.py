@@ -50,7 +50,7 @@ class PluginManagerTests(unittest.TestCase):
         self.pm = PluginManager()
         self.pm.locations = ['test-plugins', 'not-exist']
         self.pm.plugin_arguments = ('fooarg',)
-        self.pm.plugin_keyword_arguments = { 'bar': 'bararg' }
+        self.pm.plugin_keyword_arguments = {'bar': 'bararg'}
 
         self.files = sorted(['test-plugins/hello_plugin.py',
                              'test-plugins/aaa_hello_plugin.py',
@@ -115,4 +115,3 @@ class PluginManagerCompatibleApplicationVersionTests(unittest.TestCase):
 
     def test_accepts_one_two_three(self):
         self.assert_(self.pm.compatible_version('1.2.3'))
-

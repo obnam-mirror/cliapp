@@ -54,9 +54,9 @@ class RuncmdTests(unittest.TestCase):
                          'hello, world')
 
     def test_runcmd_pipes_stdin_through_two_commands(self):
-        self.assertEqual(cliapp.runcmd(
-                            ['cat'], ['cat'], feed_stdin='hello, world'),
-                         'hello, world')
+        self.assertEqual(
+            cliapp.runcmd(['cat'], ['cat'], feed_stdin='hello, world'),
+            'hello, world')
 
     def test_runcmd_pipes_stdin_through_command_with_lots_of_data(self):
         data = 'x' * (1024**2)
@@ -77,15 +77,14 @@ class RuncmdTests(unittest.TestCase):
                          (1, '', ''))
 
     def test_runcmd_unchecked_runs_simple_pipeline(self):
-        self.assertEqual(cliapp.runcmd_unchecked(
-                            ['echo', 'foo'], ['wc', '-c']),
-                         (0, '4\n', ''))
+        self.assertEqual(
+            cliapp.runcmd_unchecked(['echo', 'foo'], ['wc', '-c']),
+            (0, '4\n', ''))
 
     def test_runcmd_unchecked_runs_longer_pipeline(self):
-        self.assertEqual(cliapp.runcmd_unchecked(['echo', 'foo'],
-                                                 ['cat'],
-                                                 ['wc', '-c']),
-                         (0, '4\n', ''))
+        self.assertEqual(
+            cliapp.runcmd_unchecked(['echo', 'foo'], ['cat'], ['wc', '-c']),
+            (0, '4\n', ''))
 
     def test_runcmd_redirects_stdin_from_file(self):
         fd, filename = tempfile.mkstemp()

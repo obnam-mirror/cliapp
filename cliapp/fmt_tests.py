@@ -56,4 +56,3 @@ class TextFormatTests(unittest.TestCase):
         self.assertEqual(
             self.fmt.format('foo\nbar\n* yo\n* a\n  and b\nword'),
             'foo bar\n\n* yo\n* a and b\n\nword\n')
-

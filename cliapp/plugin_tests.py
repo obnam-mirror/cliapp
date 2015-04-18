@@ -49,4 +49,3 @@ class PluginTests(unittest.TestCase):
         self.plugin.disable = lambda: setattr(self, 'disabled', True)
         self.plugin.disable_wrapper()
         self.assert_(self.disabled, True)
-

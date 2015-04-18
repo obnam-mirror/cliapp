@@ -25,3 +25,4 @@ clean:
 check:
 	python -m CoverageTestRunner --ignore-missing-from=without-tests
 	rm .coverage
+	pep8 cliapp

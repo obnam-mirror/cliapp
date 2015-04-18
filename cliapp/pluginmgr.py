@@ -172,4 +172,3 @@ class PluginManager(object):
 
         for plugin in plugins or self.plugins:
             plugin.disable_wrapper()
-

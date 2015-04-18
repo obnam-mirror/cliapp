@@ -145,4 +145,3 @@ class ManpageGenerator(object):
             else:
                 words += ['""']
         return [' '.join(words)]
-

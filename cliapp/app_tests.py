@@ -49,10 +49,13 @@ class ApplicationTests(unittest.TestCase):
     def test_calls_add_settings_only_in_run(self):
 
         class Foo(cliapp.Application):
+
             def process_args(self, args):
                 pass
+
             def add_settings(self):
                 self.settings.string(['foo'], '')
+
         foo = Foo()
         self.assertFalse('foo' in foo.settings)
         foo.run(args=[])
@@ -61,18 +64,23 @@ class ApplicationTests(unittest.TestCase):
     def test_run_uses_string_list_options_only_once(self):
 
         class Foo(cliapp.Application):
+
             def add_settings(self):
                 self.settings.string_list(['foo'], '')
+
             def process_args(self, args):
                 pass
+
         foo = Foo()
         foo.run(args=['--foo=yo'])
         self.assertEqual(foo.settings['foo'], ['yo'])
 
     def test_run_sets_up_logging(self):
         self.called = False
+
         def setup():
             self.called = True
+
         self.app.setup_logging = setup
         self.app.process_args = lambda args: None
         self.app.run([])
@@ -133,45 +141,59 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.app.settings['bar'], True)
 
     def test_calls_setup(self):
+
         class App(cliapp.Application):
+
             def setup(self):
                 self.setup_called = True
+
             def process_inputs(self, args):
                 pass
+
         app = App()
         app.run(args=[])
         self.assertTrue(app.setup_called)
 
     def test_calls_cleanup(self):
+
         class App(cliapp.Application):
+
             def cleanup(self):
                 self.cleanup_called = True
+
             def process_inputs(self, args):
                 pass
+
         app = App()
         app.run(args=[])
         self.assertTrue(app.cleanup_called)
 
     def test_process_args_calls_process_inputs(self):
         self.called = False
+
         def process_inputs(args):
             self.called = True
+
         self.app.process_inputs = process_inputs
         self.app.process_args([])
         self.assert_(self.called)
 
     def test_process_inputs_calls_process_input_for_each_arg(self):
         self.args = []
+
         def process_input(arg):
             self.args.append(arg)
+
         self.app.process_input = process_input
         self.app.process_inputs(['foo', 'bar'])
         self.assertEqual(self.args, ['foo', 'bar'])
 
     def test_process_inputs_calls_process_input_with_dash_if_no_inputs(self):
         self.args = []
+
         def process_input(arg):
             self.args.append(arg)
+
         self.app.process_input = process_input
         self.app.process_inputs([])
         self.assertEqual(self.args, ['-'])
@@ -190,22 +212,28 @@ class ApplicationTests(unittest.TestCase):
 
     def test_process_input_calls_open_input(self):
         self.called = None
+
         def open_input(name):
             self.called = name
             return StringIO.StringIO('')
+
         self.app.open_input = open_input
         self.app.process_input('foo')
         self.assertEqual(self.called, 'foo')
 
     def test_process_input_does_not_close_stdin(self):
         self.closed = False
+
         def close():
             self.closed = True
+
         f = StringIO.StringIO('')
         f.close = close
+
         def open_input(name):
             if name == '-':
                 return f
+
         self.app.open_input = open_input
         self.app.process_input('-', stdin=f)
         self.assertEqual(self.closed, False)
@@ -213,10 +241,13 @@ class ApplicationTests(unittest.TestCase):
     def test_processes_input_lines(self):
 
         lines = []
+
         class Foo(cliapp.Application):
+
             def open_input(self, name):
                 return StringIO.StringIO(''.join('%s%d\n' % (name, i)
                                                  for i in range(2)))
+
             def process_input_line(self, name, line):
                 lines.append(line)
 
@@ -226,10 +257,13 @@ class ApplicationTests(unittest.TestCase):
 
     def test_process_input_line_can_access_counters(self):
         counters = []
+
         class Foo(cliapp.Application):
+
             def open_input(self, name):
                 return StringIO.StringIO(''.join('%s%d\n' % (name, i)
                                                  for i in range(2)))
+
             def process_input_line(self, name, line):
                 counters.append((self.fileno, self.global_lineno, self.lineno))
 
@@ -305,8 +339,10 @@ class SubcommandTests(unittest.TestCase):
 
     def test_calls_subcommand_method_via_alias(self):
         self.bar_called = False
+
         def bar(*args):
             self.bar_called = True
+
         self.app.add_subcommand('bar', bar, aliases=['yoyo'])
         self.app.run(['yoyo'], stderr=self.trash, log=devnull)
         self.assertTrue(self.bar_called)
@@ -328,4 +364,3 @@ class ExtensibleSubcommandTests(unittest.TestCase):
         help = lambda args: None
         self.app.add_subcommand('foo', help)
         self.assertEqual(self.app.subcommands, {'foo': help})
-

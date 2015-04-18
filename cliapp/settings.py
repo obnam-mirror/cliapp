@@ -42,7 +42,7 @@ class UnknownConfigVariable(cliapp.AppException):
         self.msg = (
             '%s: Unknown configuration variable %s' % (filename, name))
 
-    def __str__(self): # pragma: no cover
+    def __str__(self):  # pragma: no cover
         return self.msg
 
 
@@ -53,8 +53,8 @@ class Setting(object):
     nargs = 1
     choices = None
 
-    def __init__(
-        self, names, default, help, metavar=None, group=None, hidden=False):
+    def __init__(self, names, default, help, metavar=None, group=None,
+                 hidden=False):
         self.names = names
         self.set_value(default)
         self.help = help
@@ -85,7 +85,7 @@ class Setting(object):
     def parse_value(self, string):
         self.value = string
 
-    def format(self): # pragma: no cover
+    def format(self):  # pragma: no cover
         return str(self.value)
 
 
@@ -99,8 +99,8 @@ class StringListSetting(Setting):
 
     action = 'append'
 
-    def __init__(
-        self, names, default, help, metavar=None, group=None, hidden=False):
+    def __init__(self, names, default, help, metavar=None, group=None,
+                 hidden=False):
         Setting.__init__(
             self, names, [], help, metavar=metavar, group=group, hidden=hidden)
         self.default = default
@@ -125,7 +125,7 @@ class StringListSetting(Setting):
     def parse_value(self, string):
         self.value = [s.strip() for s in string.split(',')]
 
-    def format(self): # pragma: no cover
+    def format(self):  # pragma: no cover
         return ', '.join(self.value)
 
 
@@ -133,8 +133,8 @@ class ChoiceSetting(Setting):
 
     type = 'choice'
 
-    def __init__(
-        self, names, choices, help, metavar=None, group=None, hidden=False):
+    def __init__(self, names, choices, help, metavar=None, group=None,
+                 hidden=False):
         Setting.__init__(
             self, names, choices[0], help, metavar=metavar, group=group,
             hidden=hidden)
@@ -222,7 +222,7 @@ class IntegerSetting(Setting):
 
 class FormatHelpParagraphs(optparse.IndentedHelpFormatter):
 
-    def _format_text(self, text): # pragma: no cover
+    def _format_text(self, text):  # pragma: no cover
         '''Like the default, except handle paragraphs.'''
 
         fmt = cliapp.TextFormat(width=self.width)
@@ -292,30 +292,30 @@ class Settings(object):
 
         self.string(['log'],
                     'write log entries to FILE (default is to not write log '
-                        'files at all); use "syslog" to log to system log, '
-                        'or "none" to disable logging',
+                    'files at all); use "syslog" to log to system log, '
+                    'or "none" to disable logging',
                     metavar='FILE', group=log_group_name)
         self.choice(['log-level'],
                     ['debug', 'info', 'warning', 'error', 'critical', 'fatal'],
                     'log at LEVEL, one of debug, info, warning, '
-                        'error, critical, fatal (default: %default)',
+                    'error, critical, fatal (default: %default)',
                     metavar='LEVEL', group=log_group_name)
         self.bytesize(['log-max'],
                       'rotate logs larger than SIZE, '
-                        'zero for never (default: %default)',
+                      'zero for never (default: %default)',
                       metavar='SIZE', default=0, group=log_group_name)
         self.integer(['log-keep'], 'keep last N logs (%default)',
                      metavar='N', default=10, group=log_group_name)
         self.string(['log-mode'],
                     'set permissions of new log files to MODE (octal; '
-                        'default %default)',
+                    'default %default)',
                     metavar='MODE', default='0600', group=log_group_name)
 
         self.choice(['dump-memory-profile'],
                     ['simple', 'none', 'meliae', 'heapy'],
                     'make memory profiling dumps using METHOD, which is one '
-                        'of: none, simple, meliae, or heapy '
-                        '(default: %default)',
+                    'of: none, simple, meliae, or heapy '
+                    '(default: %default)',
                     metavar='METHOD',
                     group=perf_group_name)
         self.integer(['memory-dump-interval'],
@@ -403,8 +403,8 @@ class Settings(object):
 
         for name in setting_names:
             if not self._settingses[name].has_value():
-                messages.append('Setting %s has no value, '
-                                            'but one is required' % name)
+                messages.append(
+                    'Setting %s has no value, but one is required' % name)
         if len(messages) > 0:
             raise cliapp.AppException('\n'.join(messages))
 
@@ -430,13 +430,12 @@ class Settings(object):
         # Call a callback function unless we're in configs_only mode.
         maybe = lambda func: (lambda *args: None) if configs_only else func
 
-
         # Maintain lists of callback function calls that are deferred.
         # We call them ourselves rather than have OptionParser call them
         # directly so that we can do things like --dump-config only
         # after the whole command line is parsed.
 
-        def defer_last(func): # pragma: no cover
+        def defer_last(func):  # pragma: no cover
             def callback(*args):
                 deferred_last.append(lambda: func(*args))
             return callback
@@ -485,82 +484,87 @@ class Settings(object):
 
         # Add --dump-setting-names.
 
-        def dump_setting_names(*args): # pragma: no cover
+        def dump_setting_names(*args):  # pragma: no cover
             for name in self._canonical_names:
                 sys.stdout.write('%s\n' % name)
             sys.exit(0)
 
-        config_group.add_option('--dump-setting-names',
-                     action='callback',
-                     nargs=0,
-                     callback=defer_last(maybe(dump_setting_names)),
-                     help=help_text(
-                        'write out all names of settings and quit', True))
+        config_group.add_option(
+            '--dump-setting-names',
+            action='callback',
+            nargs=0,
+            callback=defer_last(maybe(dump_setting_names)),
+            help=help_text('write out all names of settings and quit', True))
 
         # Add --dump-config.
 
-        def call_dump_config(*args): # pragma: no cover
+        def call_dump_config(*args):  # pragma: no cover
             self.dump_config(sys.stdout)
             sys.exit(0)
 
-        config_group.add_option('--dump-config',
-                     action='callback',
-                     nargs=0,
-                     callback=defer_last(maybe(call_dump_config)),
-                     help='write out the entire current configuration')
+        config_group.add_option(
+            '--dump-config',
+            action='callback',
+            nargs=0,
+            callback=defer_last(maybe(call_dump_config)),
+            help='write out the entire current configuration')
 
         # Add --no-default-configs.
 
         def reset_configs(option, opt_str, value, parser):
             self.config_files = []
 
-        config_group.add_option('--no-default-configs',
-                     action='callback',
-                     nargs=0,
-                     callback=reset_configs,
-                     help='clear list of configuration files to read')
+        config_group.add_option(
+            '--no-default-configs',
+            action='callback',
+            nargs=0,
+            callback=reset_configs,
+            help='clear list of configuration files to read')
 
         # Add --config.
 
         def append_to_configs(option, opt_str, value, parser):
             self.config_files.append(value)
 
-        config_group.add_option('--config',
-                     action='callback',
-                     nargs=1,
-                     type='string',
-                     callback=append_to_configs,
-                     help='add FILE to config files',
-                     metavar='FILE')
+        config_group.add_option(
+            '--config',
+            action='callback',
+            nargs=1,
+            type='string',
+            callback=append_to_configs,
+            help='add FILE to config files',
+            metavar='FILE')
 
         # Add --list-config-files.
 
-        def list_config_files(*args): # pragma: no cover
+        def list_config_files(*args):  # pragma: no cover
             for filename in self.config_files:
                 print filename
             sys.exit(0)
 
-        config_group.add_option('--list-config-files',
-                     action='callback',
-                     nargs=0,
-                     callback=defer_last(maybe(list_config_files)),
-                     help=help_text('list all possible config files', True))
+        config_group.add_option(
+            '--list-config-files',
+            action='callback',
+            nargs=0,
+            callback=defer_last(maybe(list_config_files)),
+            help=help_text('list all possible config files', True))
 
         # Add --generate-manpage.
 
         self._arg_synopsis = arg_synopsis
         self._cmd_synopsis = cmd_synopsis
-        p.add_option('--generate-manpage',
-                     action='callback',
-                     nargs=1,
-                     type='string',
-                     callback=maybe(self._generate_manpage),
-                     help=help_text('fill in manual page TEMPLATE', True),
-                     metavar='TEMPLATE')
+        p.add_option(
+            '--generate-manpage',
+            action='callback',
+            nargs=1,
+            type='string',
+            callback=maybe(self._generate_manpage),
+            help=help_text('fill in manual page TEMPLATE', True),
+            metavar='TEMPLATE')
 
         # Add --help-all.
 
-        def help_all(*args): # pragma: no cover
+        def help_all(*args):  # pragma: no cover
             pp = self.build_parser(
                 configs_only=configs_only,
                 arg_synopsis=arg_synopsis,
@@ -635,9 +639,9 @@ class Settings(object):
         return p
 
     def parse_args(self, args, parser=None, suppress_errors=False,
-                    configs_only=False, arg_synopsis=None,
-                    cmd_synopsis=None, compute_setting_values=None,
-                    all_options=False):
+                   configs_only=False, arg_synopsis=None,
+                   cmd_synopsis=None, compute_setting_values=None,
+                   all_options=False):
         '''Parse the command line.
 
         Return list of non-option arguments. ``args`` would usually
@@ -657,9 +661,9 @@ class Settings(object):
             p.error = lambda msg: sys.exit(1)
 
         options, args = p.parse_args(args)
-        if compute_setting_values: # pragma: no cover
+        if compute_setting_values:  # pragma: no cover
             compute_setting_values(self)
-        for callback in deferred_last: # pragma: no cover
+        for callback in deferred_last:  # pragma: no cover
             callback()
         return args
 
@@ -680,7 +684,7 @@ class Settings(object):
         configs += self._listconfs('/etc/%s' % self.progname)
         configs.append(os.path.expanduser('~/.%s.conf' % self.progname))
         configs += self._listconfs(
-                        os.path.expanduser('~/.config/%s' % self.progname))
+            os.path.expanduser('~/.config/%s' % self.progname))
 
         return configs
 
@@ -716,7 +720,7 @@ class Settings(object):
     def set_from_raw_string(self, pathname, name, raw_string):
         '''Set value of a setting from a raw, unparsed string value.'''
         if name not in self._settingses:
-           raise UnknownConfigVariable(pathname, name)
+            raise UnknownConfigVariable(pathname, name)
         s = self._settingses[name]
         s.parse_value(raw_string)
         return s
@@ -749,7 +753,7 @@ class Settings(object):
         # Remember the ConfigParser for use in as_cp later on.
         self._cp = cp
 
-    def _generate_manpage(self, o, os, value, p): # pragma: no cover
+    def _generate_manpage(self, o, os, value, p):  # pragma: no cover
         template = open(value).read()
         generator = ManpageGenerator(template, p, self._arg_synopsis,
                                      self._cmd_synopsis)
@@ -778,7 +782,6 @@ class Settings(object):
 
         return cp
 
-    def dump_config(self, output): # pragma: no cover
+    def dump_config(self, output):  # pragma: no cover
         cp = self.as_cp()
         cp.write(output)
-

@@ -35,7 +35,7 @@ class HookManagerTests(unittest.TestCase):
         self.assertEqual(hooks.hooks, {})
 
     def test_adds_new_hook(self):
-        self.assert_(self.hooks.hooks.has_key('foo'))
+        self.assertTrue('foo' in self.hooks.hooks)
 
     def test_adds_callback(self):
         self.hooks.add_callback('foo', self.callback)
@@ -50,10 +50,9 @@ class HookManagerTests(unittest.TestCase):
         self.hooks.add_callback('foo', self.callback)
         self.hooks.call('foo', 'bar', kwarg='foobar')
         self.assertEqual(self.args, ('bar',))
-        self.assertEqual(self.kwargs, { 'kwarg': 'foobar' })
+        self.assertEqual(self.kwargs, {'kwarg': 'foobar'})
 
     def test_call_returns_value_of_callbacks(self):
         self.hooks.new('bar', FilterHook())
         self.hooks.add_callback('bar', lambda data: data + 1)
         self.assertEqual(self.hooks.call('bar', 1), 2)
-

@@ -45,7 +45,7 @@ class HookTests(unittest.TestCase):
         self.hook.add_callback(self.callback)
         self.hook.call_callbacks('bar', kwarg='foobar')
         self.assertEqual(self.args, ('bar',))
-        self.assertEqual(self.kwargs, { 'kwarg': 'foobar' })
+        self.assertEqual(self.kwargs, {'kwarg': 'foobar'})
 
     def test_removes_callback(self):
         cb_id = self.hook.add_callback(self.callback)
@@ -75,5 +75,4 @@ class FilterHookTests(unittest.TestCase):
         self.hook.add_callback(self.callback)
         self.hook.call_callbacks(['data'], 'extra', kwextra='kwextra')
         self.assertEqual(self.args, ('extra',))
-        self.assertEqual(self.kwargs, { 'kwextra': 'kwextra' })
-
+        self.assertEqual(self.kwargs, {'kwextra': 'kwextra'})

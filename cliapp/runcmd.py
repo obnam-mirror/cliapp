@@ -63,6 +63,7 @@ def runcmd(argv, *args, **kwargs):
             raise cliapp.AppException(msg)
     return out
 
+
 def runcmd_unchecked(argv, *argvs, **kwargs):
     '''Run external command or pipeline.
 
@@ -103,12 +104,13 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
         return _run_pipeline(pipeline, feed_stdin, pipe_stdin,
                              pipe_stdout, pipe_stderr,
                              stdout_callback, stderr_callback)
-    except OSError, e: # pragma: no cover
+    except OSError, e:  # pragma: no cover
         if e.errno == errno.ENOENT and e.filename is None:
             e.filename = argv[0]
             raise e
         else:
             raise
+
 
 def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
     procs = []
@@ -156,6 +158,7 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
 
     return procs
 
+
 def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
                   stdout_callback, stderr_callback):
 
@@ -187,7 +190,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
         if pipe_stdout == subprocess.PIPE and not stdout_eof:
             return True
         if pipe_stderr == subprocess.PIPE and not stderr_eof:
-            return True # pragma: no cover
+            return True  # pragma: no cover
         return False
 
     while still_running():
@@ -204,16 +207,16 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
         if rlist or wlist:
             try:
                 r, w, x = select.select(rlist, wlist, [])
-            except select.error, e: # pragma: no cover
+            except select.error, e:  # pragma: no cover
                 err, msg = e.args
                 if err == errno.EINTR:
                     break
                 raise
         else:
-            break # Let's not busywait waiting for processes to die.
+            break  # Let's not busywait waiting for processes to die.
 
         if procs[0].stdin in w and pos < len(feed_stdin):
-            data = feed_stdin[pos : pos+io_size]
+            data = feed_stdin[pos:pos+io_size]
             procs[0].stdin.write(data)
             pos += len(data)
             if pos >= len(feed_stdin):
@@ -250,7 +253,6 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
     return errorcodes[-1], ''.join(out), ''.join(err)
 
 
-
 def shell_quote(s):
     '''Return a shell-quoted version of s.'''
 
@@ -272,7 +274,7 @@ def shell_quote(s):
     return ''.join(quoted)
 
 
-def ssh_runcmd(target, argv, **kwargs): # pragma: no cover
+def ssh_runcmd(target, argv, **kwargs):  # pragma: no cover
     '''Run command in argv on remote host target.
 
     This is similar to runcmd, but the command is run on the remote

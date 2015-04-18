@@ -119,6 +119,6 @@ class Plugin(object):
         '''Enable the plugin.'''
         raise NotImplemented()
 
-    def disable(self): # pragma: no cover
+    def disable(self):  # pragma: no cover
         '''Disable the plugin.'''
         pass
