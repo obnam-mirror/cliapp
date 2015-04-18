@@ -42,6 +42,7 @@ class AppException(Exception):
     '''
 
     def __init__(self, msg):
+        Exception.__init__(self)
         self.msg = msg
 
     def __str__(self):
@@ -124,16 +125,18 @@ class Application(object):
     def add_settings(self):
         '''Add application specific settings.'''
 
-    def run(self, args=None, stderr=sys.stderr, sysargv=sys.argv,
+    def run(self, args=None, stderr=sys.stderr, sysargv=None,
             log=logging.critical):
         '''Run the application.'''
+
+        sysargv = sys.argv if sysargv is None else sysargv
 
         def run_it():
             self._run(args=args, stderr=stderr, log=log)
 
         if self.settings.progname is None and sysargv:
             self.settings.progname = os.path.basename(sysargv[0])
-        envname = '%s_PROFILE' % self._envname(self.settings.progname)
+        envname = '%s_PROFILE' % self.envname(self.settings.progname)
         profname = os.environ.get(envname, '')
         if profname:  # pragma: no cover
             import cProfile
@@ -141,7 +144,7 @@ class Application(object):
         else:
             run_it()
 
-    def _envname(self, progname):
+    def envname(self, progname):
         '''Create an environment variable name of the name of a program.'''
 
         basename = os.path.basename(progname)
@@ -226,8 +229,9 @@ class Application(object):
             stderr.write(traceback.format_exc())
             sys.exit(1)
 
-        logging.info('%s version %s ends normally' %
-                     (self.settings.progname, self.settings.version))
+        logging.info(
+            '%s version %s ends normally',
+            self.settings.progname, self.settings.version)
 
     def compute_setting_values(self, settings):
         '''Compute setting values after configs and options are parsed.
@@ -302,9 +306,10 @@ class Application(object):
             description = fmt.format(self._format_subcommand_help(cmd))
             text = '%s\n\n%s' % (usage, description)
         else:
-            usage = self._format_usage(all=show_all)
+            usage = self._format_usage(show_all=show_all)
             fmt = cliapp.TextFormat(width=width)
-            description = fmt.format(self._format_description(all=show_all))
+            description = fmt.format(
+                self._format_description(show_all=show_all))
             text = '%s\n\n%s' % (usage, description)
 
         text = self.settings.progname.join(text.split('%prog'))
@@ -330,7 +335,7 @@ class Application(object):
         assert method.startswith('cmd_')
         return method[len('cmd_'):].replace('_', '-')
 
-    def _format_usage(self, all=False):
+    def _format_usage(self, show_all=False):
         '''Format usage, possibly also subcommands, if any.'''
         if self.subcommands:
             lines = []
@@ -349,12 +354,12 @@ class Application(object):
         args = self.cmd_synopsis.get(cmd, '') or ''
         return 'Usage: %%prog [options] %s %s' % (cmd, args)
 
-    def _format_description(self, all=False):
+    def _format_description(self, show_all=False):
         '''Format OptionParser description, with subcommand support.'''
         if self.subcommands:
             summaries = []
             for cmd in sorted(self.subcommands.keys()):
-                if all or cmd not in self.hidden_subcommands:
+                if show_all or cmd not in self.hidden_subcommands:
                     summaries.append(self._format_subcommand_summary(cmd))
             cmd_desc = ''.join(summaries)
             return '%s\n%s' % (self._description or '', cmd_desc)
@@ -458,24 +463,25 @@ class Application(object):
         return '%Y-%m-%d %H:%M:%S'
 
     def log_config(self):
-        logging.info('%s version %s starts' %
-                     (self.settings.progname, self.settings.version))
-        logging.debug('sys.argv: %s' % sys.argv)
+        logging.info(
+            '%s version %s starts',
+            self.settings.progname, self.settings.version)
+        logging.debug('sys.argv: %r', sys.argv)
 
-        logging.debug('current working directory: %s' % os.getcwd())
-        logging.debug('uid: %d' % os.getuid())
-        logging.debug('effective uid: %d' % os.geteuid())
-        logging.debug('gid: %d' % os.getgid())
-        logging.debug('effective gid: %d' % os.getegid())
+        logging.debug('current working directory: %s', os.getcwd())
+        logging.debug('uid: %s', os.getuid())
+        logging.debug('effective uid: %s', os.geteuid())
+        logging.debug('gid: %s', os.getgid())
+        logging.debug('effective gid: %s', os.getegid())
 
         logging.debug('environment variables:')
         for name in os.environ:
-            logging.debug('environment: %s=%s' % (name, os.environ[name]))
+            logging.debug('environment: %s=%s', name, os.environ[name])
         cp = self.settings.as_cp()
         f = StringIO.StringIO()
         cp.write(f)
-        logging.debug('Config:\n%s' % f.getvalue())
-        logging.debug('Python version: %s' % sys.version)
+        logging.debug('Config:\n%s', f.getvalue())
+        logging.debug('Python version: %s', sys.version)
 
     def app_directory(self):
         '''Return the directory where the application class is defined.
@@ -671,30 +677,26 @@ class Application(object):
         # Log wall clock and CPU times for self, children.
         utime, stime, cutime, cstime, elapsed_time = os.times()
         duration = elapsed_time - self._started
-        logging.debug('process duration: %s s' % duration)
-        logging.debug('CPU time, in process: %s s' % utime)
-        logging.debug('CPU time, in system: %s s' % stime)
-        logging.debug('CPU time, in children: %s s' % cutime)
-        logging.debug('CPU time, in system for children: %s s' % cstime)
+        logging.debug('process duration: %s s', duration)
+        logging.debug('CPU time, in process: %s s', utime)
+        logging.debug('CPU time, in system: %s s', stime)
+        logging.debug('CPU time, in children: %s s', cutime)
+        logging.debug('CPU time, in system for children: %s s', cstime)
 
-        logging.debug('dumping memory profiling data: %s' % msg)
-        logging.debug('VmRSS: %s KiB' % self._vmrss())
+        logging.debug('dumping memory profiling data: %s', msg)
+        logging.debug('VmRSS: %s KiB', self._vmrss())
 
         if kind == 'simple':
             return
 
         # These are fairly expensive operations, so we only log them
         # if we're doing expensive stuff anyway.
-        logging.debug('# objects: %d' % len(gc.get_objects()))
-        logging.debug('# garbage: %d' % len(gc.garbage))
+        logging.debug('# objects: %d', len(gc.get_objects()))
+        logging.debug('# garbage: %d', len(gc.garbage))
 
-        if kind == 'heapy':
-            from guppy import hpy
-            h = hpy()
-            logging.debug('memory profile:\n%s' % h.heap())
-        elif kind == 'meliae':
-            filename = 'obnam-%d.meliae' % self.memory_dump_counter
-            logging.debug('memory profile: see %s' % filename)
+        if kind == 'meliae':
+            filename = 'obnam-%d.meliae', self.memory_dump_counter
+            logging.debug('memory profile: see %s', filename)
             from meliae import scanner
             scanner.dump_all_objects(filename)
             self.memory_dump_counter += 1

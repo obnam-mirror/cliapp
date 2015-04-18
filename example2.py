@@ -23,7 +23,6 @@ Greet or insult people.
 
 
 import cliapp
-import logging
 
 
 class ExampleApp(cliapp.Application):
@@ -54,14 +53,17 @@ class ExampleApp(cliapp.Application):
             self.output.write('you suck, %s\n' % arg)
 
 
-app = ExampleApp(version='0.1.2', description='''
+app = ExampleApp(
+    version='0.1.2',
+    description='''
 Greet the user.
 Or possibly insult them. User's choice.
 ''',
-epilog='''
+    epilog='''
 This is the epilog.
 
 I hope you like it.
 ''')
+
 app.run()
 

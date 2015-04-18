@@ -16,11 +16,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-import optparse
 import os
-import StringIO
 import subprocess
-import sys
 import tempfile
 import unittest
 
@@ -44,8 +41,8 @@ class RuncmdTests(unittest.TestCase):
                          'hello world\n')
 
     def test_runcmd_returns_stderr_of_command(self):
-        exit, out, err = cliapp.runcmd_unchecked(['ls', 'notexist'])
-        self.assertNotEqual(exit, 0)
+        exit_code, out, err = cliapp.runcmd_unchecked(['ls', 'notexist'])
+        self.assertNotEqual(exit_code, 0)
         self.assertEqual(out, '')
         self.assertNotEqual(err, '')
 
@@ -87,7 +84,7 @@ class RuncmdTests(unittest.TestCase):
             (0, '4\n', ''))
 
     def test_runcmd_redirects_stdin_from_file(self):
-        fd, filename = tempfile.mkstemp()
+        fd, _ = tempfile.mkstemp()
         os.write(fd, 'foobar')
         os.lseek(fd, 0, os.SEEK_SET)
         self.assertEqual(cliapp.runcmd_unchecked(['cat'], stdin=fd),
@@ -96,31 +93,32 @@ class RuncmdTests(unittest.TestCase):
 
     def test_runcmd_redirects_stdout_to_file(self):
         fd, filename = tempfile.mkstemp()
-        exit, out, err = cliapp.runcmd_unchecked(['echo', 'foo'], stdout=fd)
+        exit_code, _, _ = cliapp.runcmd_unchecked(
+            ['echo', 'foo'], stdout=fd)
         os.close(fd)
         with open(filename) as f:
             data = f.read()
-        self.assertEqual(exit, 0)
+        self.assertEqual(exit_code, 0)
         self.assertEqual(data, 'foo\n')
 
     def test_runcmd_redirects_stderr_to_file(self):
         fd, filename = tempfile.mkstemp()
-        exit, out, err = cliapp.runcmd_unchecked(['ls', 'notexist'], stderr=fd)
+        exit_code, _, _ = cliapp.runcmd_unchecked(
+            ['ls', 'notexist'], stderr=fd)
         os.close(fd)
         with open(filename) as f:
             data = f.read()
-        self.assertNotEqual(exit, 0)
+        self.assertNotEqual(exit_code, 0)
         self.assertNotEqual(data, '')
 
     def test_runcmd_unchecked_handles_stdout_err_redirected_to_same_file(self):
         fd, filename = tempfile.mkstemp()
-        exit, out, err = cliapp.runcmd_unchecked(['sleep', '2'],
-                                                 stdout=fd,
-                                                 stderr=subprocess.STDOUT)
+        exit_code, _, _ = cliapp.runcmd_unchecked(
+            ['sleep', '2'], stdout=fd, stderr=subprocess.STDOUT)
         os.close(fd)
         with open(filename) as f:
             data = f.read()
-        self.assertEqual(exit, 0)
+        self.assertEqual(exit_code, 0)
         self.assertEqual(data, '')
 
     def test_runcmd_calls_stdout_callback_when_msg_on_stdout(self):
@@ -134,8 +132,8 @@ class RuncmdTests(unittest.TestCase):
             return 'foo'
 
         test_input = 'hello fox'
-        exit, out, err = cliapp.runcmd_unchecked(['echo', '-n', test_input],
-                                                 stdout_callback=logger)
+        _, out, _ = cliapp.runcmd_unchecked(
+            ['echo', '-n', test_input], stdout_callback=logger)
 
         self.assertEqual(out, 'foo')
         self.assertEqual(msgs, [test_input])
@@ -150,8 +148,8 @@ class RuncmdTests(unittest.TestCase):
             # mangled.
             return None
 
-        exit, out, err = cliapp.runcmd_unchecked(['ls', 'nosuchthing'],
-                                                 stderr_callback=logger)
+        _, _, err = cliapp.runcmd_unchecked(
+            ['ls', 'nosuchthing'], stderr_callback=logger)
 
         # The callback may be called several times, and we have no
         # control over that: output from the subprocess may arrive in

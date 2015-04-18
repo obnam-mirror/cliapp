@@ -126,8 +126,8 @@ class PluginManager(object):
     def load_plugin_file(self, pathname):
         '''Return plugin classes in a plugin file.'''
 
-        name, ext = os.path.splitext(os.path.basename(pathname))
-        f = file(pathname, 'r')
+        name, _ = os.path.splitext(os.path.basename(pathname))
+        f = open(pathname, 'r')
         module = imp.load_module(name, f, pathname,
                                  ('.py', 'r', imp.PY_SOURCE))
         f.close()
@@ -161,13 +161,13 @@ class PluginManager(object):
 
         return [int(s) for s in version.split('.')]
 
-    def enable_plugins(self, plugins=None):
+    def enable_plugins(self, plugins=None):  # pragma: no cover
         '''Enable all or selected plugins.'''
 
         for plugin in plugins or self.plugins:
             plugin.enable_wrapper()
 
-    def disable_plugins(self, plugins=None):
+    def disable_plugins(self, plugins=None):  # pragma: no cover
         '''Disable all or selected plugins.'''
 
         for plugin in plugins or self.plugins:

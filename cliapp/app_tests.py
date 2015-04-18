@@ -15,11 +15,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-import optparse
-import os
 import StringIO
 import sys
-import tempfile
 import unittest
 
 import cliapp
@@ -99,7 +96,7 @@ class ApplicationTests(unittest.TestCase):
 
     def test_run_processes_input_files(self):
         self.inputs = []
-        self.app.process_input = lambda name: self.inputs.append(name)
+        self.app.process_input = self.inputs.append
         self.app.run(args=['foo', 'bar'])
         self.assertEqual(self.inputs, ['foo', 'bar'])
 
@@ -126,12 +123,12 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.called, ['foo', 'bar'])
 
     def test_makes_envname_correctly(self):
-        self.assertEqual(self.app._envname('foo'), 'FOO')
-        self.assertEqual(self.app._envname('foo.py'), 'FOO')
-        self.assertEqual(self.app._envname('foo bar'), 'FOO_BAR')
-        self.assertEqual(self.app._envname('foo-bar'), 'FOO_BAR')
-        self.assertEqual(self.app._envname('foo/bar'), 'BAR')
-        self.assertEqual(self.app._envname('foo_bar'), 'FOO_BAR')
+        self.assertEqual(self.app.envname('foo'), 'FOO')
+        self.assertEqual(self.app.envname('foo.py'), 'FOO')
+        self.assertEqual(self.app.envname('foo bar'), 'FOO_BAR')
+        self.assertEqual(self.app.envname('foo-bar'), 'FOO_BAR')
+        self.assertEqual(self.app.envname('foo/bar'), 'BAR')
+        self.assertEqual(self.app.envname('foo_bar'), 'FOO_BAR')
 
     def test_parses_options(self):
         self.app.settings.string(['foo'], 'foo help')
@@ -142,31 +139,35 @@ class ApplicationTests(unittest.TestCase):
 
     def test_calls_setup(self):
 
+        context = {}
+
         class App(cliapp.Application):
 
             def setup(self):
-                self.setup_called = True
+                context['setup-called'] = True
 
             def process_inputs(self, args):
                 pass
 
         app = App()
         app.run(args=[])
-        self.assertTrue(app.setup_called)
+        self.assertTrue(context['setup-called'])
 
     def test_calls_cleanup(self):
+
+        context = {}
 
         class App(cliapp.Application):
 
             def cleanup(self):
-                self.cleanup_called = True
+                context['cleanup-called'] = True
 
             def process_inputs(self, args):
                 pass
 
         app = App()
         app.run(args=[])
-        self.assertTrue(app.cleanup_called)
+        self.assertTrue(context['cleanup-called'])
 
     def test_process_args_calls_process_inputs(self):
         self.called = False
@@ -201,11 +202,11 @@ class ApplicationTests(unittest.TestCase):
     def test_open_input_opens_file(self):
         f = self.app.open_input('/dev/null')
         self.assert_(isinstance(f, file))
-        self.assertEqual(f.mode, 'r')
+        self.assertEqual(getattr(f, 'mode'), 'r')
 
     def test_open_input_opens_file_in_binary_mode_when_requested(self):
         f = self.app.open_input('/dev/null', mode='rb')
-        self.assertEqual(f.mode, 'rb')
+        self.assertEqual(getattr(f, 'mode'), 'rb')
 
     def test_open_input_opens_stdin_if_dash_given(self):
         self.assertEqual(self.app.open_input('-'), sys.stdin)
@@ -244,7 +245,7 @@ class ApplicationTests(unittest.TestCase):
 
         class Foo(cliapp.Application):
 
-            def open_input(self, name):
+            def open_input(self, name, mode=None):
                 return StringIO.StringIO(''.join('%s%d\n' % (name, i)
                                                  for i in range(2)))
 
@@ -260,7 +261,7 @@ class ApplicationTests(unittest.TestCase):
 
         class Foo(cliapp.Application):
 
-            def open_input(self, name):
+            def open_input(self, name, mode=None):
                 return StringIO.StringIO(''.join('%s%d\n' % (name, i)
                                                  for i in range(2)))
 
@@ -361,6 +362,6 @@ class ExtensibleSubcommandTests(unittest.TestCase):
         self.assertEqual(self.app.subcommands, {})
 
     def test_adds_subcommand(self):
-        help = lambda args: None
-        self.app.add_subcommand('foo', help)
-        self.assertEqual(self.app.subcommands, {'foo': help})
+        help_callback = lambda args: None
+        self.app.add_subcommand('foo', help_callback)
+        self.assertEqual(self.app.subcommands, {'foo': help_callback})

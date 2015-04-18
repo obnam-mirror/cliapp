@@ -30,17 +30,17 @@ Homepage: http://liw.fi/cliapp/
 __version__ = '1.20150305'
 
 
-from fmt import TextFormat
-from app import Application, AppException
-from settings import (Settings, log_group_name, config_group_name,
-                      perf_group_name, UnknownConfigVariable)
-from runcmd import runcmd, runcmd_unchecked, shell_quote, ssh_runcmd
+from .fmt import TextFormat
+from .app import Application, AppException
+from .settings import (Settings, log_group_name, config_group_name,
+                       perf_group_name, UnknownConfigVariable)
+from .runcmd import runcmd, runcmd_unchecked, shell_quote, ssh_runcmd
 
 # The plugin system
-from hook import Hook, FilterHook
-from hookmgr import HookManager
-from plugin import Plugin
-from pluginmgr import PluginManager
+from .hook import Hook, FilterHook
+from .hookmgr import HookManager
+from .plugin import Plugin
+from .pluginmgr import PluginManager
 
 
 __all__ = locals()

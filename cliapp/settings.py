@@ -39,8 +39,8 @@ default_group_names = [
 class UnknownConfigVariable(cliapp.AppException):
 
     def __init__(self, filename, name):
-        self.msg = (
-            '%s: Unknown configuration variable %s' % (filename, name))
+        msg = '%s: Unknown configuration variable %s' % (filename, name)
+        cliapp.AppException.__init__(self, msg)
 
     def __str__(self):  # pragma: no cover
         return self.msg
@@ -53,11 +53,11 @@ class Setting(object):
     nargs = 1
     choices = None
 
-    def __init__(self, names, default, help, metavar=None, group=None,
+    def __init__(self, names, default, help_text, metavar=None, group=None,
                  hidden=False):
         self.names = names
         self.set_value(default)
-        self.help = help
+        self.help = help_text
         self.metavar = metavar or self.default_metavar()
         self.group = group
         self.hidden = hidden
@@ -99,10 +99,11 @@ class StringListSetting(Setting):
 
     action = 'append'
 
-    def __init__(self, names, default, help, metavar=None, group=None,
+    def __init__(self, names, default, help_text, metavar=None, group=None,
                  hidden=False):
         Setting.__init__(
-            self, names, [], help, metavar=metavar, group=group, hidden=hidden)
+            self, names, [], help_text, metavar=metavar, group=group,
+            hidden=hidden)
         self.default = default
         self.using_default_value = True
 
@@ -133,10 +134,10 @@ class ChoiceSetting(Setting):
 
     type = 'choice'
 
-    def __init__(self, names, choices, help, metavar=None, group=None,
+    def __init__(self, names, choices, help_text, metavar=None, group=None,
                  hidden=False):
         Setting.__init__(
-            self, names, choices[0], help, metavar=metavar, group=group,
+            self, names, choices[0], help_text, metavar=metavar, group=group,
             hidden=hidden)
         self.choices = choices
 
@@ -312,9 +313,9 @@ class Settings(object):
                     metavar='MODE', default='0600', group=log_group_name)
 
         self.choice(['dump-memory-profile'],
-                    ['simple', 'none', 'meliae', 'heapy'],
+                    ['simple', 'none', 'meliae'],
                     'make memory profiling dumps using METHOD, which is one '
-                    'of: none, simple, meliae, or heapy '
+                    'of: none, simple, or meliae '
                     '(default: %default)',
                     metavar='METHOD',
                     group=perf_group_name)
@@ -331,11 +332,11 @@ class Settings(object):
         for name in setting.names:
             self._settingses[name] = setting
 
-    def string(self, names, help, default='', **kwargs):
+    def string(self, names, help_text, default='', **kwargs):
         '''Add a setting with a string value.'''
-        self._add_setting(StringSetting(names, default, help, **kwargs))
+        self._add_setting(StringSetting(names, default, help_text, **kwargs))
 
-    def string_list(self, names, help, default=None, **kwargs):
+    def string_list(self, names, help_text, default=None, **kwargs):
         '''Add a setting which have multiple string values.
 
         An example would be an option that can be given multiple times
@@ -343,10 +344,10 @@ class Settings(object):
 
         '''
 
-        self._add_setting(StringListSetting(names, default or [], help,
+        self._add_setting(StringListSetting(names, default or [], help_text,
                                             **kwargs))
 
-    def choice(self, names, possibilities, help, **kwargs):
+    def choice(self, names, possibilities, help_text, **kwargs):
         '''Add a setting which chooses from list of acceptable values.
 
         An example would be an option to set debugging level to be
@@ -356,24 +357,25 @@ class Settings(object):
 
         '''
 
-        self._add_setting(ChoiceSetting(names, possibilities, help, **kwargs))
+        self._add_setting(
+            ChoiceSetting(names, possibilities, help_text, **kwargs))
 
-    def boolean(self, names, help, default=False, **kwargs):
+    def boolean(self, names, help_text, default=False, **kwargs):
         '''Add a setting with a boolean value.'''
-        self._add_setting(BooleanSetting(names, default, help, **kwargs))
+        self._add_setting(BooleanSetting(names, default, help_text, **kwargs))
 
-    def bytesize(self, names, help, default=0, **kwargs):
+    def bytesize(self, names, help_text, default=0, **kwargs):
         '''Add a setting with a size in bytes.
 
         The user can use suffixes for kilo/mega/giga/tera/kibi/mibi/gibi/tibi.
 
         '''
 
-        self._add_setting(ByteSizeSetting(names, default, help, **kwargs))
+        self._add_setting(ByteSizeSetting(names, default, help_text, **kwargs))
 
-    def integer(self, names, help, default=0, **kwargs):
+    def integer(self, names, help_text, default=0, **kwargs):
         '''Add an integer setting.'''
-        self._add_setting(IntegerSetting(names, default, help, **kwargs))
+        self._add_setting(IntegerSetting(names, default, help_text, **kwargs))
 
     def __getitem__(self, name):
         return self._settingses[name].value
@@ -424,7 +426,7 @@ class Settings(object):
         return name
 
     def build_parser(self, configs_only=False, arg_synopsis=None,
-                     cmd_synopsis=None, deferred_last=[], all_options=False):
+                     cmd_synopsis=None, deferred_last=None, all_options=False):
         '''Build OptionParser for parsing command line.'''
 
         # Call a callback function unless we're in configs_only mode.
@@ -660,7 +662,7 @@ class Settings(object):
         if suppress_errors:
             p.error = lambda msg: sys.exit(1)
 
-        options, args = p.parse_args(args)
+        _, args = p.parse_args(args)
         if compute_setting_values:  # pragma: no cover
             compute_setting_values(self)
         for callback in deferred_last:  # pragma: no cover
@@ -668,7 +670,7 @@ class Settings(object):
         return args
 
     @property
-    def _default_config_files(self):
+    def default_config_files(self):
         '''Return list of default config files to read.
 
         The names of the files are dependent on the name of the program,
@@ -681,14 +683,14 @@ class Settings(object):
         configs = []
 
         configs.append('/etc/%s.conf' % self.progname)
-        configs += self._listconfs('/etc/%s' % self.progname)
+        configs += self.listconfs('/etc/%s' % self.progname)
         configs.append(os.path.expanduser('~/.%s.conf' % self.progname))
-        configs += self._listconfs(
+        configs += self.listconfs(
             os.path.expanduser('~/.config/%s' % self.progname))
 
         return configs
 
-    def _listconfs(self, dirname, listdir=os.listdir):
+    def listconfs(self, dirname, listdir=os.listdir):
         '''Return list of pathnames to config files in dirname.
 
         Config files are expectd to have names ending in '.conf'.
@@ -709,7 +711,7 @@ class Settings(object):
 
     def _get_config_files(self):
         if self._config_files is None:
-            self._config_files = self._default_config_files
+            self._config_files = self.default_config_files
         return self._config_files
 
     def _set_config_files(self, config_files):
@@ -725,7 +727,7 @@ class Settings(object):
         s.parse_value(raw_string)
         return s
 
-    def load_configs(self, open=open):
+    def load_configs(self, open_file=open):
         '''Load all config files in self.config_files.
 
         Silently ignore files that do not exist.
@@ -737,7 +739,7 @@ class Settings(object):
 
         for pathname in self.config_files:
             try:
-                f = open(pathname)
+                f = open_file(pathname)
             except IOError:
                 pass
             else:
@@ -753,7 +755,7 @@ class Settings(object):
         # Remember the ConfigParser for use in as_cp later on.
         self._cp = cp
 
-    def _generate_manpage(self, o, os, value, p):  # pragma: no cover
+    def _generate_manpage(self, o, dummy, value, p):  # pragma: no cover
         template = open(value).read()
         generator = ManpageGenerator(template, p, self._arg_synopsis,
                                      self._cmd_synopsis)

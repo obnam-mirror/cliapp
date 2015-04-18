@@ -21,19 +21,20 @@ import glob
 import cliapp
 
 
-setup(name='cliapp',
-      version=cliapp.__version__,
-      author='Lars Wirzenius',
-      author_email='liw@liw.fi',
-      url='http://liw.fi/cliapp/',
-      description='framework for Unix command line programs',
-      long_description='''\
-cliapp makes it easier to write typical Unix command line programs,
-by taking care of the common tasks they need to do, such as
-parsing the command line, reading configuration files, setting
-up logging, iterating over lines of input files, and so on.
-''',
-      classifiers=[
+setup(
+    name='cliapp',
+    version=cliapp.__version__,
+    author='Lars Wirzenius',
+    author_email='liw@liw.fi',
+    url='http://liw.fi/cliapp/',
+    description='framework for Unix command line programs',
+    long_description='''\
+    cliapp makes it easier to write typical Unix command line programs,
+    by taking care of the common tasks they need to do, such as
+    parsing the command line, reading configuration files, setting
+    up logging, iterating over lines of input files, and so on.
+    ''',
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Intended Audience :: Developers',
@@ -44,7 +45,7 @@ up logging, iterating over lines of input files, and so on.
         'Topic :: Software Development :: User Interfaces',
         'Topic :: Text Processing :: Filters',
         'Topic :: Utilities',
-      ],
-      packages=['cliapp'],
-      data_files=[('share/man/man5', glob.glob('*.5'))],
-     )
+    ],
+    packages=['cliapp'],
+    data_files=[('share/man/man5', glob.glob('*.5'))],
+)

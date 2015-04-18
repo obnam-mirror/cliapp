@@ -51,8 +51,8 @@ def runcmd(argv, *args, **kwargs):
             opts[name] = kwargs[name]
             del kwargs[name]
 
-    exit, out, err = runcmd_unchecked(argv, *args, **kwargs)
-    if exit != 0:
+    exit_code, out, err = runcmd_unchecked(argv, *args, **kwargs)
+    if exit_code != 0:
         msg = 'Command failed: %s\n%s' % (' '.join(argv), err)
         if opts['ignore_fail']:
             if opts['log_error']:
@@ -75,7 +75,7 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
     '''
 
     argvs = [argv] + list(argvs)
-    logging.debug('run external command: %s' % repr(argvs))
+    logging.debug('run external command: %r', argvs)
 
     def pop_kwarg(name, default):
         if name in kwargs:
@@ -206,10 +206,9 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
 
         if rlist or wlist:
             try:
-                r, w, x = select.select(rlist, wlist, [])
-            except select.error, e:  # pragma: no cover
-                err, msg = e.args
-                if err == errno.EINTR:
+                r, w, _ = select.select(rlist, wlist, [])
+            except select.error as e:  # pragma: no cover
+                if e.args[0] == errno.EINTR:
                     break
                 raise
         else:

@@ -80,20 +80,6 @@ class PluginManagerTests(unittest.TestCase):
     def test_raises_keyerror_for_unknown_plugin(self):
         self.assertRaises(KeyError, self.pm.__getitem__, 'Hithere')
 
-    def test_enable_plugins_enables_all_plugins(self):
-        enabled = set()
-        for plugin in self.pm.plugins:
-            plugin.enable = lambda: enabled.add(plugin)
-        self.pm.enable_plugins()
-        self.assertEqual(enabled, set(self.pm.plugins))
-
-    def test_disable_plugins_disables_all_plugins(self):
-        disabled = set()
-        for plugin in self.pm.plugins:
-            plugin.disable = lambda: disabled.add(plugin)
-        self.pm.disable_plugins()
-        self.assertEqual(disabled, set(self.pm.plugins))
-
 
 class PluginManagerCompatibleApplicationVersionTests(unittest.TestCase):
 

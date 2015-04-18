@@ -20,6 +20,20 @@ import unittest
 from cliapp import Plugin
 
 
+class DummyPlugin(Plugin):
+
+    def __init__(self):
+        Plugin.__init__(self)
+        self.enable_called = False
+        self.disable_called = False
+
+    def enable(self):
+        self.enable_called = True
+
+    def disable(self):
+        self.disable_called = True
+
+
 class PluginTests(unittest.TestCase):
 
     def setUp(self):
@@ -41,11 +55,11 @@ class PluginTests(unittest.TestCase):
         self.assertRaises(Exception, self.plugin.enable)
 
     def test_enable_wrapper_calls_enable(self):
-        self.plugin.enable = lambda: setattr(self, 'enabled', True)
-        self.plugin.enable_wrapper()
-        self.assert_(self.enabled, True)
+        plugin = DummyPlugin()
+        plugin.enable_wrapper()
+        self.assertTrue(plugin.enable_called)
 
     def test_disable_wrapper_calls_disable(self):
-        self.plugin.disable = lambda: setattr(self, 'disabled', True)
-        self.plugin.disable_wrapper()
-        self.assert_(self.disabled, True)
+        plugin = DummyPlugin()
+        plugin.disable_wrapper()
+        self.assertTrue(plugin.disable_called)

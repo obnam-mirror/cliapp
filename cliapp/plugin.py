@@ -26,11 +26,6 @@ other modules as well, such as unit tests, in the same locations.)
 '''
 
 
-import imp
-import inspect
-import os
-
-
 class Plugin(object):
 
     '''Base class for plugins.
@@ -117,7 +112,7 @@ class Plugin(object):
 
     def enable(self):
         '''Enable the plugin.'''
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def disable(self):  # pragma: no cover
         '''Disable the plugin.'''

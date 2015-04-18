@@ -13,3 +13,5 @@ class Hello(cliapp.Plugin):
     def setup(self):
         self.setup_called = True
 
+    def enable(self):
+        pass

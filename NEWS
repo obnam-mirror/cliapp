@@ -12,6 +12,9 @@ Version 1.UNRELEASED
   `cliapp.ssh_runcmd` to allow the caller to easily change to a
   directory on the server.
 
+* Support for `heapy` memory profile has been dropped. It's not
+  packaged for Debian, and is rarely available anywhere.
+
 
 Version 1.20150305
 ------------------

@@ -10,3 +10,5 @@ class WrongVersion(cliapp.Plugin):
     def __init__(self, *args, **kwargs):
         pass
 
+    def enable(self):
+        pass

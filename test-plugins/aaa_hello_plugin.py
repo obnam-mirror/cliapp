@@ -6,3 +6,5 @@ class Hello(cliapp.Plugin):
         self.foo = foo
         self.bar = bar
 
+    def enable(self):
+        pass

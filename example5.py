@@ -16,7 +16,6 @@
 
 
 import cliapp
-import logging
 
 
 class LoggerApp(cliapp.Application):

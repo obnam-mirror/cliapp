@@ -24,6 +24,8 @@ class HookTests(unittest.TestCase):
 
     def setUp(self):
         self.hook = Hook()
+        self.args = None
+        self.kwargs = None
 
     def callback(self, *args, **kwargs):
         self.args = args
@@ -57,6 +59,8 @@ class FilterHookTests(unittest.TestCase):
 
     def setUp(self):
         self.hook = FilterHook()
+        self.args = None
+        self.kwargs = None
 
     def callback(self, data, *args, **kwargs):
         self.args = args

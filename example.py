@@ -31,16 +31,25 @@ class ExampleApp(cliapp.Application):
     '''A little fgrep-like tool.'''
 
     def add_settings(self):
-        self.settings.string_list(['pattern', 'e'],
-                                  'search for regular expression PATTERN',
-                                   metavar='REGEXP')
+        self.settings.string_list(
+            ['pattern', 'e'],
+            'search for regular expression PATTERN',
+            metavar='REGEXP')
 
-        self.settings.boolean(['dummy'], 'this setting is ignored',
-                              group='Test Group')
+        self.settings.boolean(
+            ['dummy'],
+            'this setting is ignored',
+            group='Test Group')
 
-        self.settings.string(['yoyo'], 'yoyo', group=cliapp.config_group_name)
+        self.settings.string(
+            ['yoyo'],
+            'yoyo',
+            group=cliapp.config_group_name)
 
-        self.settings.string(['nono'], 'nono', default=None)
+        self.settings.string(
+            ['nono'],
+            'nono',
+            default=None)
 
     # We override process_inputs to be able to do something after the last
     # input line.
@@ -50,12 +59,12 @@ class ExampleApp(cliapp.Application):
         self.output.write('There were %s matches.\n' % self.matches)
 
     def process_input_line(self, name, line):
-        logging.debug('processing %s:%s' % (name, self.lineno))
+        logging.debug('processing %s:%s', name, self.lineno)
         for pattern in self.settings['pattern']:
             if pattern in line:
                 self.output.write('%s:%s: %s' % (name, self.lineno, line))
                 self.matches += 1
-                logging.debug('Match: %s line %d' % (name, self.lineno))
+                logging.debug('Match: %s line %d', name, self.lineno)
 
 
 app = ExampleApp(version='0.1.2')
