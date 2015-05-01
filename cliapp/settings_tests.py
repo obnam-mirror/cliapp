@@ -196,25 +196,25 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings['foo'], 123 * 1000)
 
         self.settings.parse_args(args=['--foo=123m'])
-        self.assertEqual(self.settings['foo'], 123 * 1000**2)
+        self.assertEqual(self.settings['foo'], 123 * 1000 ** 2)
 
         self.settings.parse_args(args=['--foo=123g'])
-        self.assertEqual(self.settings['foo'], 123 * 1000**3)
+        self.assertEqual(self.settings['foo'], 123 * 1000 ** 3)
 
         self.settings.parse_args(args=['--foo=123t'])
-        self.assertEqual(self.settings['foo'], 123 * 1000**4)
+        self.assertEqual(self.settings['foo'], 123 * 1000 ** 4)
 
         self.settings.parse_args(args=['--foo=123kib'])
         self.assertEqual(self.settings['foo'], 123 * 1024)
 
         self.settings.parse_args(args=['--foo=123mib'])
-        self.assertEqual(self.settings['foo'], 123 * 1024**2)
+        self.assertEqual(self.settings['foo'], 123 * 1024 ** 2)
 
         self.settings.parse_args(args=['--foo=123gib'])
-        self.assertEqual(self.settings['foo'], 123 * 1024**3)
+        self.assertEqual(self.settings['foo'], 123 * 1024 ** 3)
 
         self.settings.parse_args(args=['--foo=123tib'])
-        self.assertEqual(self.settings['foo'], 123 * 1024**4)
+        self.assertEqual(self.settings['foo'], 123 * 1024 ** 4)
 
     def test_adds_integer_setting(self):
         self.settings.integer(['foo'], 'foo help')

@@ -184,14 +184,14 @@ class ByteSizeSetting(Setting):
             number = float(m.group('number'))
             unit = m.group('unit')
             units = {
-                'k': 10**3,
-                'm': 10**6,
-                'g': 10**9,
-                't': 10**12,
-                'ki': 2**10,
-                'mi': 2**20,
-                'gi': 2**30,
-                'ti': 2**40,
+                'k': 10 ** 3,
+                'm': 10 ** 6,
+                'g': 10 ** 9,
+                't': 10 ** 12,
+                'ki': 2 ** 10,
+                'mi': 2 ** 20,
+                'gi': 2 ** 30,
+                'ti': 2 ** 40,
             }
             return long(number * units.get(unit, 1))
 
