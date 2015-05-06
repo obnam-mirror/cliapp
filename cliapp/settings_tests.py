@@ -278,14 +278,17 @@ foo = yeehaa
 [config]
 foo = yeehaa
 bar = ping, pong
+comma = ping, pong, "foo,bar"
 ''')
 
         self.settings.string_list(['foo'], 'foo help')
         self.settings.string_list(['bar'], 'bar help')
+        self.settings.string_list(['comma'], 'comma help')
         self.settings.config_files = ['whatever.conf']
         self.settings.load_configs(open_file=mock_open)
         self.assertEqual(self.settings['foo'], ['yeehaa'])
         self.assertEqual(self.settings['bar'], ['ping', 'pong'])
+        self.assertEqual(self.settings['comma'], ['ping', 'pong', 'foo,bar'])
 
     def test_handles_defaults_with_config_files(self):
 
@@ -330,9 +333,9 @@ bar = ping, pong
         self.settings.string_list(['bar'], 'bar help', default=['bar'])
         self.settings.config_files = ['whatever.conf']
         self.settings.load_configs(open_file=mock_open)
-        self.settings.parse_args(['--foo=red', '--bar=blue', '--bar=white'])
+        self.settings.parse_args(['--foo=red', '--bar=blue', '--bar=white,comma'])
         self.assertEqual(self.settings['foo'], 'red')
-        self.assertEqual(self.settings['bar'], ['blue', 'white'])
+        self.assertEqual(self.settings['bar'], ['blue', 'white,comma'])
 
     def test_load_configs_raises_error_for_unknown_variable(self):
 

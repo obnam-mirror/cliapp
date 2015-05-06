@@ -105,30 +105,41 @@ class StringListSetting(Setting):
             self, names, [], help_text, metavar=metavar, group=group,
             hidden=hidden)
         self.default = default
+        self._strings = self.default or []
         self.using_default_value = True
 
     def default_metavar(self):
         return self.names[0].upper()
 
     def get_value(self):
-        if self._string_value.strip():
-            return [s.strip() for s in self._string_value.split(',')]
-        else:
-            return self.default
+        return self._strings
 
     def set_value(self, strings):
-        self._string_value = ','.join(strings)
+        self._strings = strings
         self.using_default_value = False
 
     def has_value(self):
         return self.value != []
 
     def parse_value(self, string):
-        self.value = [s.strip() for s in string.split(',')]
+        values = []
+        value = ''
+        inside_quote = False
+        for c in string:
+            if c == '"':
+                inside_quote = not inside_quote
+            elif c == ',' and not inside_quote:
+                values.append(value)
+                value = ''
+            else:
+                value += c
+        if value:
+            values.append(value)
+        self.value = [v.strip() for v in values]
 
     def format(self):  # pragma: no cover
-        return ', '.join(self.value)
-
+        values = ['"%s"' % v if ',' in v else v for v in self.value]
+        return ', '.join(values)
 
 class ChoiceSetting(Setting):
 
