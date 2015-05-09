@@ -53,7 +53,7 @@ def runcmd(argv, *args, **kwargs):
 
     exit_code, out, err = runcmd_unchecked(argv, *args, **kwargs)
     if exit_code != 0:
-        msg = 'Command failed: %s\n%s' % (' '.join(argv), err)
+        msg = 'Command failed: %s\n%s\n%s' % (' '.join(argv), out, err)
         if opts['ignore_fail']:
             if opts['log_error']:
                 logging.info(msg)
