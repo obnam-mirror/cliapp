@@ -30,6 +30,7 @@ Homepage: http://liw.fi/cliapp/
 __version__ = '1.20150305'
 
 
+from .util import MemoryProfileDumper
 from .fmt import TextFormat
 from .app import Application, AppException
 from .settings import (Settings, log_group_name, config_group_name,

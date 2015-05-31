@@ -16,7 +16,6 @@
 
 
 import errno
-import gc
 import inspect
 import logging
 import logging.handlers
@@ -24,7 +23,6 @@ import os
 import StringIO
 import sys
 import traceback
-import time
 import platform
 import textwrap
 
@@ -115,9 +113,7 @@ class Application(object):
 
         self.plugin_subdir = 'plugins'
 
-        # For meliae memory dumps.
-        self.memory_dump_counter = 0
-        self.last_memory_dump = 0
+        self.memory_profile_dumper = cliapp.MemoryProfileDumper(self.settings)
 
         # For process duration.
         self._started = os.times()[-1]
@@ -638,65 +634,5 @@ class Application(object):
     def runcmd_unchecked(self, *args, **kwargs):  # pragma: no cover
         return cliapp.runcmd_unchecked(*args, **kwargs)
 
-    def _vmrss(self):  # pragma: no cover
-        '''Return current resident memory use, in KiB.'''
-        if platform.system() != 'Linux':
-            return 0
-        try:
-            f = open('/proc/self/status')
-        except IOError:
-            return 0
-        rss = 0
-        for line in f:
-            if line.startswith('VmRSS'):
-                rss = line.split()[1]
-        f.close()
-        return rss
-
     def dump_memory_profile(self, msg):  # pragma: no cover
-        '''Log memory profiling information.
-
-        Get the memory profiling method from the dump-memory-profile
-        setting, and log the results at DEBUG level. ``msg`` is a
-        message the caller provides to identify at what point the profiling
-        happens.
-
-        '''
-
-        kind = self.settings['dump-memory-profile']
-        interval = self.settings['memory-dump-interval']
-
-        if kind == 'none':
-            return
-
-        now = time.time()
-        if self.last_memory_dump + interval > now:
-            return
-        self.last_memory_dump = now
-
-        # Log wall clock and CPU times for self, children.
-        utime, stime, cutime, cstime, elapsed_time = os.times()
-        duration = elapsed_time - self._started
-        logging.debug('process duration: %s s', duration)
-        logging.debug('CPU time, in process: %s s', utime)
-        logging.debug('CPU time, in system: %s s', stime)
-        logging.debug('CPU time, in children: %s s', cutime)
-        logging.debug('CPU time, in system for children: %s s', cstime)
-
-        logging.debug('dumping memory profiling data: %s', msg)
-        logging.debug('VmRSS: %s KiB', self._vmrss())
-
-        if kind == 'simple':
-            return
-
-        # These are fairly expensive operations, so we only log them
-        # if we're doing expensive stuff anyway.
-        logging.debug('# objects: %d', len(gc.get_objects()))
-        logging.debug('# garbage: %d', len(gc.garbage))
-
-        if kind == 'meliae':
-            filename = 'obnam-%d.meliae', self.memory_dump_counter
-            logging.debug('memory profile: see %s', filename)
-            from meliae import scanner
-            scanner.dump_all_objects(filename)
-            self.memory_dump_counter += 1
+        self.memory_profile_dumper.dump_memory_profile(msg)
