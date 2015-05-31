@@ -224,7 +224,6 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
         if procs[-1].stdout in r:
             data = procs[-1].stdout.read(io_size)
             if data:
-                logging.debug('calling stdout callback: %r', stdout_callback)
                 data_new = stdout_callback(data)
                 if data_new is None:
                     data_new = data
@@ -235,7 +234,6 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
         if procs[-1].stderr in r:
             data = procs[-1].stderr.read(io_size)
             if data:
-                logging.debug('calling stderr callback: %r', stderr_callback)
                 data_new = stderr_callback(data)
                 if data_new is None:
                     data_new = data
