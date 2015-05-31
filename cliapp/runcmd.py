@@ -188,7 +188,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
             if p.returncode is None:
                 return True
         if pipe_stdout == subprocess.PIPE and not stdout_eof:
-            return True
+            return True  # pragma: no cover
         if pipe_stderr == subprocess.PIPE and not stderr_eof:
             return True  # pragma: no cover
         return False
