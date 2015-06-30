@@ -1,6 +1,7 @@
 python-cliapp (1.20150630-1) unstable; urgency=medium
 
   * New upstream version.
+  * Source package format changed to 3.0 (quilt).
 
  -- Lars Wirzenius <liw@liw.fi>  Tue, 30 Jun 2015 22:00:16 +0300
 
