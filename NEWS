@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.20150630
+Version 1.20150701
 ------------------
 
 * Lars Wirzenius added the `ssh_options` keyword argument to
