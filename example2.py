@@ -28,8 +28,8 @@ import cliapp
 class ExampleApp(cliapp.Application):
 
     cmd_synopsis = {
-        'greet': '[USER]...',
-        'insult': '[USER]...',
+        'greet': 'USER...',
+        'insult': 'USER...',
     }
 
     def cmd_greet(self, args):
@@ -39,6 +39,9 @@ class ExampleApp(cliapp.Application):
         but terse form of greeting.
 
         '''
+        if len(args) == 0:
+            raise cliapp.AppException(self.get_subcommand_usage('greet'))
+
         for arg in args:
             self.output.write('greetings, %s\n' % arg)
 
@@ -49,6 +52,9 @@ class ExampleApp(cliapp.Application):
         a prat, and needs to be told off. This is the command for that.
 
         '''
+        if len(args) == 0:
+            raise cliapp.AppException(self.get_subcommand_usage('insult'))
+
         for arg in args:
             self.output.write('you suck, %s\n' % arg)
 

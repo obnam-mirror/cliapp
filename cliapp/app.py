@@ -287,6 +287,10 @@ class Application(object):
 
         return cliapp.TextFormat(*a, **kw)
 
+    def get_subcommand_usage(self, cmd):  # pragma: no cover
+        return 'usage: %s %s %s' % (self.settings.progname,
+                                    cmd, self.cmd_synopsis[cmd])
+
     def _help_helper(self, args, show_all):  # pragma: no cover
         try:
             width = int(os.environ.get('COLUMNS', '78'))
