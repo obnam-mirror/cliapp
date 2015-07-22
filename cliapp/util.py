@@ -73,7 +73,7 @@ class MemoryProfileDumper(object):
         logging.debug('# garbage: %d', len(gc.garbage))
 
         if kind == 'meliae':
-            filename = 'obnam-%d.meliae', self.memory_dump_counter
+            filename = 'obnam-%d.meliae' % self.memory_dump_counter
             logging.debug('memory profile: see %s', filename)
             from meliae import scanner
             scanner.dump_all_objects(filename)

@@ -1,6 +1,11 @@
 NEWS for cliapp
 ===============
 
+Version 1.UNRELEASED
+------------------
+
+* Memory use profiling with Meliae was fixed.
+
 Version 1.20150701
 ------------------
 
