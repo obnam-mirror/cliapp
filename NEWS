@@ -16,6 +16,12 @@ Bug fixes:
 
 * Memory use profiling with Meliae was fixed.
 
+New features:
+
+* Richard Ipsum added the `cliapp.Application.get_subcommand_usage`
+  method to return a short usage text for a subcommand. This allows
+  better error message.
+
 Version 1.20150701
 ------------------
 
