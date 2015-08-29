@@ -96,16 +96,25 @@ and multiple patterns are allowed.
 On the command line,
 that happens by using the option multiple times.
 In the configuration file,
-all values are given on one line,
+all values are given on one logical line,
 separated by commas.
+.PP
 This is a non-standard extension to the INI file syntax.
-There is no way to escape commas.
+.PP
+To include an item that itself contains a comma,
+surround the item with double quotes.
+There is no way to escape double quotes.
 .PP
 Example:
 .IP
 .nf
 [config]
-pattern = foo, bar, foobar
+pattern = foo, bar, foobar, "hello, world"
+.fi
+.PP
+Note than in versions of cliapp prior to 1.20150829,
+the command line option would also break values with commas.
+This has since been fixed.
 .SS "Boolean (true/false or on/off or yes/no) settings"
 When a setting can be either on or off,
 it's called a Boolean setting.
