@@ -4,6 +4,16 @@ NEWS for cliapp
 Version 1.UNRELEASED
 ------------------
 
+Important, backwards incompatible bug fixes:
+
+* Jan Gerber fixed string list option handling. Command line options
+  no longer parse values by commas, so that `--foo=bar,foobar` results
+  in a single value `bar,foobar`, instead of two values (`bar` and
+  `foobar`). Also, in configuration files, values may be quoted with
+  double quotes.
+
+Bug fixes:
+
 * Memory use profiling with Meliae was fixed.
 
 Version 1.20150701
