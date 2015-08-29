@@ -333,7 +333,8 @@ bar = ping, pong
         self.settings.string_list(['bar'], 'bar help', default=['bar'])
         self.settings.config_files = ['whatever.conf']
         self.settings.load_configs(open_file=mock_open)
-        self.settings.parse_args(['--foo=red', '--bar=blue', '--bar=white,comma'])
+        self.settings.parse_args(
+            ['--foo=red', '--bar=blue', '--bar=white,comma'])
         self.assertEqual(self.settings['foo'], 'red')
         self.assertEqual(self.settings['bar'], ['blue', 'white,comma'])
 

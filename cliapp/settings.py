@@ -141,6 +141,7 @@ class StringListSetting(Setting):
         values = ['"%s"' % v if ',' in v else v for v in self.value]
         return ', '.join(values)
 
+
 class ChoiceSetting(Setting):
 
     type = 'choice'
