@@ -1,3 +1,10 @@
+python-cliapp (1.20150829-1) UNRELEASED; urgency=medium
+
+  * New upstream version.
+      * Fix "Allow commas in StringListSetting values" (Closes: #784576)
+
+ -- Lars Wirzenius <liw@liw.fi>  Sat, 29 Aug 2015 19:10:43 +0300
+
 python-cliapp (1.20150701-1) unstable; urgency=medium
 
   * New upstream version.
