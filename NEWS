@@ -1,6 +1,15 @@
 NEWS for cliapp
 ===============
 
+Version 1.20151108, released UNRELEASED
+---------------------------------------
+
+Bug fix:
+
+* The generated manpages used to have an equals sign for short options
+  with an argument. For example, `-e=REGEX`. This has now been fixed
+  to show the correct form, `-eREGEX`, instead.
+
 Version 1.20150829
 ------------------
 

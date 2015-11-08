@@ -77,10 +77,16 @@ class ManpageGenerator(object):
 
     def format_option_for_synopsis(self, option):
         if option.metavar:
-            suffix = '\\fR=\\fI%s' % self.esc_dashes(option.metavar)
+            short_suffix = '\\fI%s' % self.esc_dashes(option.metavar)
+            long_suffix = '\\fR=\\fI%s' % self.esc_dashes(option.metavar)
         else:
-            suffix = ''
+            short_suffix = ''
+            long_suffix = ''
         for name in option._short_opts + option._long_opts:
+            if name.startswith('--'):
+                suffix = long_suffix
+            else:
+                suffix = short_suffix
             yield '%s%s' % (self.esc_dashes(name), suffix)
 
     def format_options(self):
