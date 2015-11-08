@@ -296,6 +296,7 @@ class Settings(object):
         self._add_default_settings()
 
         self._config_files = None
+        self._required_config_files = []
         self._cp = ConfigParser.ConfigParser()
 
     def _add_default_settings(self):
@@ -527,6 +528,7 @@ class Settings(object):
 
         def reset_configs(option, opt_str, value, parser):
             self.config_files = []
+            self._required_config_files = []
 
         config_group.add_option(
             '--no-default-configs',
@@ -539,6 +541,7 @@ class Settings(object):
 
         def append_to_configs(option, opt_str, value, parser):
             self.config_files.append(value)
+            self._required_config_files.append(value)
 
         config_group.add_option(
             '--config',
@@ -752,8 +755,9 @@ class Settings(object):
         for pathname in self.config_files:
             try:
                 f = open_file(pathname)
-            except IOError:
-                pass
+            except IOError:  # pragma: no cover
+                if pathname in self._required_config_files:
+                    raise
             else:
                 cp.readfp(f)
                 f.close()

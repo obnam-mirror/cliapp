@@ -10,6 +10,8 @@ Bug fix:
   with an argument. For example, `-e=REGEX`. This has now been fixed
   to show the correct form, `-eREGEX`, instead.
 
+* If a user specifies a config file with `--config`, it must exist.
+
 Version 1.20150829
 ------------------
 
