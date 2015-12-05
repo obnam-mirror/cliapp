@@ -488,6 +488,16 @@ class Settings(object):
 
         config_group = option_groups[config_group_name]
 
+        # Helper to add an option and add a reference to the Setting
+        # object it is created from (or None). This allows manpage
+        # generation to recognize when --foo and --no-foo come from
+        # the same setting.
+
+        def add_option_to_group(setting, group, *args, **kwargs):
+            option = group.add_option(*args, **kwargs)
+            option.from_setting = setting
+            return option
+
         # Return help text, unless setting/option is hidden, in which
         # case return optparse.SUPPRESS_HELP.
 
@@ -504,7 +514,8 @@ class Settings(object):
                 sys.stdout.write('%s\n' % name)
             sys.exit(0)
 
-        config_group.add_option(
+        add_option_to_group(
+            None, config_group,
             '--dump-setting-names',
             action='callback',
             nargs=0,
@@ -517,7 +528,8 @@ class Settings(object):
             self.dump_config(sys.stdout)
             sys.exit(0)
 
-        config_group.add_option(
+        add_option_to_group(
+            None, config_group,
             '--dump-config',
             action='callback',
             nargs=0,
@@ -530,7 +542,8 @@ class Settings(object):
             self.config_files = []
             self._required_config_files = []
 
-        config_group.add_option(
+        add_option_to_group(
+            None, config_group,
             '--no-default-configs',
             action='callback',
             nargs=0,
@@ -543,7 +556,8 @@ class Settings(object):
             self.config_files.append(value)
             self._required_config_files.append(value)
 
-        config_group.add_option(
+        add_option_to_group(
+            None, config_group,
             '--config',
             action='callback',
             nargs=1,
@@ -559,7 +573,8 @@ class Settings(object):
                 print filename
             sys.exit(0)
 
-        config_group.add_option(
+        add_option_to_group(
+            None, config_group,
             '--list-config-files',
             action='callback',
             nargs=0,
@@ -570,7 +585,8 @@ class Settings(object):
 
         self._arg_synopsis = arg_synopsis
         self._cmd_synopsis = cmd_synopsis
-        p.add_option(
+        add_option_to_group(
+            None, p,
             '--generate-manpage',
             action='callback',
             nargs=1,
@@ -590,7 +606,8 @@ class Settings(object):
             sys.stdout.write(pp.format_help())
             sys.exit(0)
 
-        config_group.add_option(
+        add_option_to_group(
+            None, config_group,
             '--help-all',
             action='callback',
             help='show all options',
@@ -616,15 +633,16 @@ class Settings(object):
 
         def add_option(obj, s):
             option_names = self._option_names(s.names)
-            obj.add_option(*option_names,
-                           action='callback',
-                           callback=maybe(set_value),
-                           callback_args=(s,),
-                           type=s.type,
-                           nargs=s.nargs,
-                           choices=s.choices,
-                           help=help_text(s.help, s.hidden),
-                           metavar=s.metavar)
+            add_option_to_group(
+                s, obj, *option_names,
+                action='callback',
+                callback=maybe(set_value),
+                callback_args=(s,),
+                type=s.type,
+                nargs=s.nargs,
+                choices=s.choices,
+                help=help_text(s.help, s.hidden),
+                metavar=s.metavar)
 
         def add_negation_option(obj, s):
             option_names = self._option_names(s.names)
@@ -632,12 +650,13 @@ class Settings(object):
             neg_names = ['--no-' + x[2:] for x in long_names]
             unused_names = [x for x in neg_names
                             if x[2:] not in self._settingses]
-            obj.add_option(*unused_names,
-                           action='callback',
-                           callback=maybe(set_false),
-                           callback_args=(s,),
-                           type=s.type,
-                           help=help_text('', s.hidden))
+            add_option_to_group(
+                s, obj, *unused_names,
+                action='callback',
+                callback=maybe(set_false),
+                callback_args=(s,),
+                type=s.type,
+                help=help_text('opposite of %s' % option_names[0], s.hidden))
 
         # Add options for every setting.
 

@@ -30,8 +30,47 @@ class ManpageGenerator(object):
         self.cmd_synopsis = cmd_synopsis
 
     def sort_options(self, options):
-        return sorted(options,
-                      key=lambda o: (o._long_opts + o._short_opts)[0])
+        # Return the options in an option group in sorted order. This
+        # is slightly tricky. Humans have such weird opinions of what
+        # it means to be sorted. The main thing we care about is that
+        # given a boolean setting foo, the options --foo and --no-foo
+        # get sorted after each other. We do this by using the
+        # option.from_setting attribute, which might not exist. The
+        # list already includes the --no-foo options, which seems a
+        # bit silly, but there you go.
+        #
+        # Split list of options into two: one with --foo, one with
+        # --no-foo. Sort the first list. Insert options from second
+        # list into first list.
+
+        def is_neg_option(o):
+            return (hasattr(o, 'from_setting') and
+                    o._long_opts and
+                    o._long_opts[0].startswith('--no-'))
+
+        def split(options, setting):
+            before = []
+            from_same = []
+            after = []
+            for o in options:
+                s = getattr(o, 'from_setting', None)
+                if s is setting:
+                    from_same.append(o)
+                elif from_same:
+                    after.append(o)
+                else:
+                    before.append(o)
+            return before, from_same, after
+
+        neg_options = [o for o in options if is_neg_option(o)]
+        main_options = [o for o in options if o not in neg_options]
+        main_options.sort(key=lambda o: (o._long_opts + o._short_opts)[0])
+
+        for neg in neg_options:
+            before, from_same, after = split(main_options, neg.from_setting)
+            main_options = before + from_same + [neg] + after
+
+        return main_options
 
     def option_list(self, container):
         return self.sort_options(container.option_list)
