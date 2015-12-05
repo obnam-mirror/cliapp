@@ -12,6 +12,10 @@ Bug fix:
 
 * If a user specifies a config file with `--config`, it must exist.
 
+* The automatically added negated boolean options (`--no-foo` added
+  for `--foo`) are now sorted after the non-negated ones in manual
+  pages.
+
 Version 1.20150829
 ------------------
 
