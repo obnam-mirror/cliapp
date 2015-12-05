@@ -75,10 +75,6 @@ class ManpageGenerator(object):
     def option_list(self, container):
         return self.sort_options(container.option_list)
 
-    @property
-    def options(self):
-        return self.option_list(self.parser)
-
     def format_template(self):
         sections = (('SYNOPSIS', self.format_synopsis()),
                     ('OPTIONS', self.format_options()))
