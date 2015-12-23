@@ -78,7 +78,30 @@ Thus,
 means the same thing,
 regardless of what subcommand is being used.
 .SS "Configuration files"
-Configuration files use INI file syntax.
+Configuration files use INI or YAML file syntax.
+Files named
+.I something.yaml
+are in YAML syntax.
+Everything else are in INI syntax.
+An INI file might look like this:
+.IP
+.nf
+[config]
+foo = bar
+
+[extra section]
+yo = yoyo
+.fi
+.PP
+The same file in YAML syntax would be:
+.IP
+.nf
+config:
+  foo: bar
+"extra section":
+  yo: yoyo
+.fi
+.PP
 All the settings are in the
 .B [config]
 section.
@@ -88,7 +111,7 @@ but it is up to the application to give meaning to them.
 Multiple configuration files may be read.
 Settings from later ones override settings from earlier ones.
 Options override settings from the configuration files.
-.SS "String list settings"
+.SS "String list settings in INI files"
 Some settings may be a list of values (each value being a string).
 For example,
 there might be a setting for patterns to search for,
@@ -115,6 +138,8 @@ pattern = foo, bar, foobar, "hello, world"
 Note than in versions of cliapp prior to 1.20150829,
 the command line option would also break values with commas.
 This has since been fixed.
+.PP
+Configuration files in YAML use standard YAML syntax to express lists.
 .SS "Boolean (true/false or on/off or yes/no) settings"
 When a setting can be either on or off,
 it's called a Boolean setting.
