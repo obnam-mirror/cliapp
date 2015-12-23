@@ -165,17 +165,35 @@ class SettingsTests(unittest.TestCase):
         self.settings['foo'] = ''
         self.assertFalse(self.settings['foo'])
 
-    def test_sets_boolean_to_true_from_config_file(self):
+    def test_sets_boolean_to_true_from_ini_file(self):
         def fake_open(filename):
             return StringIO.StringIO('[config]\nfoo = yes\n')
         self.settings.boolean(['foo'], 'foo help')
+        self.settings.config_files = ['foo.conf']
         self.settings.load_configs(open_file=fake_open)
         self.assertEqual(self.settings['foo'], True)
 
-    def test_sets_boolean_to_false_from_config_file(self):
+    def test_sets_boolean_to_false_from_ini_file(self):
         def fake_open(filename):
             return StringIO.StringIO('[config]\nfoo = False\n')
         self.settings.boolean(['foo'], 'foo help')
+        self.settings.config_files = ['foo.conf']
+        self.settings.load_configs(open_file=fake_open)
+        self.assertEqual(self.settings['foo'], False)
+
+    def test_sets_boolean_to_true_from_yaml_file(self):
+        def fake_open(filename):
+            return StringIO.StringIO('config:\n foo: true\n')
+        self.settings.boolean(['foo'], 'foo help')
+        self.settings.config_files = ['foo.yaml']
+        self.settings.load_configs(open_file=fake_open)
+        self.assertEqual(self.settings['foo'], True)
+
+    def test_sets_boolean_to_false_from_yaml_file(self):
+        def fake_open(filename):
+            return StringIO.StringIO('config:\n foo: false\n')
+        self.settings.boolean(['foo'], 'foo help')
+        self.settings.config_files = ['foo.yaml']
         self.settings.load_configs(open_file=fake_open)
         self.assertEqual(self.settings['foo'], False)
 
@@ -258,7 +276,7 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings.config_files,
                          self.settings.default_config_files + ['./foo'])
 
-    def test_loads_config_files(self):
+    def test_loads_ini_files(self):
 
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
@@ -271,7 +289,20 @@ foo = yeehaa
         self.settings.load_configs(open_file=mock_open)
         self.assertEqual(self.settings['foo'], 'yeehaa')
 
-    def test_loads_string_list_from_config_files(self):
+    def test_loads_yaml_files(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+config:
+  foo: yeehaa
+''')
+
+        self.settings.string(['foo'], 'foo help')
+        self.settings.config_files = ['whatever.yaml']
+        self.settings.load_configs(open_file=mock_open)
+        self.assertEqual(self.settings['foo'], 'yeehaa')
+
+    def test_loads_string_list_from_ini_files(self):
 
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
@@ -290,7 +321,26 @@ comma = ping, pong, "foo,bar"
         self.assertEqual(self.settings['bar'], ['ping', 'pong'])
         self.assertEqual(self.settings['comma'], ['ping', 'pong', 'foo,bar'])
 
-    def test_handles_defaults_with_config_files(self):
+    def test_loads_string_list_from_yaml_files(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+config:
+  foo: yeehaa
+  bar: [ping, pong]
+  comma: [ping, pong, "foo,bar"]
+''')
+
+        self.settings.string_list(['foo'], 'foo help')
+        self.settings.string_list(['bar'], 'bar help')
+        self.settings.string_list(['comma'], 'comma help')
+        self.settings.config_files = ['whatever.yaml']
+        self.settings.load_configs(open_file=mock_open)
+        self.assertEqual(self.settings['foo'], ['yeehaa'])
+        self.assertEqual(self.settings['bar'], ['ping', 'pong'])
+        self.assertEqual(self.settings['comma'], ['ping', 'pong', 'foo,bar'])
+
+    def test_handles_defaults_with_ini_files(self):
 
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
@@ -304,7 +354,21 @@ comma = ping, pong, "foo,bar"
         self.assertEqual(self.settings['foo'], 'foo')
         self.assertEqual(self.settings['bar'], ['bar'])
 
-    def test_handles_overridden_defaults_with_config_files(self):
+    def test_handles_defaults_with_yaml_files(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+config: {}
+''')
+
+        self.settings.string(['foo'], 'foo help', default='foo')
+        self.settings.string_list(['bar'], 'bar help', default=['bar'])
+        self.settings.config_files = ['whatever.yaml']
+        self.settings.load_configs(open_file=mock_open)
+        self.assertEqual(self.settings['foo'], 'foo')
+        self.assertEqual(self.settings['bar'], ['bar'])
+
+    def test_handles_overridden_defaults_with_ini_files(self):
 
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
@@ -320,7 +384,23 @@ bar = ping, pong
         self.assertEqual(self.settings['foo'], 'yeehaa')
         self.assertEqual(self.settings['bar'], ['ping', 'pong'])
 
-    def test_handles_values_from_config_files_overridden_on_command_line(self):
+    def test_handles_overridden_defaults_with_yaml_files(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+config:
+  foo: yeehaa
+  bar: [ping, pong]
+''')
+
+        self.settings.string(['foo'], 'foo help', default='foo')
+        self.settings.string_list(['bar'], 'bar help', default=['bar'])
+        self.settings.config_files = ['whatever.yaml']
+        self.settings.load_configs(open_file=mock_open)
+        self.assertEqual(self.settings['foo'], 'yeehaa')
+        self.assertEqual(self.settings['bar'], ['ping', 'pong'])
+
+    def test_handles_values_from_ini_files_overridden_on_command_line(self):
 
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
@@ -338,7 +418,25 @@ bar = ping, pong
         self.assertEqual(self.settings['foo'], 'red')
         self.assertEqual(self.settings['bar'], ['blue', 'white,comma'])
 
-    def test_load_configs_raises_error_for_unknown_variable(self):
+    def test_handles_values_from_yaml_files_overridden_on_command_line(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+config:
+  foo: yeehaa
+  bar: [ping, pong]
+''')
+
+        self.settings.string(['foo'], 'foo help', default='foo')
+        self.settings.string_list(['bar'], 'bar help', default=['bar'])
+        self.settings.config_files = ['whatever.yaml']
+        self.settings.load_configs(open_file=mock_open)
+        self.settings.parse_args(
+            ['--foo=red', '--bar=blue', '--bar=white,comma'])
+        self.assertEqual(self.settings['foo'], 'red')
+        self.assertEqual(self.settings['bar'], ['blue', 'white,comma'])
+
+    def test_load_configs_raises_error_for_unknown_variable_in_ini(self):
 
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
@@ -350,6 +448,50 @@ unknown = variable
             cliapp.UnknownConfigVariable,
             self.settings.load_configs,
             open_file=mock_open)
+
+    def test_load_configs_raises_error_for_unknown_variable_in_yaml(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+config:
+  unknown: yeehaa
+''')
+
+        self.settings.string_list(['foo'], 'foo help')
+        self.settings.config_files = ['whatever.yaml']
+        self.assertRaises(
+            cliapp.UnknownConfigVariable,
+            self.settings.load_configs, open_file=mock_open)
+
+    def test_load_configs_remembers_extra_sections_in_ini(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+[extra]
+something = else
+''')
+
+        self.settings.string_list(['foo'], 'foo help')
+        self.settings.config_files = ['whatever.conf']
+        self.settings.load_configs(open_file=mock_open)
+        cp = self.settings.as_cp()
+        self.assertEqual(cp.sections(), ['config', 'extra'])
+        self.assertEqual(cp.get('extra', 'something'), 'else')
+
+    def test_load_configs_remembers_extra_sections_in_yaml(self):
+
+        def mock_open(filename, mode=None):
+            return StringIO.StringIO('''\
+extra:
+  something: else
+''')
+
+        self.settings.string_list(['foo'], 'foo help')
+        self.settings.config_files = ['whatever.yaml']
+        self.settings.load_configs(open_file=mock_open)
+        cp = self.settings.as_cp()
+        self.assertEqual(cp.sections(), ['config', 'extra'])
+        self.assertEqual(cp.get('extra', 'something'), 'else')
 
     def test_load_configs_ignore_errors_opening_a_file(self):
 

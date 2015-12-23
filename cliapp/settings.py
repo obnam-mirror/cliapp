@@ -21,6 +21,8 @@ import os
 import re
 import sys
 
+import yaml
+
 import cliapp
 from cliapp.genman import ManpageGenerator
 
@@ -115,7 +117,10 @@ class StringListSetting(Setting):
         return self._strings
 
     def set_value(self, strings):
-        self._strings = strings
+        if type(strings) != list:
+            self._strings = [strings]
+        else:
+            self._strings = strings
         self.using_default_value = False
 
     def has_value(self):
@@ -285,6 +290,7 @@ class Settings(object):
     def __init__(self, progname, version, usage=None, description=None,
                  epilog=None):
         self._settingses = dict()
+        self._all_config_data = {}
         self._canonical_names = list()
 
         self.version = version
@@ -717,8 +723,10 @@ class Settings(object):
         configs = []
 
         configs.append('/etc/%s.conf' % self.progname)
+        configs.append('/etc/%s.yaml' % self.progname)
         configs += self.listconfs('/etc/%s' % self.progname)
         configs.append(os.path.expanduser('~/.%s.conf' % self.progname))
+        configs.append(os.path.expanduser('~/.%s.yaml' % self.progname))
         configs += self.listconfs(
             os.path.expanduser('~/.config/%s' % self.progname))
 
@@ -727,10 +735,11 @@ class Settings(object):
     def listconfs(self, dirname, listdir=os.listdir):
         '''Return list of pathnames to config files in dirname.
 
-        Config files are expectd to have names ending in '.conf'.
+        Config files are expected to have names ending in '.conf' or
+        '.yaml'.
 
-        If dirname does not exist or is not a directory,
-        return empty list.
+        If dirname does not exist or is not a directory, return empty
+        list.
 
         '''
 
@@ -741,7 +750,7 @@ class Settings(object):
         basenames.sort(key=lambda s: [ord(c) for c in s])
         return [os.path.join(dirname, x)
                 for x in basenames
-                if x.endswith('.conf')]
+                if x.endswith('.conf') or x.endswith('.yaml')]
 
     def _get_config_files(self):
         if self._config_files is None:
@@ -768,27 +777,54 @@ class Settings(object):
 
         '''
 
-        cp = ConfigParser.ConfigParser()
-        cp.add_section('config')
+        self._all_config_data = {}
 
         for pathname in self.config_files:
             try:
                 f = open_file(pathname)
+                if pathname.endswith('.yaml'):
+                    self._read_yaml(pathname, f)
+                else:
+                    self._read_ini(pathname, f)
+                f.close()
             except IOError:  # pragma: no cover
                 if pathname in self._required_config_files:
                     raise
-            else:
-                cp.readfp(f)
-                f.close()
 
-                for name in cp.options('config'):
-                    value = cp.get('config', name)
-                    s = self.set_from_raw_string(pathname, name, value)
-                    if hasattr(s, 'using_default_value'):
-                        s.using_default_value = True
+    def _read_ini(self, pathname, f):
+        cp = ConfigParser.ConfigParser()
+        cp.add_section('config')
+        cp.readfp(f)
+        for name in cp.options('config'):
+            value = cp.get('config', name)
+            s = self.set_from_raw_string(pathname, name, value)
+            if hasattr(s, 'using_default_value'):
+                s.using_default_value = True
 
-        # Remember the ConfigParser for use in as_cp later on.
-        self._cp = cp
+        for section in [s for s in cp.sections() if s != 'config']:
+            if section not in self._all_config_data:
+                self._all_config_data[section] = {}
+            section_data = self._all_config_data[section]
+            for option in cp.options(section):
+                section_data[option] = cp.get(section, option)
+
+    def _read_yaml(self, pathname, f):
+        obj = yaml.safe_load(f)
+        config = obj.get('config', {})
+        for name, value in config.items():
+            if name not in self._settingses:
+                raise UnknownConfigVariable(pathname, name)
+            s = self._settingses[name]
+            s.set_value(value)
+            if hasattr(s, 'using_default_value'):
+                s.using_default_value = True
+
+        for section in [s for s in obj if s != 'config']:
+            if section not in self._all_config_data:
+                self._all_config_data[section] = {}
+            section_data = self._all_config_data[section]
+            for option in obj[section]:
+                section_data[option] = obj[section][option]
 
     def _generate_manpage(self, o, dummy, value, p):  # pragma: no cover
         template = open(value).read()
@@ -805,16 +841,16 @@ class Settings(object):
         meanings it desires to the section names.
 
         '''
+
         cp = ConfigParser.ConfigParser()
         cp.add_section('config')
         for name in self._canonical_names:
             cp.set('config', name, self._settingses[name].format())
 
-        for section in self._cp.sections():
+        for section in self._all_config_data:
             if section != 'config':
                 cp.add_section(section)
-                for option in self._cp.options(section):
-                    value = self._cp.get(section, option)
+                for option, value in self._all_config_data[section].items():
                     cp.set(section, option, value)
 
         return cp
