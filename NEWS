@@ -16,6 +16,11 @@ Bug fix:
   for `--foo`) are now sorted after the non-negated ones in manual
   pages.
 
+New feature:
+
+* Configuration files may now also be in YAML format, if names with an
+  `.yaml` suffix.
+
 Version 1.20150829
 ------------------
 
