@@ -482,6 +482,7 @@ something = else
 
         def mock_open(filename, mode=None):
             return StringIO.StringIO('''\
+config: {}
 extra:
   something: else
 ''')

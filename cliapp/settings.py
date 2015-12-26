@@ -48,6 +48,15 @@ class UnknownConfigVariable(cliapp.AppException):
         return self.msg
 
 
+class MalformedYamlConfig(cliapp.AppException):  # pragma: no cover
+
+    def __init__(self, msg):
+        cliapp.AppException.__init__(self, msg)
+
+    def __str__(self):  # pragma: no cover
+        return self.msg
+
+
 class Setting(object):
 
     action = 'store'
@@ -810,6 +819,7 @@ class Settings(object):
 
     def _read_yaml(self, pathname, f):
         obj = yaml.safe_load(f)
+        self._check_yaml(pathname, obj)
         config = obj.get('config', {})
         for name, value in config.items():
             if name not in self._settingses:
@@ -825,6 +835,17 @@ class Settings(object):
             section_data = self._all_config_data[section]
             for option in obj[section]:
                 section_data[option] = obj[section][option]
+
+    def _check_yaml(self, pathname, obj):  # pragma: no cover
+        if not isinstance(obj, dict):
+            raise cliapp.MalformedYamlConfig(
+                'Configuration file %s does not specify a key/value mapping' %
+                pathname)
+
+        if 'config' not in obj:
+            raise cliapp.MalformedYamlConfig(
+                'Configuration file %s does not have a "config" key' %
+                pathname)
 
     def _generate_manpage(self, o, dummy, value, p):  # pragma: no cover
         template = open(value).read()

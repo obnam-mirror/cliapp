@@ -34,7 +34,8 @@ from .util import MemoryProfileDumper
 from .fmt import TextFormat
 from .app import Application, AppException
 from .settings import (Settings, log_group_name, config_group_name,
-                       perf_group_name, UnknownConfigVariable)
+                       perf_group_name, UnknownConfigVariable,
+                       MalformedYamlConfig)
 from .runcmd import runcmd, runcmd_unchecked, shell_quote, ssh_runcmd
 
 # The plugin system
