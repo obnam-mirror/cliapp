@@ -23,6 +23,13 @@ import sys
 
 import yaml
 
+try:
+    import xdg.BaseDirectory
+except ImportError:  # pragma: no cover
+    xdg_is_available = False
+else:  # pragma: no cover
+    xdg_is_available = True
+
 import cliapp
 from cliapp.genman import ManpageGenerator
 
@@ -734,10 +741,24 @@ class Settings(object):
         configs.append('/etc/%s.conf' % self.progname)
         configs.append('/etc/%s.yaml' % self.progname)
         configs += self.listconfs('/etc/%s' % self.progname)
+
         configs.append(os.path.expanduser('~/.%s.conf' % self.progname))
         configs.append(os.path.expanduser('~/.%s.yaml' % self.progname))
         configs += self.listconfs(
             os.path.expanduser('~/.config/%s' % self.progname))
+
+        # See <http://standards.freedesktop.org/basedir-spec/>. We
+        # support these if the xdg library is available. We always
+        # support the hardcoded locations so that people's config
+        # files don't get ignored just because the xdg library gets
+        # installed.
+
+        if xdg_is_available:  # pragma: no cover
+            for dirname in reversed(xdg.BaseDirectory.xdg_config_dirs):
+                pathname = os.path.join(dirname, self.progname)
+                for location in self.listconfs(pathname):
+                    if location not in configs:
+                        configs.append(location)
 
         return configs
 

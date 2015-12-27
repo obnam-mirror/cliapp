@@ -21,6 +21,9 @@ New feature:
 * Configuration files may now also be in YAML format, if names with an
   `.yaml` suffix.
 
+* If the `python-xdg` library is available, it is used to allow user
+  to specify locations of XDG Base Directory locations.
+
 Version 1.20150829
 ------------------
 

@@ -5,6 +5,8 @@ python-cliapp (1.20151220-1) UNRELEASED; urgency=medium
       to correct the dependency package name. (Closes: #804268)
     * Adds hard dependency on python-yaml. debian/control updated
       accordingly.
+    * Adds an optional use of python-xdg to allow XDG Base Directory
+      specification support. (Closes: #677117)
 
  -- Lars Wirzenius <liw@liw.fi>  Sun, 20 Dec 2015 15:53:30 +0100
 

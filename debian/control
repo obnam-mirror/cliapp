@@ -11,7 +11,7 @@ X-Python-Version: >= 2.6
 Package: python-cliapp
 Architecture: all
 Depends: ${python:Depends}, ${misc:Depends}, python (>= 2.6), python-yaml
-Suggests: libjs-jquery, libjs-underscore
+Suggests: libjs-jquery, libjs-underscore, python-xdg
 Description: Python framework for Unix command line programs
  cliapp makes it easier to write typical Unix command line programs,
  by taking care of the common tasks they need to do, such as

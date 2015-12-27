@@ -311,3 +311,12 @@ Per-user configuration file.
 .BR ~/.config/progname/*.conf
 More per-user configuration files.
 Again, ASCII sorted order.
+.PP
+In addition, the XDG Base Directory specification is followed,
+if the Python
+.B python-xdg
+library is installed.
+In that case, environment variables can be set to set additional location
+in which files are search for.
+The fixed names above are always search;
+the XDG ones are search additionally.
