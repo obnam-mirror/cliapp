@@ -16,13 +16,16 @@ Bug fix:
   for `--foo`) are now sorted after the non-negated ones in manual
   pages.
 
-New feature:
+New features:
 
 * Configuration files may now also be in YAML format, if names with an
   `.yaml` suffix.
 
 * If the `python-xdg` library is available, it is used to allow user
   to specify locations of XDG Base Directory locations.
+
+* Log to STDERR support has been added. Use `--log=stderr`. Patch by
+  Roland Mas.
 
 Version 1.20150829
 ------------------

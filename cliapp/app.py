@@ -405,6 +405,8 @@ class Application(object):
 
         if self.settings['log'] == 'syslog':
             handler = self.setup_logging_handler_for_syslog()
+        elif self.settings['log'] == 'stderr':
+            handler = self.setup_logging_handler_for_stderr()
         elif self.settings['log'] and self.settings['log'] != 'none':
             handler = self.setup_logging_handler_for_file()
         else:
@@ -429,6 +431,20 @@ class Application(object):
         '''Setup a logging.Formatter for syslog.'''
         progname = '%%'.join(self.settings.progname.split('%'))
         fmt = progname + ": %(levelname)s %(message)s"
+        return logging.Formatter(fmt)
+
+    def setup_logging_handler_for_stderr(self):  # pragma: no cover
+        '''Setup a logging.Handler for logging to stderr.'''
+
+        handler = logging.StreamHandler()
+        formatter = self.setup_logging_formatter_for_stderr()
+        handler.setFormatter(formatter)
+
+        return handler
+
+    def setup_logging_formatter_for_stderr(self):  # pragma: no cover
+        '''Setup a logging.Formatter for stderr.'''
+        fmt = "%(levelname)s %(message)s"
         return logging.Formatter(fmt)
 
     def setup_logging_handler_for_file(self):  # pragma: no cover

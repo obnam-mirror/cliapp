@@ -329,6 +329,7 @@ class Settings(object):
         self.string(['log'],
                     'write log entries to FILE (default is to not write log '
                     'files at all); use "syslog" to log to system log, '
+                    '"stderr" to log to the standard error output, '
                     'or "none" to disable logging',
                     metavar='FILE', group=log_group_name)
         self.choice(['log-level'],
