@@ -1,4 +1,4 @@
-python-cliapp (1.20151220-1) UNRELEASED; urgency=medium
+python-cliapp (1.20160109-1) unstable; urgency=medium
 
   * New upstream version.
     * Fix "package suggests non-existing package" using provided patch
@@ -8,7 +8,7 @@ python-cliapp (1.20151220-1) UNRELEASED; urgency=medium
     * Adds an optional use of python-xdg to allow XDG Base Directory
       specification support. (Closes: #677117)
 
- -- Lars Wirzenius <liw@liw.fi>  Sun, 20 Dec 2015 15:53:30 +0100
+ -- Lars Wirzenius <liw@liw.fi>  Sat, 09 Jan 2016 12:32:32 +0200
 
 python-cliapp (1.20150829-1) unstable; urgency=medium
 

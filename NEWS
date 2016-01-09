@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.20151108, released UNRELEASED
+Version 1.20151108, released 2016-01-09
 ---------------------------------------
 
 Bug fix:
@@ -19,7 +19,8 @@ Bug fix:
 New features:
 
 * Configuration files may now also be in YAML format, if names with an
-  `.yaml` suffix.
+  `.yaml` suffix. This also means that the `python-yaml` library
+  **MUST** installed. It is not an optional dependency.
 
 * If the `python-xdg` library is available, it is used to allow user
   to specify locations of XDG Base Directory locations.

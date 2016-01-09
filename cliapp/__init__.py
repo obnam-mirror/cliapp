@@ -27,7 +27,7 @@ Homepage: http://liw.fi/cliapp/
 '''
 
 
-__version__ = '1.20150829'
+__version__ = '1.20160109'
 
 
 from .util import MemoryProfileDumper
