@@ -466,7 +466,8 @@ class Settings(object):
         '''Build OptionParser for parsing command line.'''
 
         # Call a callback function unless we're in configs_only mode.
-        maybe = lambda func: (lambda *args: None) if configs_only else func
+        def maybe(func):
+            return (lambda *args: None) if configs_only else func
 
         # Maintain lists of callback function calls that are deferred.
         # We call them ourselves rather than have OptionParser call them

@@ -362,6 +362,7 @@ class ExtensibleSubcommandTests(unittest.TestCase):
         self.assertEqual(self.app.subcommands, {})
 
     def test_adds_subcommand(self):
-        help_callback = lambda args: None
+        def help_callback(arg):
+            pass
         self.app.add_subcommand('foo', help_callback)
         self.assertEqual(self.app.subcommands, {'foo': help_callback})
