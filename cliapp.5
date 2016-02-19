@@ -140,6 +140,32 @@ the command line option would also break values with commas.
 This has since been fixed.
 .PP
 Configuration files in YAML use standard YAML syntax to express lists.
+.SS "Expressing sizes in bytes"
+Some options take a value that gives the size as bytes.
+These take an optional unit suffix.
+A plain integer is the size in bytes.
+The following units are supported:
+.TS
+tab(:);
+lb lb rb rb
+l l n n.
+suffix:meaning:factor:
+_
+k, kb:kilobyte:10**3:1000
+m, mb:megabyte:10**6:1000000
+g, gb:gigabyte:10**9:1000000000
+t, tb:terabyte:10**12:1000000000000
+_
+ki, kib:kibibyte:2**10:1024
+mi, mib:mebibyte:2**20:1048576
+gi, gib:gibibyte:2**30:1073741824
+ti, tib:tebibyte:2**40:1099511627776
+.TE
+.PP
+Suffixes may be upper or lower case,
+without change in meaning.
+Note that "b" and "B" are identical,
+and both mean byte, not bit.
 .SS "Boolean (true/false or on/off or yes/no) settings"
 When a setting can be either on or off,
 it's called a Boolean setting.
