@@ -524,7 +524,7 @@ class Settings(object):
         # Return help text, unless setting/option is hidden, in which
         # case return optparse.SUPPRESS_HELP.
 
-        def help_text(text, hidden):
+        def help_text(text, hidden):  # pragma: no cover
             if all_options or not hidden:
                 return text
             else:
@@ -543,7 +543,7 @@ class Settings(object):
             action='callback',
             nargs=0,
             callback=defer_last(maybe(dump_setting_names)),
-            help=help_text('write out all names of settings and quit', True))
+            help=help_text('write out all names of settings and quit', False))
 
         # Add --dump-config.
 
@@ -602,7 +602,7 @@ class Settings(object):
             action='callback',
             nargs=0,
             callback=defer_last(maybe(list_config_files)),
-            help=help_text('list all possible config files', True))
+            help=help_text('list all possible config files', False))
 
         # Add --generate-manpage.
 
@@ -615,7 +615,7 @@ class Settings(object):
             nargs=1,
             type='string',
             callback=maybe(self._generate_manpage),
-            help=help_text('fill in manual page TEMPLATE', True),
+            help=help_text('fill in manual page TEMPLATE', False),
             metavar='TEMPLATE')
 
         # Add --help-all.

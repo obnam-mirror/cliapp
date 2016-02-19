@@ -1,6 +1,14 @@
 NEWS for cliapp
 ===============
 
+Version 1.20151108+git, not yet released
+---------------------------------------
+
+* The `--help` now shows the previously hidden options
+  `--dump-config-names`, `--list-config-files`, and
+  `--generate-manpage`. These are not frequently used, but sometimes
+  they are useful, and there's no point making them difficult to find.
+
 Version 1.20151108, released 2016-01-09
 ---------------------------------------
 
