@@ -1,4 +1,4 @@
-# Copyright (C) 2011  Lars Wirzenius
+# Copyright (C) 2011-2016  Lars Wirzenius
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ Homepage: http://liw.fi/cliapp/
 '''
 
 
-__version__ = '1.20160109'
+from .version import __version__, __version_info__
 
 
 from .util import MemoryProfileDumper
