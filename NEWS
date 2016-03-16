@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.20151108+git, not yet released
+Version 1.20160316, released 2016-03-16
 ---------------------------------------
 
 * The `--help` now shows the previously hidden options
