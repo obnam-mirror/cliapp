@@ -8,7 +8,7 @@ override_dh_auto_build:
 	dh_auto_build --with=python2 --buildsystem=python_distutils
 
 override_dh_auto_test:
-	$(MAKE) check
+	$(MAKE) clean check
 
 override_dh_auto_clean:
 	$(MAKE) clean
