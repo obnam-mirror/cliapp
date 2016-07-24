@@ -4,6 +4,8 @@ NEWS for cliapp
 Version 1.20160316+git, not yet released
 ----------------------------------------
 
+* Debian packaging change: running automated checks during package
+  build.
 
 Version 1.20160316, released 2016-03-16
 ---------------------------------------
