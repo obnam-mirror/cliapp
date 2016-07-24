@@ -22,8 +22,9 @@ Demonstrate the compute_setting_values method.
 '''
 
 
-import cliapp
 import urlparse
+
+import cliapp
 
 
 class ExampleApp(cliapp.Application):

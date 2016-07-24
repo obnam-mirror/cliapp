@@ -26,7 +26,8 @@ check:
 	python -m CoverageTestRunner --ignore-missing-from=without-tests
 	rm -f .coverage
 	pep8 cliapp
-	if command -v pylint && pylint --version | grep '^pylint [1-9]'; \
+	if command -v pylint --rcfile=pylint.conf > /dev/null && \
+	   pylint --version --rcfile=pylint.conf | grep -q '^pylint [1-9]'; \
         then \
 		PYTHONPATH=. pylint --rcfile=pylint.conf \
 			cliapp *.py test-plugins/*.py; \

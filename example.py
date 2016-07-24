@@ -22,8 +22,9 @@ This implements an fgrep-like utility.
 '''
 
 
-import cliapp
 import logging
+
+import cliapp
 
 
 class ExampleApp(cliapp.Application):
