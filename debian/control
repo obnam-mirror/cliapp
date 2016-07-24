@@ -5,7 +5,7 @@ Priority: optional
 Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 7.3.8), python-all (>= 2.6.6-3~),
     python-coverage-test-runner, python-sphinx, pep8, pylint,
-    python-yaml
+    python-yaml, python-meliae, python-xdg
 X-Python-Version: >= 2.6
 
 Package: python-cliapp
