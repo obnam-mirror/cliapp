@@ -1,3 +1,9 @@
+python-cliapp (1.20160724+git-1) UNRELEASED; urgency=medium
+
+  * New upstream version.
+
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 24 Jul 2016 21:50:41 +0300
+
 python-cliapp (1.20160724-1) unstable; urgency=medium
 
   * Change debian/rules to run automated tests during build.

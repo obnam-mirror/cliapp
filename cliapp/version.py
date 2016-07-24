@@ -1,2 +1,2 @@
-__version__ = "1.20160724"
-__version_info__ = (1, 20160724)
+__version__ = "1.20160724+git"
+__version_info__ = (1, 20160724, '+git')
