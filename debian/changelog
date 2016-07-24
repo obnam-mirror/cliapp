@@ -1,6 +1,6 @@
 python-cliapp (1.20160316+git-1) UNRELEASED; urgency=medium
 
-  * 
+  * Change debian/rules to run automated tests during build.
 
  -- Lars Wirzenius <liw@liw.fi>  Wed, 16 Mar 2016 19:27:16 +0200
 
