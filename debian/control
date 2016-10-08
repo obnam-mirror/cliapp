@@ -2,15 +2,15 @@ Source: python-cliapp
 Maintainer: Lars Wirzenius <liw@liw.fi>
 Section: python
 Priority: optional
-Standards-Version: 3.9.5
-Build-Depends: debhelper (>= 7.3.8), python-all (>= 2.6.6-3~),
+Standards-Version: 3.9.8
+Build-Depends: debhelper (>= 9), python-all (>= 2.7~),
     python-coverage-test-runner, python-sphinx, pep8, pylint,
     python-yaml, python-meliae, python-xdg
-X-Python-Version: >= 2.6
+X-Python-Version: >= 2.7
 
 Package: python-cliapp
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends}, python (>= 2.6), python-yaml
+Depends: ${python:Depends}, ${misc:Depends}, python (>= 2.7), python-yaml
 Suggests: libjs-jquery, libjs-underscore, python-xdg
 Description: Python framework for Unix command line programs
  cliapp makes it easier to write typical Unix command line programs,
