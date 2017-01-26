@@ -94,6 +94,7 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
     pipe_stderr = pop_kwarg('stderr', subprocess.PIPE)
     stdout_callback = pop_kwarg('stdout_callback', noop)
     stderr_callback = pop_kwarg('stderr_callback', noop)
+    output_timeout = pop_kwarg('output_timeout', None)
 
     try:
         pipeline = _build_pipeline(argvs,
@@ -103,7 +104,8 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
                                    kwargs)
         return _run_pipeline(pipeline, feed_stdin, pipe_stdin,
                              pipe_stdout, pipe_stderr,
-                             stdout_callback, stderr_callback)
+                             stdout_callback, stderr_callback,
+                             output_timeout)
     except OSError, e:  # pragma: no cover
         if e.errno == errno.ENOENT and e.filename is None:
             e.filename = argv[0]
@@ -160,7 +162,7 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
 
 
 def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
-                  stdout_callback, stderr_callback):
+                  stdout_callback, stderr_callback, output_timeout):
 
     stdout_eof = False
     stderr_eof = False
