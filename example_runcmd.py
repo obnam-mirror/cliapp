@@ -25,6 +25,6 @@ def cb():
 
 
 print 'sleeping 10'
-r = cliapp.runcmd_unchecked(['sleep', '10'], output_timeout=2, timeout_callback=cb)
+r = cliapp.runcmd_unchecked(['sleep', '5'], output_timeout=2, timeout_callback=cb)
 print repr(r)
 print 'done'
