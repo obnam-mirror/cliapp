@@ -242,6 +242,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
                 out.append(data_new)
             else:
                 stdout_eof = True
+            timeout = False
 
         if procs[-1].stderr in r:
             data = procs[-1].stderr.read(io_size)
@@ -252,6 +253,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
                 err.append(data_new)
             else:
                 stderr_eof = True
+            timeout = False
 
     while not timeout and still_running():
         for p in procs:
