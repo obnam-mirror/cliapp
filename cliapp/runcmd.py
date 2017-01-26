@@ -22,6 +22,7 @@ import logging
 import os
 import select
 import subprocess
+import time
 
 import cliapp
 
@@ -95,6 +96,7 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
     stdout_callback = pop_kwarg('stdout_callback', noop)
     stderr_callback = pop_kwarg('stderr_callback', noop)
     output_timeout = pop_kwarg('output_timeout', None)
+    timeout_callback = pop_kwarg('timeout_callback', None)
 
     try:
         pipeline = _build_pipeline(argvs,
@@ -105,7 +107,7 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
         return _run_pipeline(pipeline, feed_stdin, pipe_stdin,
                              pipe_stdout, pipe_stderr,
                              stdout_callback, stderr_callback,
-                             output_timeout)
+                             output_timeout, timeout_callback)
     except OSError, e:  # pragma: no cover
         if e.errno == errno.ENOENT and e.filename is None:
             e.filename = argv[0]
@@ -162,7 +164,8 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
 
 
 def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
-                  stdout_callback, stderr_callback, output_timeout):
+                  stdout_callback, stderr_callback, output_timeout,
+                  timeout_callback):
 
     stdout_eof = False
     stderr_eof = False
@@ -170,6 +173,8 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
     err = []
     pos = 0
     io_size = 1024
+    latest_output = time.time()
+    timeout = False
 
     def set_nonblocking(fd):
         flags = fcntl.fcntl(fd, fcntl.F_GETFL, 0)
@@ -195,7 +200,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
             return True  # pragma: no cover
         return False
 
-    while still_running():
+    while not timeout and still_running():
         rlist = []
         if not stdout_eof and pipe_stdout == subprocess.PIPE:
             rlist.append(procs[-1].stdout)
@@ -208,13 +213,18 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
 
         if rlist or wlist:
             try:
-                r, w, _ = select.select(rlist, wlist, [])
+                r, w, _ = select.select(rlist, wlist, [], output_timeout)
             except select.error as e:  # pragma: no cover
                 if e.args[0] == errno.EINTR:
                     break
                 raise
         else:
             break  # Let's not busywait waiting for processes to die.
+
+        now = time.time()
+        time_since_output = now - latest_output
+        timeout = (output_timeout is not None and
+                   time_since_output >= output_timeout)
 
         if procs[0].stdin in w and pos < len(feed_stdin):
             data = feed_stdin[pos:pos + io_size]
@@ -243,10 +253,13 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
             else:
                 stderr_eof = True
 
-    while still_running():
+    while not timeout and still_running():
         for p in procs:
             if p.returncode is None:
                 p.wait()
+
+    if timeout and timeout_callback:  # pragma: no cover
+        timeout_callback()
 
     errorcodes = [p.returncode for p in procs if p.returncode != 0] or [0]
     return errorcodes[-1], ''.join(out), ''.join(err)
