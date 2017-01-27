@@ -46,4 +46,3 @@ class ExampleApp(cliapp.Application):
 
 app = ExampleApp()
 app.run()
-

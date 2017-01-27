@@ -343,7 +343,7 @@ class Application(object):
         if self.subcommands:
             lines = []
             prefix = 'Usage:'
-            for cmd in sorted(self.subcommands.keys()):
+            for cmd in sorted(self.subcommands):
                 if all or cmd not in self.hidden_subcommands:
                     args = self.cmd_synopsis.get(cmd, '') or ''
                     lines.append(
@@ -361,7 +361,7 @@ class Application(object):
         '''Format OptionParser description, with subcommand support.'''
         if self.subcommands:
             summaries = []
-            for cmd in sorted(self.subcommands.keys()):
+            for cmd in sorted(self.subcommands):
                 if show_all or cmd not in self.hidden_subcommands:
                     summaries.append(self._format_subcommand_summary(cmd))
             cmd_desc = ''.join(summaries)

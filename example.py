@@ -71,4 +71,3 @@ class ExampleApp(cliapp.Application):
 app = ExampleApp(version='0.1.2')
 app.settings.config_files = ['example.conf']
 app.run()
-
