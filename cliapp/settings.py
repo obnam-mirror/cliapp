@@ -843,7 +843,7 @@ class Settings(object):
     def _read_yaml(self, pathname, f):
         obj = yaml.safe_load(f)
         self._check_yaml(pathname, obj)
-        config = obj.get('config', {})
+        config = obj.get('config') or {}
         for name, value in config.items():
             if name not in self._settingses:
                 raise UnknownConfigVariable(pathname, name)
