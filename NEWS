@@ -6,6 +6,7 @@ Version 1.20160724+git, not yet released
 
 * `cliapp.runcmd` now has a optional arguments `output_timeout` and
   `timeout_callback`.
+* Meliae the Python memory profiler is no longer supported.
 
 Version 1.20160724, released 2016-07-24
 ----------------------------------------

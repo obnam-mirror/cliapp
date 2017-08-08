@@ -72,13 +72,6 @@ class MemoryProfileDumper(object):
         logging.debug('# objects: %d', len(gc.get_objects()))
         logging.debug('# garbage: %d', len(gc.garbage))
 
-        if kind == 'meliae':
-            filename = 'obnam-%d.meliae' % self.memory_dump_counter
-            logging.debug('memory profile: see %s', filename)
-            from meliae import scanner
-            scanner.dump_all_objects(filename)
-            self.memory_dump_counter += 1
-
     def _vmrss(self):  # pragma: no cover
         '''Return current resident memory use, in KiB.'''
         if platform.system() != 'Linux':

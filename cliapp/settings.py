@@ -349,9 +349,9 @@ class Settings(object):
                     metavar='MODE', default='0600', group=log_group_name)
 
         self.choice(['dump-memory-profile'],
-                    ['simple', 'none', 'meliae'],
+                    ['simple', 'none'],
                     'make memory profiling dumps using METHOD, which is one '
-                    'of: none, simple, or meliae '
+                    'of: none, or simple (no meliae support anymore)'
                     '(default: %default)',
                     metavar='METHOD',
                     group=perf_group_name)
