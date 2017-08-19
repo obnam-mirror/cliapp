@@ -9,6 +9,7 @@ Version 1.20160724+git, not yet released
 * Meliae the Python memory profiler is no longer supported.
 * Sphinx-generated documentation is no longer supported. It was
   unmainained and rubbish by now.
+* Added support for Python 3, thanks to patches from Stuart Prescott.
 
 Version 1.20160724, released 2016-07-24
 ----------------------------------------
