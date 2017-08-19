@@ -24,7 +24,7 @@ import cliapp
 
 # Only install manpages in the 3.x version so that the Debian
 # packaging doesn't end up having it in two packages.
-if sys.version_info > (3,)
+if sys.version_info > (3,):
     manpages = [('share/man/man5', glob.glob('*.5'))]
 else:
     manpages = []
