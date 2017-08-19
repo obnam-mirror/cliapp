@@ -97,7 +97,7 @@ class PluginManagerCompatibleApplicationVersionTests(unittest.TestCase):
         self.assertFalse(self.pm.compatible_version('1.2.4'))
 
     def test_accepts_one(self):
-        self.assert_(self.pm.compatible_version('1'))
+        self.assertTrue(self.pm.compatible_version('1'))
 
     def test_accepts_one_two_three(self):
-        self.assert_(self.pm.compatible_version('1.2.3'))
+        self.assertTrue(self.pm.compatible_version('1.2.3'))
