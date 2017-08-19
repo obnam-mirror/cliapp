@@ -3,7 +3,7 @@ python-cliapp (1.20160724+git-1) UNRELEASED; urgency=medium
   * New upstream version.
   * Require Python 2.7.
   * Bump Standards-Version to 3.9.8. No changes required.
-  * Drop build-dep on python-meliae.
+  * Drop build-dep on python-meliae and python-sphinx.
 
  -- Lars Wirzenius <liw@liw.fi>  Sun, 24 Jul 2016 21:50:41 +0300
 
