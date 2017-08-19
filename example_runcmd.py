@@ -16,16 +16,17 @@
 #
 # =*= License: GPL-2+ =*=
 
+from __future__ import print_function
 
 import cliapp
 
 
 def cb():
-    print 'callback called'
+    print('callback called')
 
 
-print 'sleeping 10'
+print('sleeping 10')
 r = cliapp.runcmd_unchecked(
     ['sleep', '5'], output_timeout=2, timeout_callback=cb)
-print repr(r)
-print 'done'
+print(repr(r))
+print('done')
