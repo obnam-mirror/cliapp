@@ -27,7 +27,7 @@ import cliapp
 if sys.version_info > (3,):
     manpages = [('share/man/man5', glob.glob('*.5'))]
 else:
-    manpages = []
+    manpages = None
 
 
 setup(
@@ -56,5 +56,5 @@ setup(
         'Topic :: Utilities',
     ],
     packages=['cliapp'],
-    data_files=,
+    data_files=manpages,
 )
