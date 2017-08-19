@@ -15,6 +15,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import unicode_literals
 
 import os
 import subprocess
@@ -85,10 +86,10 @@ class RuncmdTests(unittest.TestCase):
 
     def test_runcmd_redirects_stdin_from_file(self):
         fd, _ = tempfile.mkstemp()
-        os.write(fd, 'foobar')
+        os.write(fd, 'foobar'.encode())   # send encoded data to stdin
         os.lseek(fd, 0, os.SEEK_SET)
         self.assertEqual(cliapp.runcmd_unchecked(['cat'], stdin=fd),
-                         (0, 'foobar', ''))
+                         (0, 'foobar', ''))  # runcmd will decode stdout
         os.close(fd)
 
     def test_runcmd_redirects_stdout_to_file(self):
