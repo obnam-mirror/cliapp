@@ -14,8 +14,12 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import print_function, unicode_literals
 
-import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:      # pragma: no cover
+    from ConfigParser import ConfigParser
 import optparse
 import os
 import re
@@ -32,6 +36,11 @@ else:  # pragma: no cover
 
 import cliapp
 from cliapp.genman import ManpageGenerator
+
+
+# hack in a 'unicode' type for Python 2 v 3 compatibility
+if sys.version_info > (3, ):      # pragma: no cover
+    unicode = str                # pylint: disable=redefined-builtin
 
 
 log_group_name = 'Logging'
@@ -226,16 +235,16 @@ class ByteSizeSetting(Setting):
                 'gi': 2 ** 30,
                 'ti': 2 ** 40,
             }
-            return long(number * units.get(unit, 1))
+            return int(number * units.get(unit, 1))
 
     def default_metavar(self):
         return 'SIZE'
 
     def get_value(self):
-        return long(self._string_value)
+        return int(self._string_value)
 
     def set_value(self, value):
-        if type(value) == str:
+        if type(value) in [str, unicode]:
             value = self.parse_human_size(value)
         self._string_value = str(value)
 
@@ -248,7 +257,7 @@ class IntegerSetting(Setting):
         return self.names[0].upper()
 
     def get_value(self):
-        return long(self._string_value)
+        return int(self._string_value)
 
     def set_value(self, value):
         self._string_value = str(value)
@@ -319,7 +328,7 @@ class Settings(object):
 
         self._config_files = None
         self._required_config_files = []
-        self._cp = ConfigParser.ConfigParser()
+        self._cp = ConfigParser()
 
     def _add_default_settings(self):
         self.string(['output'],
@@ -594,7 +603,7 @@ class Settings(object):
 
         def list_config_files(*args):  # pragma: no cover
             for filename in self.config_files:
-                print filename
+                print(filename)
             sys.exit(0)
 
         add_option_to_group(
@@ -824,7 +833,7 @@ class Settings(object):
                     raise
 
     def _read_ini(self, pathname, f):
-        cp = ConfigParser.ConfigParser()
+        cp = ConfigParser()
         cp.add_section('config')
         cp.readfp(f)
         for name in cp.options('config'):
@@ -844,7 +853,7 @@ class Settings(object):
         obj = yaml.safe_load(f)
         self._check_yaml(pathname, obj)
         config = obj.get('config') or {}
-        for name, value in config.items():
+        for name, value in list(config.items()):
             if name not in self._settingses:
                 raise UnknownConfigVariable(pathname, name)
             s = self._settingses[name]
@@ -886,7 +895,7 @@ class Settings(object):
 
         '''
 
-        cp = ConfigParser.ConfigParser()
+        cp = ConfigParser()
         cp.add_section('config')
         for name in self._canonical_names:
             cp.set('config', name, self._settingses[name].format())

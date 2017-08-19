@@ -14,8 +14,12 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import unicode_literals
 
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import unittest
 
 import cliapp
@@ -39,12 +43,12 @@ class SettingsTests(unittest.TestCase):
     def test_sets_usage_from_func(self):
         s = cliapp.Settings('appname', '1.0', usage=lambda: 'xyzzy')
         p = s.build_parser()
-        self.assert_('xyzzy' in p.usage)
+        self.assertTrue('xyzzy' in p.usage)
 
     def test_adds_default_options_and_settings(self):
-        self.assert_('output' in self.settings)
-        self.assert_('log' in self.settings)
-        self.assert_('log-level' in self.settings)
+        self.assertTrue('output' in self.settings)
+        self.assertTrue('log' in self.settings)
+        self.assertTrue('log-level' in self.settings)
 
     def test_iterates_over_canonical_settings_names(self):
         known = ['output', 'log', 'log-level']
@@ -84,11 +88,11 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_string_setting(self):
         self.settings.string(['foo'], 'foo help')
-        self.assert_('foo' in self.settings)
+        self.assertTrue('foo' in self.settings)
 
     def test_adds_string_list_setting(self):
         self.settings.string_list(['foo'], 'foo help')
-        self.assert_('foo' in self.settings)
+        self.assertTrue('foo' in self.settings)
 
     def test_string_list_is_empty_list_by_default(self):
         self.settings.string_list(['foo'], '')
@@ -117,7 +121,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_choice_setting(self):
         self.settings.choice(['foo'], ['foo', 'bar'], 'foo help')
-        self.assert_('foo' in self.settings)
+        self.assertTrue('foo' in self.settings)
 
     def test_choice_defaults_to_first_one(self):
         self.settings.choice(['foo'], ['foo', 'bar'], 'foo help')
@@ -139,7 +143,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_boolean_setting(self):
         self.settings.boolean(['foo'], 'foo help')
-        self.assert_('foo' in self.settings)
+        self.assertTrue('foo' in self.settings)
 
     def test_boolean_setting_is_false_by_default(self):
         self.settings.boolean(['foo'], 'foo help')
@@ -148,9 +152,9 @@ class SettingsTests(unittest.TestCase):
     def test_sets_boolean_setting_to_true_for_many_true_values(self):
         self.settings.boolean(['foo'], 'foo help')
         self.settings['foo'] = True
-        self.assert_(self.settings['foo'])
+        self.assertTrue(self.settings['foo'])
         self.settings['foo'] = 1
-        self.assert_(self.settings['foo'])
+        self.assertTrue(self.settings['foo'])
 
     def test_sets_boolean_setting_to_false_for_many_false_values(self):
         self.settings.boolean(['foo'], 'foo help')
@@ -167,7 +171,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_sets_boolean_to_true_from_ini_file(self):
         def fake_open(filename):
-            return StringIO.StringIO('[config]\nfoo = yes\n')
+            return StringIO('[config]\nfoo = yes\n')
         self.settings.boolean(['foo'], 'foo help')
         self.settings.config_files = ['foo.conf']
         self.settings.load_configs(open_file=fake_open)
@@ -175,7 +179,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_sets_boolean_to_false_from_ini_file(self):
         def fake_open(filename):
-            return StringIO.StringIO('[config]\nfoo = False\n')
+            return StringIO('[config]\nfoo = False\n')
         self.settings.boolean(['foo'], 'foo help')
         self.settings.config_files = ['foo.conf']
         self.settings.load_configs(open_file=fake_open)
@@ -183,7 +187,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_sets_boolean_to_true_from_yaml_file(self):
         def fake_open(filename):
-            return StringIO.StringIO('config:\n foo: true\n')
+            return StringIO('config:\n foo: true\n')
         self.settings.boolean(['foo'], 'foo help')
         self.settings.config_files = ['foo.yaml']
         self.settings.load_configs(open_file=fake_open)
@@ -191,7 +195,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_sets_boolean_to_false_from_yaml_file(self):
         def fake_open(filename):
-            return StringIO.StringIO('config:\n foo: false\n')
+            return StringIO('config:\n foo: false\n')
         self.settings.boolean(['foo'], 'foo help')
         self.settings.config_files = ['foo.yaml']
         self.settings.load_configs(open_file=fake_open)
@@ -199,7 +203,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_bytesize_setting(self):
         self.settings.bytesize(['foo'], 'foo help')
-        self.assert_('foo' in self.settings)
+        self.assertTrue('foo' in self.settings)
 
     def test_parses_bytesize_option(self):
         self.settings.bytesize(['foo'], 'foo help')
@@ -236,7 +240,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_adds_integer_setting(self):
         self.settings.integer(['foo'], 'foo help')
-        self.assert_('foo' in self.settings)
+        self.assertTrue('foo' in self.settings)
 
     def test_parses_integer_option(self):
         self.settings.integer(['foo'], 'foo help', default=123)
@@ -249,8 +253,8 @@ class SettingsTests(unittest.TestCase):
 
     def test_has_list_of_default_config_files(self):
         defaults = self.settings.default_config_files
-        self.assert_(isinstance(defaults, list))
-        self.assert_(len(defaults) > 0)
+        self.assertTrue(isinstance(defaults, list))
+        self.assertTrue(len(defaults) > 0)
 
     def test_listconfs_returns_empty_list_for_nonexistent_directory(self):
         self.assertEqual(self.settings.listconfs('notexist'), [])
@@ -279,7 +283,7 @@ class SettingsTests(unittest.TestCase):
     def test_loads_ini_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [config]
 foo = yeehaa
 ''')
@@ -292,7 +296,7 @@ foo = yeehaa
     def test_loads_yaml_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 config:
   foo: yeehaa
 ''')
@@ -305,7 +309,7 @@ config:
     def test_loads_string_list_from_ini_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [config]
 foo = yeehaa
 bar = ping, pong
@@ -324,7 +328,7 @@ comma = ping, pong, "foo,bar"
     def test_loads_string_list_from_yaml_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 config:
   foo: yeehaa
   bar: [ping, pong]
@@ -343,7 +347,7 @@ config:
     def test_handles_defaults_with_ini_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [config]
 ''')
 
@@ -357,7 +361,7 @@ config:
     def test_handles_defaults_with_yaml_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 config: {}
 ''')
 
@@ -371,7 +375,7 @@ config: {}
     def test_handles_overridden_defaults_with_ini_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [config]
 foo = yeehaa
 bar = ping, pong
@@ -387,7 +391,7 @@ bar = ping, pong
     def test_handles_overridden_defaults_with_yaml_files(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 config:
   foo: yeehaa
   bar: [ping, pong]
@@ -403,7 +407,7 @@ config:
     def test_handles_values_from_ini_files_overridden_on_command_line(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [config]
 foo = yeehaa
 bar = ping, pong
@@ -421,7 +425,7 @@ bar = ping, pong
     def test_handles_values_from_yaml_files_overridden_on_command_line(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 config:
   foo: yeehaa
   bar: [ping, pong]
@@ -439,7 +443,7 @@ config:
     def test_load_configs_raises_error_for_unknown_variable_in_ini(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [config]
 unknown = variable
 ''')
@@ -452,7 +456,7 @@ unknown = variable
     def test_load_configs_raises_error_for_unknown_variable_in_yaml(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 config:
   unknown: yeehaa
 ''')
@@ -466,7 +470,7 @@ config:
     def test_load_configs_remembers_extra_sections_in_ini(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [extra]
 something = else
 ''')
@@ -481,7 +485,7 @@ something = else
     def test_load_configs_remembers_extra_sections_in_yaml(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 config: {}
 extra:
   something: else
@@ -579,7 +583,7 @@ extra:
     def test_exports_all_config_sections_via_as_cp(self):
 
         def mock_open(filename, mode=None):
-            return StringIO.StringIO('''\
+            return StringIO('''\
 [config]
 foo = yeehaa
 
