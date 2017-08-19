@@ -117,7 +117,7 @@ class PluginManager(object):
                 else:
                     plugins[plugin.name] = plugin
 
-        return plugins.values()
+        return list(plugins.values())
 
     def is_older(self, version1, version2):
         '''Is version1 older than version2?'''
