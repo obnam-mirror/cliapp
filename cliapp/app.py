@@ -14,13 +14,17 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import unicode_literals
 
 import errno
 import inspect
 import logging
 import logging.handlers
 import os
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:            # pragma: no cover
+    from io import StringIO
 import sys
 import traceback
 import platform
@@ -51,7 +55,7 @@ class LogHandler(logging.handlers.RotatingFileHandler):  # pragma: no cover
 
     '''Like RotatingFileHandler, but set permissions of new files.'''
 
-    def __init__(self, filename, perms=0600, *args, **kwargs):
+    def __init__(self, filename, perms=0o600, *args, **kwargs):
         self._perms = perms
         logging.handlers.RotatingFileHandler.__init__(self, filename,
                                                       *args, **kwargs)
@@ -155,8 +159,8 @@ class Application(object):
     def _set_process_name(self):  # pragma: no cover
         comm = '/proc/self/comm'
         if platform.system() == 'Linux' and os.path.exists(comm):
-            with open('/proc/self/comm', 'w', 0) as f:
-                f.write(self.settings.progname[:15])
+            with open('/proc/self/comm', 'wb', 0) as f:
+                f.write(self.settings.progname[:15].encode())
 
     def _run(self, args=None, stderr=sys.stderr, log=logging.critical):
         try:
@@ -189,24 +193,24 @@ class Application(object):
             self.process_args(args)
             self.cleanup()
             self.disable_plugins()
-        except cliapp.UnknownConfigVariable, e:  # pragma: no cover
+        except cliapp.UnknownConfigVariable as e:  # pragma: no cover
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
         except cliapp.MalformedYamlConfig as e:  # pragma: no cover
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
-        except AppException, e:
+        except AppException as e:
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
-        except SystemExit, e:
+        except SystemExit as e:
             if e.code is not None and type(e.code) != int:
                 log(str(e))
                 stderr.write('ERROR: %s\n' % str(e))
             sys.exit(e.code if type(e.code) == int else 1)
-        except KeyboardInterrupt, e:
+        except KeyboardInterrupt as e:
             sys.exit(255)
-        except IOError, e:  # pragma: no cover
+        except IOError as e:  # pragma: no cover
             if e.errno == errno.EPIPE and e.filename is None:
                 # We're writing to stdout, and it broke. This almost always
                 # happens when we're being piped to less, and the user quits
@@ -216,14 +220,14 @@ class Application(object):
             log(traceback.format_exc())
             stderr.write('ERROR: %s\n' % str(e))
             sys.exit(1)
-        except OSError, e:  # pragma: no cover
+        except OSError as e:  # pragma: no cover
             log(traceback.format_exc())
             if hasattr(e, 'filename') and e.filename:
                 stderr.write('ERROR: %s: %s\n' % (e.filename, e.strerror))
             else:
                 stderr.write('ERROR: %s\n' % e.strerror)
             sys.exit(1)
-        except BaseException, e:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
             log(traceback.format_exc())
             stderr.write(traceback.format_exc())
             sys.exit(1)
@@ -497,7 +501,7 @@ class Application(object):
         for name in os.environ:
             logging.debug('environment: %s=%s', name, os.environ[name])
         cp = self.settings.as_cp()
-        f = StringIO.StringIO()
+        f = StringIO()
         cp.write(f)
         logging.debug('Config:\n%s', f.getvalue())
         logging.debug('Python version: %s', sys.version)
