@@ -14,8 +14,14 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import unicode_literals
 
-import StringIO
+try:
+    from StringIO import StringIO
+    # Fake these types that exist only in Python 3
+    TextIOBase = file
+except ImportError:
+    from io import StringIO, TextIOBase
 import sys
 import unittest
 
@@ -32,7 +38,7 @@ class AppExceptionTests(unittest.TestCase):
         self.e = cliapp.AppException('foo')
 
     def test_error_message_contains_foo(self):
-        self.assert_('foo' in str(self.e))
+        self.assertTrue('foo' in str(self.e))
 
 
 class ApplicationTests(unittest.TestCase):
@@ -41,7 +47,7 @@ class ApplicationTests(unittest.TestCase):
         self.app = cliapp.Application()
 
     def test_creates_settings(self):
-        self.assert_(isinstance(self.app.settings, cliapp.Settings))
+        self.assertTrue(isinstance(self.app.settings, cliapp.Settings))
 
     def test_calls_add_settings_only_in_run(self):
 
@@ -56,7 +62,7 @@ class ApplicationTests(unittest.TestCase):
         foo = Foo()
         self.assertFalse('foo' in foo.settings)
         foo.run(args=[])
-        self.assert_('foo' in foo.settings)
+        self.assertTrue('foo' in foo.settings)
 
     def test_run_uses_string_list_options_only_once(self):
 
@@ -81,7 +87,7 @@ class ApplicationTests(unittest.TestCase):
         self.app.setup_logging = setup
         self.app.process_args = lambda args: None
         self.app.run([])
-        self.assert_(self.called)
+        self.assertTrue(self.called)
 
     def test_run_sets_progname_from_sysargv0(self):
         self.app.process_args = lambda args: None
@@ -177,7 +183,7 @@ class ApplicationTests(unittest.TestCase):
 
         self.app.process_inputs = process_inputs
         self.app.process_args([])
-        self.assert_(self.called)
+        self.assertTrue(self.called)
 
     def test_process_inputs_calls_process_input_for_each_arg(self):
         self.args = []
@@ -201,7 +207,7 @@ class ApplicationTests(unittest.TestCase):
 
     def test_open_input_opens_file(self):
         f = self.app.open_input('/dev/null')
-        self.assert_(isinstance(f, file))
+        self.assertTrue(isinstance(f, TextIOBase))
         self.assertEqual(getattr(f, 'mode'), 'r')
 
     def test_open_input_opens_file_in_binary_mode_when_requested(self):
@@ -216,7 +222,7 @@ class ApplicationTests(unittest.TestCase):
 
         def open_input(name):
             self.called = name
-            return StringIO.StringIO('')
+            return StringIO('')
 
         self.app.open_input = open_input
         self.app.process_input('foo')
@@ -228,7 +234,7 @@ class ApplicationTests(unittest.TestCase):
         def close():
             self.closed = True
 
-        f = StringIO.StringIO('')
+        f = StringIO('')
         f.close = close
 
         def open_input(name):
@@ -246,8 +252,8 @@ class ApplicationTests(unittest.TestCase):
         class Foo(cliapp.Application):
 
             def open_input(self, name, mode=None):
-                return StringIO.StringIO(''.join('%s%d\n' % (name, i)
-                                                 for i in range(2)))
+                return StringIO(''.join('%s%d\n' % (name, i)
+                                        for i in range(2)))
 
             def process_input_line(self, name, line):
                 lines.append(line)
@@ -262,8 +268,8 @@ class ApplicationTests(unittest.TestCase):
         class Foo(cliapp.Application):
 
             def open_input(self, name, mode=None):
-                return StringIO.StringIO(''.join('%s%d\n' % (name, i)
-                                                 for i in range(2)))
+                return StringIO(''.join('%s%d\n' % (name, i)
+                                        for i in range(2)))
 
             def process_input_line(self, name, line):
                 counters.append((self.fileno, self.global_lineno, self.lineno))
@@ -280,30 +286,30 @@ class ApplicationTests(unittest.TestCase):
         def raise_error(args):
             raise cliapp.AppException('xxx')
         self.app.process_args = raise_error
-        f = StringIO.StringIO()
+        f = StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
-        self.assert_('xxx' in f.getvalue())
+        self.assertTrue('xxx' in f.getvalue())
 
     def test_run_prints_out_stack_trace_for_not_appexception(self):
         def raise_error(args):
             raise Exception('xxx')
         self.app.process_args = raise_error
-        f = StringIO.StringIO()
+        f = StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
-        self.assert_('Traceback' in f.getvalue())
+        self.assertTrue('Traceback' in f.getvalue())
 
     def test_run_raises_systemexit_for_systemexit(self):
         def raise_error(args):
             raise SystemExit(123)
         self.app.process_args = raise_error
-        f = StringIO.StringIO()
+        f = StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
 
     def test_run_raises_systemexit_for_keyboardint(self):
         def raise_error(args):
             raise KeyboardInterrupt()
         self.app.process_args = raise_error
-        f = StringIO.StringIO()
+        f = StringIO()
         self.assertRaises(SystemExit, self.app.run, [], stderr=f, log=devnull)
 
 
@@ -317,7 +323,7 @@ class SubcommandTests(unittest.TestCase):
 
     def setUp(self):
         self.app = DummySubcommandApp()
-        self.trash = StringIO.StringIO()
+        self.trash = StringIO()
 
     def test_lists_subcommands(self):
         self.assertEqual(self.app._subcommand_methodnames(), ['cmd_foo'])
@@ -336,7 +342,7 @@ class SubcommandTests(unittest.TestCase):
 
     def test_calls_subcommand_method(self):
         self.app.run(['foo'], stderr=self.trash, log=devnull)
-        self.assert_(self.app.foo_called)
+        self.assertTrue(self.app.foo_called)
 
     def test_calls_subcommand_method_via_alias(self):
         self.bar_called = False
