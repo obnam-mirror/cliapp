@@ -5,7 +5,7 @@ Priority: optional
 Standards-Version: 3.9.8
 Build-Depends: debhelper (>= 9),
     python-all (>= 2.7~),
-    python3-all (>= 3.5~),
+    python3-all (>= 3.4~),
     python-coverage-test-runner,
     python3-coverage-test-runner,
     pep8,
@@ -27,7 +27,7 @@ Homepage: http://liw.fi/cliapp/
 
 Package: python3-cliapp
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, python3 (>= 3.5), python3-yaml
+Depends: ${python3:Depends}, ${misc:Depends}, python3 (>= 3.4), python3-yaml
 Suggests: python3-xdg
 Description: Python framework for Unix command line programs
  cliapp makes it easier to write typical Unix command line programs,
