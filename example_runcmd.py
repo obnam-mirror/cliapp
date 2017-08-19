@@ -16,7 +16,6 @@
 #
 # =*= License: GPL-2+ =*=
 
-from __future__ import print_function
 
 import cliapp
 
