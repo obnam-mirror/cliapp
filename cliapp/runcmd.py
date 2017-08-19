@@ -108,7 +108,7 @@ def runcmd_unchecked(argv, *argvs, **kwargs):
                              pipe_stdout, pipe_stderr,
                              stdout_callback, stderr_callback,
                              output_timeout, timeout_callback)
-    except OSError, e:  # pragma: no cover
+    except OSError as e:  # pragma: no cover
         if e.errno == errno.ENOENT and e.filename is None:
             e.filename = argv[0]
             raise e
@@ -158,7 +158,7 @@ def _build_pipeline(argvs, pipe_stdin, pipe_stdout, pipe_stderr, kwargs):
         os.close(wpipe)
         # Allow reading of the stderr of every process as the stderr of
         # the last element
-        procs[-1].stderr = os.fdopen(rpipe)
+        procs[-1].stderr = os.fdopen(rpipe, 'rb')
 
     return procs
 
@@ -264,6 +264,14 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
         timeout_callback()
 
     errorcodes = [p.returncode for p in procs if p.returncode != 0] or [0]
+
+    # Ensure that the pipeline doesn't leak file descriptors
+    if procs[0].stdin is not None:
+        procs[0].stdin.close()
+    if procs[-1].stderr is not None:
+        procs[-1].stderr.close()
+    if procs[-1].stdout is not None:
+        procs[-1].stdout.close()
     return errorcodes[-1], ''.join(out), ''.join(err)
 
 
@@ -339,17 +347,17 @@ def ssh_runcmd(target, argv, **kwargs):  # pragma: no cover
         ssh_argv.append('-T')
 
     more_options = kwargs.pop('ssh_options', [])
-    ssh_argv.extend(map(shell_quote, more_options))
+    ssh_argv.extend(list(map(shell_quote, more_options)))
 
     ssh_argv.append(target)
     ssh_argv.append('--')
 
     remote_cwd = kwargs.pop('remote_cwd', None)
     if remote_cwd:
-        ssh_argv.extend(map(shell_quote, [
+        ssh_argv.extend(list(map(shell_quote, [
             'sh', '-c', 'cd "$1" && shift && exec "$@"',
             '-',
-            remote_cwd]))
+            remote_cwd])))
 
-    local_argv = ssh_argv + map(shell_quote, argv)
+    local_argv = ssh_argv + list(map(shell_quote, argv))
     return runcmd(local_argv, **kwargs)
