@@ -3,15 +3,34 @@ Maintainer: Lars Wirzenius <liw@liw.fi>
 Section: python
 Priority: optional
 Standards-Version: 3.9.8
-Build-Depends: debhelper (>= 9), python-all (>= 2.7~),
-    python-coverage-test-runner, pep8, pylint,
-    python-yaml, python-xdg
-X-Python-Version: >= 2.7
+Build-Depends: debhelper (>= 9),
+    python-all (>= 2.7~),
+    python3-all (>= 3.5~),
+    python-coverage-test-runner,
+    python3-coverage-test-runner,
+    pep8,
+    pylint,
+    pylint3,
+    python-yaml,
+    python3-yaml,
+    python-xdg,
+    python3-xdg
 
 Package: python-cliapp
 Architecture: all
 Depends: ${python:Depends}, ${misc:Depends}, python (>= 2.7), python-yaml
-Suggests: libjs-jquery, libjs-underscore, python-xdg
+Suggests: python-xdg
+Description: Python framework for Unix command line programs
+ cliapp makes it easier to write typical Unix command line programs,
+ by taking care of the common tasks they need to do, such as
+ parsing the command line, reading configuration files, setting
+ up logging, iterating over lines of input files, and so on.
+Homepage: http://liw.fi/cliapp/
+
+Package: python3-cliapp
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}, python3 (>= 3.5), python3-yaml
+Suggests: python3-xdg
 Description: Python framework for Unix command line programs
  cliapp makes it easier to write typical Unix command line programs,
  by taking care of the common tasks they need to do, such as
