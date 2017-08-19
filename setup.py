@@ -17,8 +17,17 @@
 
 from distutils.core import setup
 import glob
+import sys
 
 import cliapp
+
+
+# Only install manpages in the 3.x version so that the Debian
+# packaging doesn't end up having it in two packages.
+if sys.version_info > (3,)
+    manpages = [('share/man/man5', glob.glob('*.5'))]
+else:
+    manpages = []
 
 
 setup(
@@ -47,5 +56,5 @@ setup(
         'Topic :: Utilities',
     ],
     packages=['cliapp'],
-    data_files=[('share/man/man5', glob.glob('*.5'))],
+    data_files=,
 )
