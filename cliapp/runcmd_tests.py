@@ -32,64 +32,64 @@ def devnull(msg):
 class RuncmdTests(unittest.TestCase):
 
     def test_runcmd_executes_true(self):
-        self.assertEqual(cliapp.runcmd(['true']), '')
+        self.assertEqual(cliapp.runcmd(['true']), b'')
 
     def test_runcmd_raises_error_on_failure(self):
         self.assertRaises(cliapp.AppException, cliapp.runcmd, ['false'])
 
     def test_runcmd_returns_stdout_of_command(self):
-        self.assertEqual(cliapp.runcmd(['echo', 'hello', 'world']),
-                         'hello world\n')
+        self.assertEqual(cliapp.runcmd(['echo', b'hello', b'world']),
+                         b'hello world\n')
 
     def test_runcmd_returns_stderr_of_command(self):
         exit_code, out, err = cliapp.runcmd_unchecked(['ls', 'notexist'])
         self.assertNotEqual(exit_code, 0)
-        self.assertEqual(out, '')
-        self.assertNotEqual(err, '')
+        self.assertEqual(out, b'')
+        self.assertNotEqual(err, b'')
 
     def test_runcmd_pipes_stdin_through_command(self):
-        self.assertEqual(cliapp.runcmd(['cat'], feed_stdin='hello, world'),
-                         'hello, world')
+        self.assertEqual(cliapp.runcmd(['cat'], feed_stdin=b'hello, world'),
+                         b'hello, world')
 
     def test_runcmd_pipes_stdin_through_two_commands(self):
         self.assertEqual(
-            cliapp.runcmd(['cat'], ['cat'], feed_stdin='hello, world'),
-            'hello, world')
+            cliapp.runcmd(['cat'], ['cat'], feed_stdin=b'hello, world'),
+            b'hello, world')
 
     def test_runcmd_pipes_stdin_through_command_with_lots_of_data(self):
-        data = 'x' * (1024 ** 2)
+        data = b'x' * (1024 ** 2)
         self.assertEqual(cliapp.runcmd(['cat'], feed_stdin=data), data)
 
     def test_runcmd_ignores_failures_on_request(self):
-        self.assertEqual(cliapp.runcmd(['false'], ignore_fail=True), '')
+        self.assertEqual(cliapp.runcmd(['false'], ignore_fail=True), b'')
 
     def test_runcmd_obeys_cwd(self):
-        self.assertEqual(cliapp.runcmd(['pwd'], cwd='/'), '/\n')
+        self.assertEqual(cliapp.runcmd(['pwd'], cwd='/'), b'/\n')
 
     def test_runcmd_unchecked_returns_values_on_success(self):
         self.assertEqual(cliapp.runcmd_unchecked(['echo', 'foo']),
-                         (0, 'foo\n', ''))
+                         (0, b'foo\n', b''))
 
     def test_runcmd_unchecked_returns_values_on_failure(self):
         self.assertEqual(cliapp.runcmd_unchecked(['false']),
-                         (1, '', ''))
+                         (1, b'', b''))
 
     def test_runcmd_unchecked_runs_simple_pipeline(self):
         self.assertEqual(
             cliapp.runcmd_unchecked(['echo', 'foo'], ['wc', '-c']),
-            (0, '4\n', ''))
+            (0, b'4\n', b''))
 
     def test_runcmd_unchecked_runs_longer_pipeline(self):
         self.assertEqual(
             cliapp.runcmd_unchecked(['echo', 'foo'], ['cat'], ['wc', '-c']),
-            (0, '4\n', ''))
+            (0, b'4\n', b''))
 
     def test_runcmd_redirects_stdin_from_file(self):
         fd, _ = tempfile.mkstemp()
         os.write(fd, 'foobar'.encode())   # send encoded data to stdin
         os.lseek(fd, 0, os.SEEK_SET)
         self.assertEqual(cliapp.runcmd_unchecked(['cat'], stdin=fd),
-                         (0, 'foobar', ''))  # runcmd will decode stdout
+                         (0, b'foobar', b''))
         os.close(fd)
 
     def test_runcmd_redirects_stdout_to_file(self):
@@ -128,16 +128,16 @@ class RuncmdTests(unittest.TestCase):
         def logger(s):
             msgs.append(s)
 
-            # We return a string to allow the callback to mangle
+            # We return bytes to allow the callback to mangle
             # the data being returned.
-            return 'foo'
+            return b'foo'
 
         test_input = 'hello fox'
         _, out, _ = cliapp.runcmd_unchecked(
             ['echo', '-n', test_input], stdout_callback=logger)
 
-        self.assertEqual(out, 'foo')
-        self.assertEqual(msgs, [test_input])
+        self.assertEqual(out, b'foo')
+        self.assertEqual(msgs, [test_input.encode('UTF-8')])
 
     def test_runcmd_calls_stderr_callback_when_msg_on_stderr(self):
         msgs = []
@@ -159,7 +159,7 @@ class RuncmdTests(unittest.TestCase):
         # instead of the list of fragments.
 
         self.assertNotEqual(err, '')
-        self.assertEqual(''.join(msgs), err)
+        self.assertEqual(b''.join(msgs), err)
 
 
 class ShellQuoteTests(unittest.TestCase):

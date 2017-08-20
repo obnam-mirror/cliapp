@@ -272,7 +272,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
         procs[-1].stderr.close()
     if procs[-1].stdout is not None:
         procs[-1].stdout.close()
-    return errorcodes[-1], ''.join(out), ''.join(err)
+    return errorcodes[-1], b''.join(out), b''.join(err)
 
 
 def shell_quote(s):
