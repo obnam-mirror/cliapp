@@ -1,7 +1,9 @@
 python-cliapp (1.20170820+git-1) UNRELEASED; urgency=medium
 
   * New upstream version.
-  * debian/copyright: Add Codethink to debian/copyright.
+  * debian/copyright: Add Codethink to debian/copyright. (cliapp was
+    worked by me, Richard Maw, and Richard Ipsum, while working at
+    Codethink.)
 
  -- Lars Wirzenius <liw@liw.fi>  Sun, 20 Aug 2017 10:58:53 +0300
 
