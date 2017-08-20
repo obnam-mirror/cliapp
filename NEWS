@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.20160724+git, not yet released
+Version 1.20170820, released 2017-08-20
 ----------------------------------------
 
 * `cliapp.runcmd` now has a optional arguments `output_timeout` and

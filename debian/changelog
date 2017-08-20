@@ -1,11 +1,11 @@
-python-cliapp (1.20160724+git-1) UNRELEASED; urgency=medium
+python-cliapp (1.20170820-1) unstable; urgency=medium
 
   * New upstream version.
   * Require Python 2.7.
   * Bump Standards-Version to 3.9.8. No changes required.
   * Drop build-dep on python-meliae and python-sphinx.
 
- -- Lars Wirzenius <liw@liw.fi>  Sun, 24 Jul 2016 21:50:41 +0300
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 20 Aug 2017 10:58:50 +0300
 
 python-cliapp (1.20160724-1) unstable; urgency=medium
 
