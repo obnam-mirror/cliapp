@@ -1,11 +1,11 @@
-python-cliapp (1.20170820+git-1) UNRELEASED; urgency=medium
+python-cliapp (1.20170823-1) unstable; urgency=medium
 
   * New upstream version.
   * debian/copyright: Add Codethink to debian/copyright. (cliapp was
     worked by me, Richard Maw, and Richard Ipsum, while working at
     Codethink.)
 
- -- Lars Wirzenius <liw@liw.fi>  Sun, 20 Aug 2017 10:58:53 +0300
+ -- Lars Wirzenius <liw@liw.fi>  Wed, 23 Aug 2017 18:54:02 +0300
 
 python-cliapp (1.20170820-1) unstable; urgency=medium
 
