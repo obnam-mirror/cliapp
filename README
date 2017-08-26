@@ -27,12 +27,12 @@ Hacking
 
 To run the test suite:
 
-   make clean check
+   ./check
 
 Legalese
 --------
 
-* Copyright (C) 2011-2014  Lars Wirzenius
+* Copyright (C) 2011-2017  Lars Wirzenius
 * Copyright (C) 2012-2015  Codethink Limited
 
 This program is free software; you can redistribute it and/or modify
