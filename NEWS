@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.20170823+git, not yet released
+Version 1.20170827, released 2017-08-27
 ----------------------------------------
 
 * Fix settings to not use Unicode strings (drop import of Unicode
