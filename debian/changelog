@@ -1,6 +1,6 @@
 python-cliapp (1.20170823+git-1) UNRELEASED; urgency=medium
 
-  * New upstream version.
+  * New upstream version. (Closes: #873298)
 
  -- Lars Wirzenius <liw@liw.fi>  Wed, 23 Aug 2017 18:54:04 +0300
 
