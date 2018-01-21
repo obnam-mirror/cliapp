@@ -12,4 +12,5 @@
 ./test-plugins/aaa_hello_plugin.py
 example4.py
 example5.py
+example6.py
 example_runcmd.py

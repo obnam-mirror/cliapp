@@ -174,6 +174,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
     pos = 0
     io_size = 1024
     latest_output = time.time()
+    timeout_quit = False
     timeout = False
 
     def set_nonblocking(fd):
@@ -200,7 +201,7 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
             return True  # pragma: no cover
         return False
 
-    while not timeout and still_running():
+    while not timeout_quit and still_running():
         rlist = []
         if not stdout_eof and pipe_stdout == subprocess.PIPE:
             rlist.append(procs[-1].stdout)
@@ -255,13 +256,17 @@ def _run_pipeline(procs, feed_stdin, pipe_stdin, pipe_stdout, pipe_stderr,
                 stderr_eof = True
             timeout = False
 
+        if timeout and timeout_callback:  # pragma: no cover
+            result = timeout_callback()
+            if result:
+                timeout_quit = True
+        elif timeout:  # pragma: no cover
+            timeout_quit = True
+
     while not timeout and still_running():
         for p in procs:
             if p.returncode is None:
                 p.wait()
-
-    if timeout and timeout_callback:  # pragma: no cover
-        timeout_callback()
 
     errorcodes = [p.returncode for p in procs if p.returncode != 0] or [0]
 
