@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.20170827+git, not yet released
+Version 1.20180121, released 2018-01-21
 ----------------------------------------
 
 * The `runcmd` timeout behaviour has changed a little. Previously, a
