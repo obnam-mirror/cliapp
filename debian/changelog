@@ -1,9 +1,9 @@
-python-cliapp (1.20180812+git-1) UNRELEASED; urgency=medium
+python-cliapp (1.20180812.1-1) unstable; urgency=medium
 
   * New upstream version.
   * Add build-dep on dh-python.
 
- -- Lars Wirzenius <liw@liw.fi>  Sun, 12 Aug 2018 10:22:15 +0300
+ -- Lars Wirzenius <liw@liw.fi>  Sun, 12 Aug 2018 15:22:03 +0300
 
 python-cliapp (1.20180812-1) unstable; urgency=medium
 
