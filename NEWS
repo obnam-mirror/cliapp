@@ -1,7 +1,7 @@
 NEWS for cliapp
 ===============
 
-Version 1.20180121+git, not yet released
+Version 1.20180812, released 2018-08-12
 ----------------------------------------
 
 * Fix file conflict between python3 and old versions of python2
