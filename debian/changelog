@@ -1,6 +1,12 @@
 python-cliapp (1.20180121+git-1) UNRELEASED; urgency=medium
 
   * New upstream version.
+  * Add Breaks and Replaces on the python-cliapp version prior to
+    buster to python3-cliapp, because the python3-cliapp package
+    now has the cliapp(5) manpage. It used to be in python-cliapp.
+    Having the manpage at all was probably a mistake, since it seems
+    no-one in the history of the world has read it without being
+    forced to. (Closes: #874421)
 
  -- Lars Wirzenius <liw@liw.fi>  Sun, 21 Jan 2018 17:20:16 +0200
 

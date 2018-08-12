@@ -28,6 +28,8 @@ Homepage: http://liw.fi/cliapp/
 Package: python3-cliapp
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}, python3 (>= 3.4), python3-yaml
+Breaks: python-cliapp (<< 1.20170827-1)
+Replaces: python-cliapp (<< 1.20170827-1)
 Suggests: python3-xdg
 Description: Python framework for Unix command line programs
  cliapp makes it easier to write typical Unix command line programs,

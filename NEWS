@@ -4,6 +4,8 @@ NEWS for cliapp
 Version 1.20180121+git, not yet released
 ----------------------------------------
 
+* Fix file conflict between python3 and old versions of python2
+  versions of the Debian package.
 
 Version 1.20180121, released 2018-01-21
 ----------------------------------------
